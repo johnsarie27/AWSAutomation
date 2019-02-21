@@ -1,8 +1,8 @@
 # ==============================================================================
-# Updated:      2019-02-14
+# Updated:      2019-02-21
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
-# Link:         https://github.com/johnsarie27/PowerShell-Modules/AWSReporting
+# Link:         https://github.com/johnsarie27/AWSReporting
 # ==============================================================================
 
 # CFTEMPLATEBUILDER FUNCTIONS
