@@ -19,6 +19,7 @@
 . $PSScriptRoot\Get-NetworkInfo.ps1
 . $PSScriptRoot\Get-ELB.ps1
 . $PSScriptRoot\Get-IAMReport.ps1
+. $PSScriptRoot\Disable-AccessKey.ps1
 
 # FUNCTIONS
 function Get-EC2 {
