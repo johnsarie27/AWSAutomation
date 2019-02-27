@@ -67,7 +67,7 @@ function Revoke-AccessKey {
                 $Span = New-TimeSpan -Start $_.CreateDate -End (Get-Date)
 
                 # IF KEY OLDER THAN 90 DAYS...
-                if ( $Span.Days -ge 90 ) {
+                if ( $Span.Days -gt 90 ) {
                     # REMOVE KEY
                     if ( $PSBoundParameters.ContainsKey('Remove') ) {
                         Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $PN
@@ -91,6 +91,6 @@ function Revoke-AccessKey {
         Write-Output ('[{0}] key(s) {1}.' -f $Results.Count, $Status)
 
         # RETURN REVOKED KEYS
-        Write-Information $Results
+        Write-Information ($Results | Select-Object -ExcludeProperty Status)
     }
 }
