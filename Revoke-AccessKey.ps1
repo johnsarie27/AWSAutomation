@@ -43,11 +43,6 @@ function Revoke-AccessKey {
         # IMPORT AWS MODULE
         Import-Module -Name AWSPowerShell.NetCore
 
-        # VALIDATE USERNAME
-        if ( $UserName -notin (Get-IAMUserList).UserName ) {
-            Write-Error ('User [{0}] not found.' -f $UserName); Break
-        }
-
         # CREATE RESULTS ARRAY
         $Results = [System.Collections.Generic.List[PSObject]]::new()
     }
@@ -59,6 +54,7 @@ function Revoke-AccessKey {
             
             # GET ACCESS KEYS
             $Keys = Get-IAMAccessKey -UserName $UserName -ProfileName $PN
+            if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) } 
 
             # LOOP THROUGH KEYS
             $Keys | ForEach-Object -Process {
