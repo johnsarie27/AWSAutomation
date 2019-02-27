@@ -25,7 +25,7 @@ function Revoke-AccessKey {
     [CmdletBinding(DefaultParameterSetName='_deactivate')]
     Param(
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='User name')]
-        [ValidateScript({ $_ -in (Get-IAMUserList).UserName })]
+        [ValidateNotNullOrEmpty()]
         [string] $UserName,
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='AWS credential profile name')]
@@ -40,14 +40,16 @@ function Revoke-AccessKey {
     )
 
     Begin {
-        # IMPORT AWS MODULE
-        Import-Module -Name AWSPowerShell.NetCore
-
         # CREATE RESULTS ARRAY
         $Results = [System.Collections.Generic.List[PSObject]]::new()
     }
 
     Process {
+        # VALIDATE USERNAME
+        if ( $UserName -notin (Get-IAMUserList -ProfileName $ProfileName).UserName ) {	
+            Write-Error ('User [{0}] not found in profile [{1}].' -f $UserName, $ProfileName); Break	
+        }
+
         # GET ACCESS KEYS
         $Keys = Get-IAMAccessKey -UserName $UserName -ProfileName $ProfileName
         if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) } 
@@ -79,9 +81,10 @@ function Revoke-AccessKey {
     End {
         if ( $PSBoundParameters.ContainsKey('Deactivate') ) { $Status = 'deactivated' }
         else { $Status = 'removed' }
-        Write-Output ('[{0}] key(s) {1}.' -f $Results.Count, $Status)
+        if ( $Results.Count -eq 1 ) { $Num = 'key' } else { $Num = 'keys' }
+        Write-Verbose ('{0} {1} {2}.' -f $Results.Count, $Num, $Status)
 
         # RETURN REVOKED KEYS
-        Write-Information ($Results | Select-Object -ExcludeProperty Status)
+        $Results | Select-Object -ExcludeProperty Status
     }
 }
