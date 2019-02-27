@@ -8,17 +8,21 @@ function Revoke-AccessKey {
         User name
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Deactivate
+        Deactivate key(s)
+    .PARAMETER Remove
+        Remove key(s)
     .INPUTS
         System.String.
     .OUTPUTS
         System.Object.
     .EXAMPLE
         PS C:\> Revoke-AccessKey -UserName jsmith -ProfileName MyAWSAccount
-        Disable all access keys for jsmith that are older than 90 days in MyAWSAccount profile.
+        Remove all access keys for jsmith that are older than 90 days in MyAWSAccount profile.
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='_deactivate')]
     Param(
         [Parameter(Mandatory, HelpMessage='User name')]
         [ValidateNotNullOrEmpty()]
@@ -26,7 +30,13 @@ function Revoke-AccessKey {
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage='AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName
+        [string[]] $ProfileName,
+
+        [Parameter(ParameterSetName='_remove')]
+        [switch] $Remove,
+
+        [Parameter(ParameterSetName='_deactivate')]
+        [switch] $Deactivate
     )
 
     Begin {
@@ -59,10 +69,14 @@ function Revoke-AccessKey {
                 # IF KEY OLDER THAN 90 DAYS...
                 if ( $Span.Days -ge 90 ) {
                     # REMOVE KEY
-                    Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $PN
-
+                    if ( $PSBoundParameters.ContainsKey('Remove') ) {
+                        Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $PN
+                    }
+                    
                     # DEACTIVATE KEY
-                    #Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $ProfileName
+                    if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
+                        Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $PN
+                    }
 
                     # ADD KEY TO LIST
                     $Results.Add($_)
@@ -72,7 +86,9 @@ function Revoke-AccessKey {
     }
 
     End {
-        Write-Output ('[{0}] key(s) disabled.' -f $Results.Count)
+        if ( $PSBoundParameters.ContainsKey('Deactivate') ) { $Status = 'deactivated' }
+        else { $Status = 'removed' }
+        Write-Output ('[{0}] key(s) {1}.' -f $Results.Count, $Status)
 
         # RETURN REVOKED KEYS
         Write-Information $Results
