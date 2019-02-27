@@ -24,13 +24,13 @@ function Revoke-AccessKey {
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName='_deactivate')]
     Param(
-        [Parameter(Mandatory, HelpMessage='User name')]
-        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='User name')]
+        [ValidateScript({ $_ -in (Get-IAMUserList).UserName })]
         [string] $UserName,
 
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage='AWS credential profile name')]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [string] $ProfileName,
 
         [Parameter(ParameterSetName='_remove')]
         [switch] $Remove,
@@ -48,35 +48,30 @@ function Revoke-AccessKey {
     }
 
     Process {
+        # GET ACCESS KEYS
+        $Keys = Get-IAMAccessKey -UserName $UserName -ProfileName $ProfileName
+        if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) } 
 
-        #LOOP ALL PROFILES
-        foreach ( $PN in $ProfileName ) {
-            
-            # GET ACCESS KEYS
-            $Keys = Get-IAMAccessKey -UserName $UserName -ProfileName $PN
-            if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) } 
+        # LOOP THROUGH KEYS
+        $Keys | ForEach-Object -Process {
 
-            # LOOP THROUGH KEYS
-            $Keys | ForEach-Object -Process {
+            # CREATE TIMESPAN
+            $Span = New-TimeSpan -Start $_.CreateDate -End (Get-Date)
 
-                # CREATE TIMESPAN
-                $Span = New-TimeSpan -Start $_.CreateDate -End (Get-Date)
-
-                # IF KEY OLDER THAN 90 DAYS...
-                if ( $Span.Days -gt 90 ) {
-                    # REMOVE KEY
-                    if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                        Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $PN
-                    }
-                    
-                    # DEACTIVATE KEY
-                    if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
-                        Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $PN
-                    }
-
-                    # ADD KEY TO LIST
-                    $Results.Add($_)
+            # IF KEY OLDER THAN 90 DAYS...
+            if ( $Span.Days -gt 90 ) {
+                # REMOVE KEY
+                if ( $PSBoundParameters.ContainsKey('Remove') ) {
+                    Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
                 }
+                
+                # DEACTIVATE KEY
+                if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
+                    Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $ProfileName
+                }
+
+                # ADD KEY TO LIST
+                $Results.Add($_)
             }
         }
     }
