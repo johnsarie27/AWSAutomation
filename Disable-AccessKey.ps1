@@ -59,7 +59,7 @@ function Disable-AccessKey {
                 # IF KEY OLDER THAN 90 DAYS...
                 if ( $Span.Days -ge 90 ) {
                     # REMOVE KEY
-                    Remove-IAMAccessKey -AccessKeyId $_.AccessKeyId -ProfileName $PN
+                    Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $PN
 
                     # DEACTIVATE KEY
                     #Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $ProfileName
@@ -72,7 +72,7 @@ function Disable-AccessKey {
     }
 
     End {
-        Write-Output ('[{0}] keys disabled.' -f $Results.Count)
+        Write-Output ('[{0}] key(s) disabled.' -f $Results.Count)
 
         # RETURN REVOKED KEYS
         Write-Information $Results
