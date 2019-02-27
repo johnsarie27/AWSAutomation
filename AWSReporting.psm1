@@ -12,14 +12,17 @@
 . $PSScriptRoot\ConvertTo-RouteTableObject.ps1
 . $PSScriptRoot\Export-SecurityGroup.ps1
 
-# IMPORT
+# IAM FUNCTIONS
+. $PSScriptRoot\Get-IAMReport.ps1
+. $PSScriptRoot\Revoke-AccessKey.ps1
+. $PSScriptRoot\Disable-InactiveUserKey.ps1
+
+# INVENTORY AND BUDGETARY FUNCTIONS
 . $PSScriptRoot\Find-InsecureS3BucketPolicy.ps1
 . $PSScriptRoot\Find-PublicS3Objects.ps1
 . $PSScriptRoot\Get-SecurityGroupInfo.ps1
 . $PSScriptRoot\Get-NetworkInfo.ps1
 . $PSScriptRoot\Get-ELB.ps1
-. $PSScriptRoot\Get-IAMReport.ps1
-. $PSScriptRoot\Revoke-AccessKey.ps1
 . $PSScriptRoot\Get-EC2.ps1
 . $PSScriptRoot\Get-AvailableEBS.ps1
 . $PSScriptRoot\New-QuarterlyReport.ps1
