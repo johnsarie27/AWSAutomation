@@ -1,9 +1,9 @@
-function Disable-AccessKey {
+function Revoke-AccessKey {
     <# =========================================================================
     .SYNOPSIS
-        Disable IAM User Access Key
+        Revoke IAM User Access Key
     .DESCRIPTION
-        Disable any IAM User Access Key that is older than 90 days.
+        Revoke any IAM User Access Key that is older than 90 days.
     .PARAMETER UserName
         User name
     .PARAMETER ProfileName
@@ -13,7 +13,7 @@ function Disable-AccessKey {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Disable-AccessKey -UserName jsmith -ProfileName MyAWSAccount
+        PS C:\> Revoke-AccessKey -UserName jsmith -ProfileName MyAWSAccount
         Disable all access keys for jsmith that are older than 90 days in MyAWSAccount profile.
     .NOTES
         General notes
