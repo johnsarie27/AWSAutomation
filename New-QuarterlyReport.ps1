@@ -35,9 +35,9 @@ function New-QuarterlyReport {
         [string] $Region = 'us-east-1'
     )
 
-    Import-Module UtilityFunctions
+    #Import-Module UtilityFunctions
 
-    $XlsxFile = '{0}\{1}_AWS-Quarterly-Report.xlsx' -f (Get-Folder -Description 'Save folder'), (Get-Date).ToString("yyyy-MM-dd")
+    #$XlsxFile = '{0}\{1}_AWS-Quarterly-Report.xlsx' -f (Get-Folder -Description 'Save folder'), (Get-Date).ToString("yyyy-MM-dd")
 
     $InstanceList = @()
 
