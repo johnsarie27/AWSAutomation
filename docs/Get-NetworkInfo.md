@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-NetworkInfo
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Get AWS network infrastructure
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Get-NetworkInfo [-ProfileName] <String> [[-Region] <String>] [-VpcId] <String> [
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function iterates through the networking infrastructure (VPC's, Subnets, and Route Tables) and outputs a list of objects using the Route Tables as a connection point.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NetworkInfo -ProfileName $P $Region 'us-east-1' -VpcId vpc-12345678
 ```
 
-{{ Add example description here }}
+Get network infrastructure details for VPC vpc-12345678 in us-east-1 for store profile.
 
 ## PARAMETERS
 

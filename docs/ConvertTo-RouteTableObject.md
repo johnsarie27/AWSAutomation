@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-RouteTableObject
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Converts Route Tables to an object that can be used to populate a CloudFormation template.
 
 ## SYNTAX
 
@@ -17,16 +17,17 @@ ConvertTo-RouteTableObject [-ProfileName] <String> [[-Region] <String>] [-VpcId]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function takes an existing set of Route Tables contained in an AWS account and outputs an object that can esily be converted into JSON for a CloudFormation template.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> $a = ConvertTo-RouteTableObject -ProfileName $P -Region us-east-1
+PS C:\> $a | ConvertTo-Json -Depth 8
 ```
 
-{{ Add example description here }}
+This will create the JSON that can be edited to fit into a CloudFormation template.
 
 ## PARAMETERS
 

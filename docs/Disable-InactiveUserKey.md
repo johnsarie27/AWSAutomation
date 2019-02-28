@@ -8,7 +8,7 @@ schema: 2.0.0
 # Disable-InactiveUserKey
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Deactivate unused IAM User Access Key
 
 ## SYNTAX
 
@@ -23,21 +23,21 @@ Disable-InactiveUserKey -UserName <String> -ProfileName <String> [-Remove] [<Com
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+Deactivate any IAM User Access Key that has not been used in 90 or more days.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Disable-InactiveUserKey -UserName jsmith -ProfileName MyAWSAccount
 ```
 
-{{ Add example description here }}
+Deactivate all access keys for jsmith that have not been used in 90 days for MyAWSAccount profile.
 
 ## PARAMETERS
 
 ### -Deactivate
-{{Fill Deactivate Description}}
+Disable key
 
 ```yaml
 Type: SwitchParameter
@@ -67,7 +67,7 @@ Accept wildcard characters: False
 ```
 
 ### -Remove
-{{Fill Remove Description}}
+Delete key
 
 ```yaml
 Type: SwitchParameter

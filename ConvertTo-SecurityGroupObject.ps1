@@ -13,13 +13,12 @@ function ConvertTo-SecurityGroupObject {
         This will create the JSON that can be edited to fit into a
         CloudFormation template.
     .INPUTS
-        ProfileName = AWS Credential Profile
-        Region = AWS Region
-        VpcId = AWS VPC ID
+        System.String
     .OUTPUTS
+        System.Object
+    .NOTES
         An object containing security group objects that can easitly be
         converted into JSON for a CloudFormation template.
-    .NOTES
         SecurityGroupEgress can be removed if desired. This will allow an
         egress object to be created allowing egress to any/all IPs.
     ========================================================================= #>

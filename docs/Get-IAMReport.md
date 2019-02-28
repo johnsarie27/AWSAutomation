@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-IAMReport
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Generate and parse AWS IAM report
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Get-IAMReport [-ProfileName] <String> [-Path] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function will use the supplied AWS Credential profile to generate and parse the IAM Credential Report. It then returns the account information.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-IAMReport -ProfileName MyAccount
 ```
 
-{{ Add example description here }}
+Generate IAM report for MyAccount
 
 ## PARAMETERS
 
@@ -66,11 +66,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 
-### System.Object
+### CSV file
 ## NOTES
 
 ## RELATED LINKS

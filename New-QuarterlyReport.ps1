@@ -19,7 +19,7 @@ function New-QuarterlyReport {
     .OUTPUTS
         Excel spreadsheet.
     .EXAMPLE
-        PS C:\>New-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
+        PS C:\> New-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
         region
     ========================================================================= #>

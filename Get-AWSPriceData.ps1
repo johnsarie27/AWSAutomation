@@ -15,6 +15,7 @@ function Get-AWSPriceData {
         CSV file.
     .EXAMPLE
         PS C:\> GetPriceInfo -Region us-west-2
+        Get pricing info for EC2 resources in the us-west-2 region
     .NOTES
         https://aws.amazon.com/blogs/aws/new-aws-price-list-api/
         https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{offer_code}/current/index.{format}

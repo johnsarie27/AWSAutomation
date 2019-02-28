@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-EC2
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Get all EC2 instances for given list of accounts
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Get-EC2 [[-ProfileName] <String[]>] [[-Region] <String>] [-All] [-AWSPowerShell]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function returns a list of the EC2 instances in production or in all available AWS credential profiles.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> $All = Get-EC2 -Region us-west-2 -All
 ```
 
-{{ Add example description here }}
+Return all EC2 instances in all AWS accounts represented by the locally stored AWS credential profiles in the us-west-2 region.
 
 ## PARAMETERS
 
@@ -96,8 +96,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
-
-### System.String[]
 
 ### System.String
 

@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-SecurityGroupInfo
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Retrieve security group information from an AWS VPC
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Get-SecurityGroupInfo [-ProfileName] <String> [[-Region] <String>] [-VpcId] <Str
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function retrieves all security groups from the provided VPC and outputs an object with a subset of the data, including the EC2 instances, in a format easy to use
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> $a = Get-SecurityGroupInfo -ProfileName $P -VpcId $V
 ```
 
-{{ Add example description here }}
+Store all security groups from Profile $P and VPC $V in varibale $a
 
 ## PARAMETERS
 

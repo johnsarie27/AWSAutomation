@@ -8,7 +8,7 @@ schema: 2.0.0
 # Find-InsecureS3BucketPolicy
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Find S3 bucket policies with insecure principle
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Find-InsecureS3BucketPolicy [-ProfileName] <String> [[-BucketName] <String>] [<C
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function scans through bucket policies for given bucket(s) to identify policies that contain principles allowing unauthenticated access.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Find-InsecureS3BucketPolicy -ProfileName MyProfile
 ```
 
-{{ Add example description here }}
+Search through all buckets in account represented by MyProfile for bucket policies that allow non-authenticated principles.
 
 ## PARAMETERS
 

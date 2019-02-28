@@ -34,10 +34,10 @@ function Disable-InactiveUserKey {
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(ParameterSetName='_remove')]
+        [Parameter(ParameterSetName='_remove', HelpMessage='Delete key')]
         [switch] $Remove,
 
-        [Parameter(ParameterSetName='_deactivate')]
+        [Parameter(ParameterSetName='_deactivate', HelpMessage='Disable key')]
         [switch] $Deactivate
     )
 

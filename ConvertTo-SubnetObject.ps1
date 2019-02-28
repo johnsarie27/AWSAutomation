@@ -13,9 +13,10 @@ function ConvertTo-SubnetObject {
         This will create the JSON that can be edited to fit into a
         CloudFormation template.
     .INPUTS
-        ProfileName = AWS Credential Profile
-        Region = AWS Region
+        System.String
     .OUTPUTS
+        System.Object
+    .NOTES
         An object containing subnet object(s) that can easitly be converted into
         JSON for a CloudFormation template.
     ========================================================================= #>

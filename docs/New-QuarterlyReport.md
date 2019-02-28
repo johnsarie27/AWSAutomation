@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-QuarterlyReport
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Generate reports for instances offline and running without reservation
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ New-QuarterlyReport [-ProfileName] <String[]> [[-Region] <String>] [<CommonParam
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This script iterates through all instances in a give AWS Region and creates a list of specific attributes. It then finds the last stop time, user who stopped the instance, and calculates the number of days the system has been stopped (if possible) and creates a data sheet (CSV). The data sheet is then imported into Excel and formatted.  This can be done for a single or multiple accounts based on AWS Credentail Profiles.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> New-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
 ```
 
-{{ Add example description here }}
+Generate new EC2 report for all instances in MyAccount in the us-west-1 region
 
 ## PARAMETERS
 
@@ -67,7 +67,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 

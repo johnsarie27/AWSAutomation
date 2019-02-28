@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-VpcObject
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Converts VPCs to an object that can be used to populate a CloudFormation template.
 
 ## SYNTAX
 
@@ -17,16 +17,17 @@ ConvertTo-VpcObject [-ProfileName] <String> [[-Region] <String>] [<CommonParamet
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function takes an existing set of VPCs contained in an AWS account and outputs an object that can esily be converted into JSON for a CloudFormation template.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> $a = ConvertTo-VpcObject -ProfileName $P -Region us-east-1
+PS C:\> $a | ConvertTo-Json -Depth 8
 ```
 
-{{ Add example description here }}
+This will create the JSON that can be edited to fit into a CloudFormation template.
 
 ## PARAMETERS
 
@@ -67,7 +68,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 

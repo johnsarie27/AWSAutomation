@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-AWSPriceData
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Get price data for EC2 resources
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Get-AWSPriceData [[-OfferCode] <String>] [[-Format] <String>] [<CommonParameters
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function retrieves the EC2 price data for AWS us-east-1 region and returns a CSV file with the relevant data.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> GetPriceInfo -Region us-west-2
 ```
 
-{{ Add example description here }}
+Get pricing info for EC2 resources in the us-west-2 region
 
 ## PARAMETERS
 
@@ -68,7 +68,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 

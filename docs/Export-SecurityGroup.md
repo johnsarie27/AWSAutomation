@@ -8,7 +8,7 @@ schema: 2.0.0
 # Export-SecurityGroup
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Export Security Groups from a CloudFormation template
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Export-SecurityGroup [-TemplateFile] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+Export Security Groups from a CloudFormation template to an Excel spreadsheet
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Export-SecurityGroup -TF C:\template.template
 ```
 
-{{ Add example description here }}
+Exports Security Groups from template.template
 
 ## PARAMETERS
 
@@ -51,7 +51,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 

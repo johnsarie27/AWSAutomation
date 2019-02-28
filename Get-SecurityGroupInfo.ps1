@@ -18,6 +18,7 @@ function Get-SecurityGroupInfo {
         System.Object.
     .EXAMPLE
         PS C:\> $a = Get-SecurityGroupInfo -ProfileName $P -VpcId $V
+        Store all security groups from Profile $P and VPC $V in varibale $a
     ========================================================================= #>
     [CmdletBinding()]
     Param(

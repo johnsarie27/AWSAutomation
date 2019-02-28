@@ -17,6 +17,7 @@ function Get-ELB {
         System.Object.
     .EXAMPLE
         PS C:\> Get-ELB -ProfileName MyAccount
+        Get all Elastic Load Balancers in account represented by MyAccount profile
     .NOTES
         Uses [PSCustomObject] rather than $New = New-Object -TypeName psobject
     ========================================================================= #>

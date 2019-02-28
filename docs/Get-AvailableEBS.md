@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-AvailableEBS
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Get "unattached" Elastic Block Store volumes
 
 ## SYNTAX
 
@@ -23,16 +23,16 @@ Get-AvailableEBS -ProfileName <String[]> [-Region <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function returns a list of custom objects with properties from AWS EBS volume objects where each EBS volume is available (unattached).
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-AvailableEBS -AllProfiles | Group -Property Account | Select Name, Count
 ```
 
-{{ Add example description here }}
+Get unattached EBS volumes, group them by Account, and display Name and Count
 
 ## PARAMETERS
 
@@ -88,7 +88,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### None
+### System.String
 
 ## OUTPUTS
 

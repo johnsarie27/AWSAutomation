@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-SecurityGroupObject
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Converts Security Groups to an object that can be used to populate a CloudFormation template.
 
 ## SYNTAX
 
@@ -18,16 +18,17 @@ ConvertTo-SecurityGroupObject [-ProfileName] <String> [[-Region] <String>] [[-Vp
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function takes an existing set of Security Groups contained in a VPC and outputs an object that can esily be converted into JSON for a CloudFormation template.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> $a = ConvertTo-SecurityGroupObject -ProfileName $P -Region us-east-1 -VpcId $v
+PS C:\> $a | ConvertTo-Json -Depth 8
 ```
 
-{{ Add example description here }}
+This will create the JSON that can be edited to fit into a CloudFormation template.
 
 ## PARAMETERS
 

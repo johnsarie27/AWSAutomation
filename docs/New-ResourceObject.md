@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-ResourceObject
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Create a CloudFormation resource
 
 ## SYNTAX
 
@@ -33,16 +33,16 @@ New-ResourceObject [-VGA] [-NameTag <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+Generate a new CloudFormation resource object
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> New-ResourceObject -EIP
 ```
 
-{{ Add example description here }}
+Create a generic Elastic IP resource object for CloudFormation
 
 ## PARAMETERS
 

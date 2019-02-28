@@ -8,7 +8,7 @@ schema: 2.0.0
 # Revoke-AccessKey
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Revoke IAM User Access Key
 
 ## SYNTAX
 
@@ -23,21 +23,21 @@ Revoke-AccessKey -UserName <String> -ProfileName <String> [-Remove] [<CommonPara
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+Revoke any IAM User Access Key that is older than 90 days.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Revoke-AccessKey -UserName jsmith -ProfileName MyAWSAccount
 ```
 
-{{ Add example description here }}
+Remove all access keys for jsmith that are older than 90 days in MyAWSAccount profile.
 
 ## PARAMETERS
 
 ### -Deactivate
-{{Fill Deactivate Description}}
+Disable key
 
 ```yaml
 Type: SwitchParameter
@@ -67,7 +67,7 @@ Accept wildcard characters: False
 ```
 
 ### -Remove
-{{Fill Remove Description}}
+Delete key
 
 ```yaml
 Type: SwitchParameter

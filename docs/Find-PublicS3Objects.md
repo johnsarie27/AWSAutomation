@@ -8,7 +8,7 @@ schema: 2.0.0
 # Find-PublicS3Objects
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Find publicly accessible S3 objects
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Find-PublicS3Objects [-ProfileName] <String> [[-BucketName] <String>] [<CommonPa
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+Search S3 bucket(s) and return a list of publicly accessible objects
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Find-PublicS3Objects -ProfileName MyAccount
 ```
 
-{{ Add example description here }}
+Search all objects in all S3 buckets for MyAccount and return a list of publicly accessible objects
 
 ## PARAMETERS
 

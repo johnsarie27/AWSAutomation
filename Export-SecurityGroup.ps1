@@ -11,8 +11,8 @@ function Export-SecurityGroup {
     .OUTPUTS
         Excel Workbook
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Export-SecurityGroup -TF C:\template.template
+        Exports Security Groups from template.template
     .NOTES
         A log of work to be done here
         1. Create parameter input as a "Resource" object from a CF Template

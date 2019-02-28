@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-InstanceList
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Get list of EC2 instances
 
 ## SYNTAX
 
@@ -17,16 +17,16 @@ Get-InstanceList [[-ProfileName] <String[]>] [[-Region] <String>] [<CommonParame
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+This function queries AWS EC2 API for all instances in a given region for a given account. It requires an AWS Credential Profile and uses a custom class to store the data.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-InstanceList -Region us-east-1 -ProfileName MyAccount
 ```
 
-{{ Add example description here }}
+Get a list of all EC2 instances in the AWS account represented by MyAccount in the us-east-1 region
 
 ## PARAMETERS
 
