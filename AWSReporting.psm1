@@ -33,9 +33,10 @@
 # DEPRICATED
 #. $PSScriptRoot\Get-CostInfo.ps1
 
-# IMPORT AWS MODULE
-if ( $PSVersionTable.PSVersion.Major -eq 6 ) { Import-Module -Name AWSPowerShell.NetCore }
-else { Import-Module -Name AWSPowershell }
+# THIS IMPORT CAUSES PROBLEMS WITH USING Get-Command -Module AWSReporting
+# OR USING PLATYPS TO GENERATE AND UPDATE MODULE HLEP
+#if ( $PSVersionTable.PSVersion.Major -eq 6 ) { Import-Module -Name AWSPowerShell.NetCore }
+#else { Import-Module -Name AWSPowershell }
 
 # FUNCTIONS
 function New-ResourceObject {
@@ -235,6 +236,6 @@ foreach ( $letter in $AlphabetList ) {
 $VolumeLookupTable.T00 = '/dev/sda1/'
 
 # EXPORT MEMBERS
-# THESE ARE SPECIFIED IN THE MODULE MANIFEST AND THEREFORE DON'T NEED TO BE LISTED HERE
+# EXPORTING IS SPECIFIED IN THE MODULE MANIFEST AND UNNECESSARY HERE
 #Export-ModuleMember -Function *
 #Export-ModuleMember -Variable *
