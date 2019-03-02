@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-02-27
+# Updated:      2019-03-01
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -13,6 +13,7 @@
 . $PSScriptRoot\Export-SecurityGroup.ps1
 
 # IAM FUNCTIONS
+. $PSScriptRoot\Edit-AWSProfile.ps1
 . $PSScriptRoot\Get-IAMReport.ps1
 . $PSScriptRoot\Revoke-AccessKey.ps1
 . $PSScriptRoot\Disable-InactiveUserKey.ps1
@@ -31,6 +32,10 @@
 
 # DEPRICATED
 #. $PSScriptRoot\Get-CostInfo.ps1
+
+# IMPORT AWS MODULE
+if ( $PSVersionTable.PSVersion.Major -eq 6 ) { Import-Module -Name AWSPowerShell.NetCore }
+else { Import-Module -Name AWSPowershell }
 
 # FUNCTIONS
 function New-ResourceObject {
