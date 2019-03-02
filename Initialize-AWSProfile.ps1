@@ -69,6 +69,9 @@ function Initialize-AWSProfile {
     )
 
     Begin {
+        # VARS
+        $OpParams = @('Default', 'Region', 'ProfileName')
+        
         # FUNCTIONS
         function Confirm-Profile ([string] $ProfileName) {
             $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
@@ -82,10 +85,10 @@ function Initialize-AWSProfile {
     }
 
     Process {
-    
-        switch ( $PSBoundParameters.Keys | Where-Object { $_ -notin @('Default', 'Region', 'ProfileName') } ) {
+
+        $Result = switch ( $PSBoundParameters.Keys | Where-Object {$_ -notin $OpParams} ) {
             List {
-                $Result = Get-AWSCredential -ListProfileDetail | Sort-Object ProfileName | Out-String
+                Get-AWSCredential -ListProfileDetail | Sort-Object ProfileName | Out-String
             }
             Create {
                 if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
@@ -116,7 +119,7 @@ function Initialize-AWSProfile {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
 
-                $Result = 'Profile [{0}] created.' -f $ProfileName
+                'Profile [{0}] created.' -f $ProfileName
             }
             Update {
                 if ( !(Confirm-Profile -ProfileName $ProfileName) ) { Write-Error ('Profile [{0}] not found' -f $ProfileName); Break }
@@ -129,12 +132,12 @@ function Initialize-AWSProfile {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
             
-                $Result = 'Profile [{0}] updated.' -f $ProfileName
+                'Profile [{0}] updated.' -f $ProfileName
             }
             Delete {
                 if ( !(Confirm-Profile -ProfileName $ProfileName) ) { Write-Error ('Profile [{0}] not found' -f $ProfileName); Break }
                 Remove-AWSCredentialProfile -ProfileName $ProfileName
-                $Result = 'Profile [{0}] removed.' -f $ProfileName
+                'Profile [{0}] removed.' -f $ProfileName
             }
         }
     }
