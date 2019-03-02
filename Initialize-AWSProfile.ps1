@@ -4,8 +4,8 @@ function Initialize-AWSProfile {
         Manage AWS Credential Profiles
     .DESCRIPTION
         Allows for managemnt of AWS Profile Credentials by prompting the user
-        for the necessary information to perform a specific task. Profiles
-        can be created, updated, set as default, or removed.
+        for the necessary information to perform an initialization task.
+        Profiles can be created, updated, set as default, or removed.
     .PARAMETER List
         List profiles
     .PARAMETER Create
@@ -30,6 +30,9 @@ function Initialize-AWSProfile {
     .EXAMPLE
         PS C:\> Initialize-AWSProfile -Create -ProfileName MyProfile
         Create new profile named MyProfile
+    .EXAMPLE
+        PS C:\> Initialize-AWSProfile -Update -ProfileName Profile1
+        Update existing profile Profile1
     .LINK
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
     .NOTES
