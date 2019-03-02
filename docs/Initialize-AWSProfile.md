@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Edit-AWSProfile
+# Initialize-AWSProfile
 
 ## SYNOPSIS
 Manage AWS Credential Profiles
@@ -14,32 +14,32 @@ Manage AWS Credential Profiles
 
 ### _list
 ```
-Edit-AWSProfile [-List] [<CommonParameters>]
+Initialize-AWSProfile [-List] [<CommonParameters>]
 ```
 
 ### _create_default
 ```
-Edit-AWSProfile [-Create] [-Default] -Region <String> [-ProfileName <String>] [<CommonParameters>]
+Initialize-AWSProfile [-Create] [-Default] -Region <String> [-ProfileName <String>] [<CommonParameters>]
 ```
 
 ### _create
 ```
-Edit-AWSProfile [-Create] [-ProfileName <String>] [<CommonParameters>]
+Initialize-AWSProfile [-Create] [-ProfileName <String>] [<CommonParameters>]
 ```
 
 ### _update_default
 ```
-Edit-AWSProfile [-Update] [-Default] -Region <String> -ProfileName <String> [<CommonParameters>]
+Initialize-AWSProfile [-Update] [-Default] -Region <String> -ProfileName <String> [<CommonParameters>]
 ```
 
 ### _update
 ```
-Edit-AWSProfile [-Update] -ProfileName <String> [<CommonParameters>]
+Initialize-AWSProfile [-Update] -ProfileName <String> [<CommonParameters>]
 ```
 
 ### _delete
 ```
-Edit-AWSProfile [-Delete] -ProfileName <String> [<CommonParameters>]
+Initialize-AWSProfile [-Delete] -ProfileName <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -49,14 +49,14 @@ Allows for managemnt of AWS Profile Credentials by prompting the user for the ne
 
 ### Example 1
 ```powershell
-PS C:\> Edit-AWSProfile -List
+PS C:\> Initialize-AWSProfile -List
 ```
 
 Display all existing profiles
 
 ### Example 2
 ```powershell
-PS C:\> Edit-AWSProfile -Create -ProfileName MyProfile
+PS C:\> Initialize-AWSProfile -Create -ProfileName MyProfile
 ```
 
 Create new profile named MyProfile

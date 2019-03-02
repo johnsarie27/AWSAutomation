@@ -13,7 +13,7 @@
 . $PSScriptRoot\Export-SecurityGroup.ps1
 
 # IAM FUNCTIONS
-. $PSScriptRoot\Edit-AWSProfile.ps1
+. $PSScriptRoot\Initialize-AWSProfile.ps1
 . $PSScriptRoot\Get-IAMReport.ps1
 . $PSScriptRoot\Revoke-AccessKey.ps1
 . $PSScriptRoot\Disable-InactiveUserKey.ps1

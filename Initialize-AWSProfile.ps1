@@ -1,4 +1,4 @@
-function Edit-AWSProfile {
+function Initialize-AWSProfile {
     <# =========================================================================
     .SYNOPSIS
         Manage AWS Credential Profiles
@@ -25,10 +25,10 @@ function Edit-AWSProfile {
     .OUTPUTS
         System.String.
     .EXAMPLE
-        PS C:\> Edit-AWSProfile -List
+        PS C:\> Initialize-AWSProfile -List
         Display all existing profiles
     .EXAMPLE
-        PS C:\> Edit-AWSProfile -Create -ProfileName MyProfile
+        PS C:\> Initialize-AWSProfile -Create -ProfileName MyProfile
         Create new profile named MyProfile
     .LINK
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
