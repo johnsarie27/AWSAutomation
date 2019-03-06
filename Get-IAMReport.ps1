@@ -12,7 +12,7 @@ function Get-IAMReport {
     .INPUTS
         System.String.
     .OUTPUTS
-        CSV file.
+        System.Object.
     .EXAMPLE
         PS C:\> Get-IAMReport -ProfileName MyAccount
         Generate IAM report for MyAccount
