@@ -69,7 +69,7 @@ function Get-ELB {
             #$new.Policies = $ELB.Policies
             $new.ProfileName = $Name
             $new.Scheme = $ELB.Scheme
-            #$new.SecurityGroups = $ELB.SecurityGroups
+            $new.SecurityGroups = $ELB.SecurityGroups
             #$new.SourceSecurityGroup = $ELB.SourceSecurityGroup
             #$new.Subnets = $ELB.Subnets
             $new.VPCId = $ELB.VPCId
@@ -93,6 +93,7 @@ function Get-ELB {
             $new.IpAddress = (Resolve-DnsName $ALB.DNSName).IPAddress
             $new.ProfileName = $Name
             $new.Scheme = $ALB.Scheme
+            $new.SecurityGroups = $ALB.SecurityGroups
             $new.VPCId = $ALB.VPCId
             $new.Type = $ALB.Type
             $new.PrivateIp = @()
