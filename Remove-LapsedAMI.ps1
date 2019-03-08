@@ -97,15 +97,15 @@ function Remove-LapsedAMI {
             Param (
                 [Parameter(Mandatory)] [string] $ProfileName,
                 [Parameter(Mandatory)] [string] $Region,
-                [boolean] $bolRunAsTestOnly = $true,
-                # PASS $FALSE FOR THIS PARAMETER TO ACTUALLY DELETE AMIS AND ASSOCIATED SNAPSHOTS.
+                [boolean] $RunAsTestOnly = $true,
+                # PASS $false FOR THIS PARAMETER TO ACTUALLY DELETE AMIS AND ASSOCIATED SNAPSHOTS.
                 # BY DEFAULT THE SCRIPT RUNS IN TEST MODE ONLY WHICH WILL PERFORM ALL FUNCTIONS
                 # (INCLUDING NOTIFICATIONS) BUT WILL NOT ACTUALLY DELETE ANYTHING.
                 [Parameter(Mandatory)] $amisTargetedForDeletion
             )
     
             # THE CONTENT WITHIN THIS BLOCK IS DESTRUCTIVE. ONLY EXECUTE NEXT LINE IF $RUNASTESTONLY = $false
-            if ( $bolRunAsTestOnly -eq $false ) {
+            if ( $RunAsTestOnly -eq $false ) {
         
                 foreach ($ami in $amisTargetedForDeletion) {
                     $amiSnapshots = @($ami.BlockDeviceMapping.ebs.snapshotid) 
@@ -122,48 +122,60 @@ function Remove-LapsedAMI {
     Process {
 
         foreach ( $Name in $ProfileName ) {
+            # SET SPLATTER TABLE
+            $Splat = @{ ProfileName = $Name; Region = $Region; Owner = 'self' }
+
             #TARGET DAILY IMAGES OLDER THAN A WEEK, NEWER THAN A MONTH, EXCLUDING MONTHLY BACKUPS AND WEEKLY BACKUPS, WITH NAMES ENDING IN *.backup.
-            $DailyImagesToDelete = Get-EC2Image -ProfileName $Name -Region $Region -Owner 'self' | `
-            Where-Object {[datetime]::Parse($_.CreationDate).DayofWeek -ne $WeeklyBackupDay `
+            $DailyImagesToDelete = Get-EC2Image @Splat | Where-Object {
+                [datetime]::Parse($_.CreationDate).DayofWeek -ne $WeeklyBackupDay `
                 -and [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay `
                 -and [datetime]::Parse($_.CreationDate) -gt (Get-Date).AddDays(-$WeeklyBackupRetentionPeriod) `
                 -and [datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$DailyBackupRetentionPeriod) `
-                -and $_.Name -like '*' + $BackupSuffix}
+                -and $_.Name -like '*' + $BackupSuffix
+            }
 
             if ( $DailyImagesToDelete ) {
                 $Output += "`n`nDeleting Daily Images: `n"
-                foreach ($image in $DailyImagesToDelete) {$Output += ($image.Name + "; " + [datetime]::parse($image.CreationDate).DateTime + "`n")}
+                $DailyImagesToDelete | ForEach-Object -Process {
+                    $Output += ($_.Name + "; " + [datetime]::parse($_.CreationDate).DateTime + "`n")
+                }
             }
             
             #TARGET IMAGES OLDER THAN A MONTH, NEWER THAN A SIX MONTHS, EXCLUDING MONTHLY BACKUPS, WITH NAMES ENDING IN *.backup.
-            $WeeklyImagesToDelete = Get-EC2Image -ProfileName $Name -Region $Region -Owner 'self' | `
-            Where-Object {[datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay `
+            $WeeklyImagesToDelete = Get-EC2Image @Splat | Where-Object {
+                [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay `
                 -and ([datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$WeeklyBackupRetentionPeriod)) `
                 -and ([datetime]::Parse($_.CreationDate) -gt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod)) `
-                -and $_.Name -like '*' + $BackupSuffix}
+                -and $_.Name -like '*' + $BackupSuffix
+            }
 
             if ( $WeeklyImagesToDelete ) {
                 $Output += "`n`nDeleting Weekly Images: `n"
-                foreach ($image in $WeeklyImagesToDelete) {$Output += ($image.Name + "; " + [datetime]::parse($image.CreationDate).DateTime + "`n")}
+                $WeeklyImagesToDelete | ForEach-Object -Process {
+                    $Output += ($_.Name + "; " + [datetime]::parse($_.CreationDate).DateTime + "`n")
+                }
             }
             
             #TARGET IMAGES OLDER THAN 6 MONTHS, WITH NAMES ENDING IN *.backup.
-            $MonthlyImagesToDelete = Get-EC2Image -ProfileName $Name -Region $Region -Owner 'self' | `
-            Where-Object {([datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod)) `
-                -and $_.Name -like '*' + $BackupSuffix}
+            $MonthlyImagesToDelete = Get-EC2Image @Splat | Where-Object {
+                ([datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod)) `
+                -and $_.Name -like '*' + $BackupSuffix
+            }
 
             if ( $MonthlyImagesToDelete ) {
                 $Output += "`n`nDeleting Monthly Images: `n"
-                foreach ($image in $MonthlyImagesToDelete) {$Output += ($image.Name + "; " + [datetime]::parse($image.CreationDate).DateTime + "`n")}
+                $MonthlyImagesToDelete | ForEach-Object -Process {
+                    $Output += ($_.Name + "; " + [datetime]::parse($_.CreationDate).DateTime + "`n")
+                }
             }
             
             # SETUP SPLATTER TABLE FOR PARAMETERS
-            $Splat = @{ Region = $Region; ProfileName = $Name; bolRunAsTestOnly = $RunAsTestOnly }
+            $Splat.Remove('Owner'); $Splat.bolRunAsTestOnly = $RunAsTestOnly
             
             # UNREGISTER AMIS
-            if ( $null -ne $DailyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $DailyImagesToDelete }
-            if ( $null -ne $WeeklyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $WeeklyImagesToDelete }
-            if ( $null -ne $MonthlyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $MonthlyImagesToDelete }
+            if ( $DailyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $DailyImagesToDelete }
+            if ( $WeeklyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $WeeklyImagesToDelete }
+            if ( $MonthlyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $MonthlyImagesToDelete }
         }
     }
 
