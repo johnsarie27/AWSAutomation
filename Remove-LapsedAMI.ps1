@@ -89,7 +89,6 @@ function Remove-LapsedAMI {
     )
 
     Begin {
-
         # SET VARS
         $Output = ''
 
