@@ -27,8 +27,8 @@ function Remove-LapsedAMI {
         How far back do you want to keep monthly backups?
     .INPUTS
         System.String.
-        System.Boolean.
-        System.Int.
+        System.ValueType.Boolean.
+        System.ValueType.Int.
     .OUTPUTS
         System.String.
     .EXAMPLE
