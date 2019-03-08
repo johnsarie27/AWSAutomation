@@ -127,11 +127,11 @@ function Remove-LapsedAMI {
 
             #TARGET DAILY IMAGES OLDER THAN A WEEK, NEWER THAN A MONTH, EXCLUDING MONTHLY BACKUPS AND WEEKLY BACKUPS, WITH NAMES ENDING IN *.backup.
             $DailyImagesToDelete = Get-EC2Image @Splat | Where-Object {
-                [datetime]::Parse($_.CreationDate).DayofWeek -ne $WeeklyBackupDay `
-                -and [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay `
-                -and [datetime]::Parse($_.CreationDate) -gt (Get-Date).AddDays(-$WeeklyBackupRetentionPeriod) `
-                -and [datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$DailyBackupRetentionPeriod) `
-                -and $_.Name -like '*' + $BackupSuffix
+                [datetime]::Parse($_.CreationDate).DayofWeek -ne $WeeklyBackupDay -and `
+                [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay -and `
+                [datetime]::Parse($_.CreationDate) -gt (Get-Date).AddDays(-$WeeklyBackupRetentionPeriod) -and `
+                [datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$DailyBackupRetentionPeriod) -and `
+                $_.Name -like '*' + $BackupSuffix
             }
 
             if ( $DailyImagesToDelete ) {
@@ -143,10 +143,10 @@ function Remove-LapsedAMI {
             
             #TARGET IMAGES OLDER THAN A MONTH, NEWER THAN A SIX MONTHS, EXCLUDING MONTHLY BACKUPS, WITH NAMES ENDING IN *.backup.
             $WeeklyImagesToDelete = Get-EC2Image @Splat | Where-Object {
-                [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay `
-                -and ([datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$WeeklyBackupRetentionPeriod)) `
-                -and ([datetime]::Parse($_.CreationDate) -gt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod)) `
-                -and $_.Name -like '*' + $BackupSuffix
+                [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay -and `
+                [datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$WeeklyBackupRetentionPeriod) -and `
+                [datetime]::Parse($_.CreationDate) -gt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod) -and `
+                $_.Name -like '*' + $BackupSuffix
             }
 
             if ( $WeeklyImagesToDelete ) {
@@ -158,8 +158,8 @@ function Remove-LapsedAMI {
             
             #TARGET IMAGES OLDER THAN 6 MONTHS, WITH NAMES ENDING IN *.backup.
             $MonthlyImagesToDelete = Get-EC2Image @Splat | Where-Object {
-                ([datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod)) `
-                -and $_.Name -like '*' + $BackupSuffix
+                [datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod) -and `
+                $_.Name -like '*' + $BackupSuffix
             }
 
             if ( $MonthlyImagesToDelete ) {
