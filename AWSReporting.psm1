@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-03-06
+# Updated:      2019-03-07
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -29,6 +29,7 @@
 . $PSScriptRoot\New-QuarterlyReport.ps1
 . $PSScriptRoot\Get-InstanceList.ps1
 . $PSScriptRoot\Get-AWSPriceData.ps1
+. $PSScriptRoot\Remove-LapsedAMI.ps1
 
 # DEPRICATED
 #. $PSScriptRoot\Get-CostInfo.ps1
