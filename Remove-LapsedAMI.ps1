@@ -120,7 +120,7 @@ function Remove-LapsedAMI {
     }
 
     Process {
-
+        # LOOP ALL PROFILES
         foreach ( $Name in $ProfileName ) {
             # SET SPLATTER TABLE
             $Splat = @{ ProfileName = $Name; Region = $Region; Owner = 'self' }
