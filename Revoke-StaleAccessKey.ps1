@@ -1,4 +1,4 @@
-function Revoke-AccessKey {
+function Revoke-StaleAccessKey {
     <# =========================================================================
     .SYNOPSIS
         Revoke IAM User Access Key
