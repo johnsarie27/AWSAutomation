@@ -67,28 +67,34 @@ function Disable-InactiveUserKey {
 
             # IF KEY NOT USED IN LAST 90 DAYS...
             if ( $Span.Days -gt 90 ) {
-                # REMOVE KEY
-                if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                    Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
-                }
+                # SET ACTION PARAMS
+                $Splat = @{ UserName = $_.UserName; AccessKeyId = $_.AccessKeyId; ProfileName = $ProfileName }
                 
-                # DEACTIVATE KEY
-                if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
-                    Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $ProfileName
-                }
-
                 # CREATE NEW CUSTOM OBJECT
-                $New = [PSCustomObject] @{
+                $New = @{
                     UserName     = $_.UserName
                     AccessKeyId  = $_.AccessKeyId
                     CreateDate   = $_.CreateDate
                     LastUsedDate = $LastUsed.LastUsedDate
                     Region       = $LastUsed.Region
                     ServiceName  = $LastUsed.ServiceName
+                    Action       = 'none'
+                }
+
+                # REMOVE KEY
+                if ( $PSBoundParameters.ContainsKey('Remove') ) {
+                    try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
+                    catch { $New.Action = $_.Exception.Message }
+                }
+
+                # DEACTIVATE KEY
+                if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
+                    try { Update-IAMAccessKey -Status Inactive ; $New.Action = 'Key deactivated' }
+                    catch { $New.Action = $_.Exception.Message }
                 }
 
                 # ADD OBJECT TO LIST
-                $Results.Add($New)
+                $Results.Add([PSCustomObject]$New)
             }
         }
     }
@@ -100,6 +106,6 @@ function Disable-InactiveUserKey {
         Write-Verbose ('{0} {1} {2}.' -f $Results.Count, $Num, $Status)
 
         # RETURN REVOKED KEYS
-        $Results | Select-Object -ExcludeProperty Status
+        $Results #| Select-Object -ExcludeProperty Status
     }
 }
