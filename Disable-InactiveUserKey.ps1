@@ -26,11 +26,11 @@ function Disable-InactiveUserKey {
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName='_deactivate')]
     Param(
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='User name')]
+        [Parameter(Mandatory, ValueFromPipeline, HelpMessage='User name')]
         [ValidateNotNullOrEmpty()]
         [string] $UserName,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='AWS credential profile name')]
+        [Parameter(Mandatory, HelpMessage='AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
