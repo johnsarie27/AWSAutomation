@@ -9,8 +9,6 @@ function Disable-InactiveUserKey {
         User name
     .PARAMETER ProfileName
         AWS Credential Profile name
-    .PARAMETER Deactivate
-        Deactivate key(s)
     .PARAMETER Remove
         Remove key(s)
     .INPUTS
@@ -24,7 +22,7 @@ function Disable-InactiveUserKey {
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding(DefaultParameterSetName='_deactivate')]
+    [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage='User name')]
         [ValidateNotNullOrEmpty()]
@@ -34,11 +32,8 @@ function Disable-InactiveUserKey {
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(ParameterSetName='_remove', HelpMessage='Delete key')]
-        [switch] $Remove,
-
-        [Parameter(ParameterSetName='_deactivate', HelpMessage='Disable key')]
-        [switch] $Deactivate
+        [Parameter(HelpMessage='Delete key')]
+        [switch] $Remove
     )
 
     Begin {
@@ -81,15 +76,12 @@ function Disable-InactiveUserKey {
                     Action       = 'none'
                 }
 
-                # REMOVE KEY
+                # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
                 if ( $PSBoundParameters.ContainsKey('Remove') ) {
                     try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
                     catch { $New.Action = $_.Exception.Message }
-                }
-
-                # DEACTIVATE KEY
-                if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
-                    try { Update-IAMAccessKey -Status Inactive ; $New.Action = 'Key deactivated' }
+                } else  {
+                    try { Update-IAMAccessKey @Splat -Status Inactive ; $New.Action = 'Key deactivated' }
                     catch { $New.Action = $_.Exception.Message }
                 }
 
@@ -100,8 +92,8 @@ function Disable-InactiveUserKey {
     }
 
     End {
-        if ( $PSBoundParameters.ContainsKey('Deactivate') ) { $Status = 'deactivated' }
-        else { $Status = 'removed' }
+        if ( $PSBoundParameters.ContainsKey('Remove') ) { $Status = 'removed' }
+        else { $Status = 'deactivated' }
         if ( $Results.Count -eq 1 ) { $Num = 'key' } else { $Num = 'keys' }
         Write-Verbose ('{0} {1} {2}.' -f $Results.Count, $Num, $Status)
 
