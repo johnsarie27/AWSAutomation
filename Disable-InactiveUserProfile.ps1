@@ -54,7 +54,7 @@ function Disable-InactiveUserProfile {
         $UserName | ForEach-Object {
             # VALIDATE USER
             try {
-                $User = Get-IAMUser -UserName $_ -ProfileName $ProfileName -EA 1
+                $User = Get-IAMUser -UserName $_ -ProfileName $ProfileName -ErrorAction Stop
             }
             catch {
                 Write-Error ('User [{0}] not found in profile [{1}].' -f $_, $ProfileName)
@@ -67,7 +67,7 @@ function Disable-InactiveUserProfile {
             # THE CMDLET Get-IAMLoginProfile HAS ISSUES AND DOES NOT RESPECT STANDARDS
             # LIKE ERRORACTION. THEREFORE, THE COMMANDS BELOW THAT UTILIZE Get-IAMloginProfile
             # WILL OUTPUT ERROR MESSAGES WHEN UNABLE TO LOCATE A LOGIN PROFILE
-            try { $HasLoginProfile = Get-IAMLoginProfile @Splat -EA 1 }
+            try { $HasLoginProfile = Get-IAMLoginProfile @Splat -ErrorAction Stop }
             catch { $HasLoginProfile = $null }
 
             # IF USER HAS A VALID LOGIN PROFILE
@@ -76,15 +76,29 @@ function Disable-InactiveUserProfile {
                 $TimeSinceLastLogin = New-TimeSpan -Start $User.PasswordLastUsed -End (Get-Date)
                 
                 if ( $TimeSinceLastLogin.Days -ge $Age ) {
+                    # CREATE CUSTOM OBJECT
+                    $New = @{
+                        Arn               = $User.Arn
+                        CreateDate        = $User.CreateDate
+                        PasswordLastUsed  = $User.PasswordLastUsed
+                        DaysSinceLastUsed = $TimeSinceLastLogin.Days
+                        UserName          = $User.UserName
+                        UserId            = $User.UserId
+                    }
+
                     # DISABLE USER
                     try {
                         Remove-IAMLoginProfile @Splat -Force
                         Write-Verbose 'DISABLED USER [{0}] in account [{1}]' -f $Splat.UserName, $ProfileName
-                        $Results += $User
+                        $New.Action = 'User profile disabled'
                     }
                     catch {
                         Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $_.Exception.Message)
+                        $New.Action = 'Error: {0}' -f $_.Exception.Message
                     }
+
+                    # ADD TO THE LIST
+                    $Results += [PSCustomObject] $New
                 }
             }
         }
@@ -94,6 +108,6 @@ function Disable-InactiveUserProfile {
         Write-Verbose ('{0} user profile(s) disabled.' -f $Results.Count)
 
         # RETURN REVOKED KEYS
-        $Results #| Select-Object -ExcludeProperty Status
+        $Results
     }
 }
