@@ -3,8 +3,7 @@ function Disable-InactiveUserKey {
     .SYNOPSIS
         Deactivate unused IAM User Access Key
     .DESCRIPTION
-        Deactivate any IAM User Access Key that has not been used in 90 or more
-        days.
+        Deactivate IAM User Access Key that has not been used in 90 or more days
     .PARAMETER UserName
         User name
     .PARAMETER ProfileName
