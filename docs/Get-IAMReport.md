@@ -17,7 +17,7 @@ Get-IAMReport [-ProfileName] <String> [-Path] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-This function will use the supplied AWS Credential profile to generate and parse the IAM Credential Report. It then returns the account information.
+Generate and parse the IAM Credential Report and return the account information.
 
 ## EXAMPLES
 
@@ -38,7 +38,7 @@ Type: String
 Parameter Sets: (All)
 Aliases: Data, CredentialReport, File, FilePath, Report, ReportPath
 
-Required: True
+Required: False
 Position: 1
 Default value: None
 Accept pipeline input: False
@@ -56,7 +56,7 @@ Aliases:
 Required: True
 Position: 0
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True
 Accept wildcard characters: False
 ```
 
@@ -66,11 +66,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### System.String
+### System.String[]
 
 ## OUTPUTS
 
-### CSV file
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
