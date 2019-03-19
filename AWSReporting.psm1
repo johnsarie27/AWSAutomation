@@ -17,6 +17,7 @@
 . $PSScriptRoot\Get-IAMReport.ps1
 . $PSScriptRoot\Revoke-StaleAccessKey.ps1
 . $PSScriptRoot\Disable-InactiveUserKey.ps1
+. $PSScriptRoot\Disable-InactiveUserProfile.ps1
 
 # INVENTORY AND BUDGETARY FUNCTIONS
 . $PSScriptRoot\Find-InsecureS3BucketPolicy.ps1

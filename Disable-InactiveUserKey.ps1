@@ -9,6 +9,8 @@ function Disable-InactiveUserKey {
         User name
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Age
+        Age (in days) past which the keys should be disabled
     .PARAMETER Remove
         Remove key(s)
     .INPUTS
@@ -31,6 +33,10 @@ function Disable-InactiveUserKey {
         [Parameter(Mandatory, HelpMessage='AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'Age to disable keys')]
+        [ValidateRange(30,365)]
+        [int] $Age = 90,
 
         [Parameter(HelpMessage='Delete key')]
         [switch] $Remove
@@ -62,7 +68,7 @@ function Disable-InactiveUserKey {
                 $Span = New-TimeSpan -Start $LastUsed.AccessKeyLastUsed.LastUsedDate -End (Get-Date)
 
                 # IF KEY NOT USED IN LAST 90 DAYS...
-                if ( $Span.Days -gt 90 ) {
+                if ( $Span.Days -ge $Age ) {
                     # SET ACTION PARAMS
                     $Splat = @{ UserName = $_.UserName; AccessKeyId = $_.AccessKeyId; ProfileName = $ProfileName }
                     

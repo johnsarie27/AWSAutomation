@@ -8,6 +8,10 @@ function Disable-InactiveUserProfile {
         User name
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Age
+        Age (in days) past which the keys should be disabled
+    .PARAMETER All
+        All users within the AWS account
     .INPUTS
         System.String.
     .OUTPUTS
@@ -29,7 +33,7 @@ function Disable-InactiveUserProfile {
         [string] $ProfileName,
 
         [Parameter(HelpMessage = 'Age to disable accounts')]
-        [ValidateRange(30,180)]
+        [ValidateRange(30,365)]
         [int] $Age = 90,
 
         [Parameter(Mandatory, HelpMessage = 'All users in account', ParameterSetName = 'all')]
