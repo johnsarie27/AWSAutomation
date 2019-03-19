@@ -52,35 +52,39 @@ function Disable-InactiveUserProfile {
 
     Process {
         $UserName | ForEach-Object {
-            # GET USER
-            $User = Get-IAMUser -UserName -ProfileName $ProfileName
-            
-            # VALIDATE USERNAME
-            if ( $user -notin (Get-IAMUserList -ProfileName $ProfileName).UserName ) {	
-                Write-Error ('User [{0}] not found in profile [{1}].' -f $user, $ProfileName); Break
+            # VALIDATE USER
+            try {
+                $User = Get-IAMUser -UserName $_ -ProfileName $ProfileName -EA 1
             }
+            catch {
+                Write-Error ('User [{0}] not found in profile [{1}].' -f $_, $ProfileName)
+                Break
+            }
+
+            # SET COMMON VARS
+            $Splat = @{ UserName = $User.UserName ; ProfileName = $ProfileName }
             
-            # GET DAYS SINCE LAST LOGIN
-            $TimeSinceLastLogin = New-TimeSpan -Start $User.PasswordLastUsed -End (Get-Date)
+            # THE CMDLET Get-IAMLoginProfile HAS ISSUES AND DOES NOT RESPECT STANDARDS
+            # LIKE ERRORACTION. THEREFORE, THE COMMANDS BELOW THAT UTILIZE Get-IAMloginProfile
+            # WILL OUTPUT ERROR MESSAGES WHEN UNABLE TO LOCATE A LOGIN PROFILE
+            try { $HasLoginProfile = Get-IAMLoginProfile @Splat -EA 1 }
+            catch { $HasLoginProfile = $null }
 
-            # (RE)SET VARIABLE TO NULL FOR EACH USER
-            $HasLoginProfile = $null
-            # THE CMDLET Get-IAMLoginProfile HAS ISSUES AND DOES NOT RESPECT STANDARD
-            # CMDLET PARAMETERS LIKE ERRORACTION. THEREFORE, THE COMMANDS BELOW THAT
-            # UTILIZE Get-IAMloginProfile WILL OUTPUT ERROR MESSAGES WHEN UNABLE TO
-            # LOCATE A LOGIN PROFILE BECAUSE THE PROFILE HAS BEEN DISABLED.
-            $HasLoginProfile = Get-IAMLoginProfile -UserName $User.UserName -EA 0
-
-            # ADD USERS TO NOTIFY LIST IF NOT LOGGED IN 80 DAYS (SINGLE NOTIFICATION)
-            if ( $TimeSinceLastLogin.Days -ge $Age -AND $HasLoginProfile ) {
+            # IF USER HAS A VALID LOGIN PROFILE
+            if ( $HasLoginProfile ) {
+                # GET DAYS SINCE LAST LOGIN
+                $TimeSinceLastLogin = New-TimeSpan -Start $User.PasswordLastUsed -End (Get-Date)
                 
-                try {
-                    Remove-IAMLoginProfile -UserName $User.UserName -ProfileName $ProfileName -Force
-                    Write-Verbose 'DISABLED USER [{0}] in account [{1}]' -f $User.UserName, $ProfileName
-                    $Results += $User
-                }
-                catch {
-                    Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $User.UserName, $_.Exception.Message)
+                if ( $TimeSinceLastLogin.Days -ge $Age ) {
+                    # DISABLE USER
+                    try {
+                        Remove-IAMLoginProfile @Splat -Force
+                        Write-Verbose 'DISABLED USER [{0}] in account [{1}]' -f $Splat.UserName, $ProfileName
+                        $Results += $User
+                    }
+                    catch {
+                        Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $_.Exception.Message)
+                    }
                 }
             }
         }
