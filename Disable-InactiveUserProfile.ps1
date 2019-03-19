@@ -53,13 +53,8 @@ function Disable-InactiveUserProfile {
     Process {
         $UserName | ForEach-Object {
             # VALIDATE USER
-            try {
-                $User = Get-IAMUser -UserName $_ -ProfileName $ProfileName -ErrorAction Stop
-            }
-            catch {
-                Write-Error ('User [{0}] not found in profile [{1}].' -f $_, $ProfileName)
-                Break
-            }
+            try { $User = Get-IAMUser -UserName $_ -ProfileName $ProfileName -ErrorAction Stop }
+            catch { Write-Error ('User [{0}] not found in profile [{1}].' -f $_, $ProfileName) }
 
             # SET COMMON VARS
             $Splat = @{ UserName = $User.UserName ; ProfileName = $ProfileName }
