@@ -48,6 +48,10 @@ function Disable-InactiveUserProfile {
         if ( $PSBoundParameters.ContainsKey('All') ) {
             $UserName = (Get-IAMUserList -ProfileName $ProfileName).UserName
         }
+
+        # SET VARS
+        $Date = Get-Date
+        $BadDate = Get-Date -Date "0001-01-01 00:00"
     }
 
     Process {
@@ -67,8 +71,13 @@ function Disable-InactiveUserProfile {
 
             # IF USER HAS A VALID LOGIN PROFILE
             if ( $HasLoginProfile ) {
+
+                # VALIDATE LAST LOGIN DATE
+                if ( $BadDate -eq $User.PasswordLastUsed ) { $LastUsed = $User.CreateDate }
+                else { $LastUsed = $User.PasswordLastUsed }
+
                 # GET DAYS SINCE LAST LOGIN
-                $TimeSinceLastLogin = New-TimeSpan -Start $User.PasswordLastUsed -End (Get-Date)
+                $TimeSinceLastLogin = New-TimeSpan -Start $LastUsed -End $Date
                 
                 if ( $TimeSinceLastLogin.Days -ge $Age ) {
                     # CREATE CUSTOM OBJECT
