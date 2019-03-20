@@ -4,16 +4,16 @@ function Disable-InactiveUserProfile {
         Disable unused IAM User Profile
     .DESCRIPTION
         Disable any IAM User Profiles that has not been used in 90 or more days
-    .PARAMETER UserName
-        User name
     .PARAMETER ProfileName
         AWS Credential Profile name
     .PARAMETER Age
         Age (in days) past which the keys should be disabled
     .PARAMETER All
         All users within the AWS account
+    .PARAMETER User
+        AWS User object
     .INPUTS
-        System.String.
+        Amazon.IdentityManagement.Model.User[].
     .OUTPUTS
         System.Object.
     .EXAMPLE
@@ -22,12 +22,8 @@ function Disable-InactiveUserProfile {
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding(DefaultParameterSetName = 'user')]
+    [CmdletBinding(DefaultParameterSetName = 'all')]
     Param(
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'User name', ParameterSetName = 'user')]
-        [ValidateNotNullOrEmpty()]
-        [string[]] $UserName,
-
         [Parameter(Mandatory, HelpMessage='AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
@@ -36,8 +32,12 @@ function Disable-InactiveUserProfile {
         [ValidateRange(30,365)]
         [int] $Age = 90,
 
-        [Parameter(Mandatory, HelpMessage = 'All users in account', ParameterSetName = 'all')]
-        [switch] $All
+        [Parameter(HelpMessage = 'All users in account', ParameterSetName = 'all')]
+        [switch] $All,
+
+        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'User name', ParameterSetName = 'user')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.IdentityManagement.Model.User[]] $User
     )
 
     Begin {
@@ -45,9 +45,7 @@ function Disable-InactiveUserProfile {
         $Results = @()
 
         # GET ALL USERS IN AWS ACCOUNT
-        if ( $PSBoundParameters.ContainsKey('All') ) {
-            $UserName = (Get-IAMUserList -ProfileName $ProfileName).UserName
-        }
+        if ( $PSCmdlet.ParameterSetName -eq 'all' ) { $User = Get-IAMUserList -ProfileName $ProfileName }
 
         # SET VARS
         $Date = Get-Date
@@ -55,26 +53,28 @@ function Disable-InactiveUserProfile {
     }
 
     Process {
-        $UserName | ForEach-Object {
-            # VALIDATE USER
-            try { $User = Get-IAMUser -UserName $_ -ProfileName $ProfileName -ErrorAction Stop }
-            catch { Write-Error ('User [{0}] not found in profile [{1}].' -f $_, $ProfileName) }
-
+        foreach ( $U in $User ) {
             # SET COMMON VARS
-            $Splat = @{ UserName = $User.UserName ; ProfileName = $ProfileName }
+            $Splat = @{ UserName = $U.UserName ; ProfileName = $ProfileName }
             
             # THE CMDLET Get-IAMLoginProfile HAS ISSUES AND DOES NOT RESPECT STANDARDS
             # LIKE ERRORACTION. THEREFORE, THE COMMANDS BELOW THAT UTILIZE Get-IAMloginProfile
             # WILL OUTPUT ERROR MESSAGES WHEN UNABLE TO LOCATE A LOGIN PROFILE
-            try { $HasLoginProfile = Get-IAMLoginProfile @Splat -ErrorAction Stop }
-            catch { $HasLoginProfile = $null }
+            try {
+                $HasLoginProfile = Get-IAMLoginProfile @Splat -ErrorAction Stop
+                Write-Verbose ('Found login profile for user: [{0}]' -f $U.UserName)
+            }
+            catch {
+                $HasLoginProfile = $null
+                Write-Verbose ('No login profile found for user: [{0}]' -f $U.UserName)
+            }
 
             # IF USER HAS A VALID LOGIN PROFILE
             if ( $HasLoginProfile ) {
 
                 # VALIDATE LAST LOGIN DATE
-                if ( $BadDate -eq $User.PasswordLastUsed ) { $LastUsed = $User.CreateDate }
-                else { $LastUsed = $User.PasswordLastUsed }
+                if ( $BadDate -eq $U.PasswordLastUsed ) { $LastUsed = $U.CreateDate }
+                else { $LastUsed = $U.PasswordLastUsed }
 
                 # GET DAYS SINCE LAST LOGIN
                 $TimeSinceLastLogin = New-TimeSpan -Start $LastUsed -End $Date
@@ -82,12 +82,12 @@ function Disable-InactiveUserProfile {
                 if ( $TimeSinceLastLogin.Days -ge $Age ) {
                     # CREATE CUSTOM OBJECT
                     $New = @{
-                        Arn               = $User.Arn
-                        CreateDate        = $User.CreateDate
-                        PasswordLastUsed  = $User.PasswordLastUsed
+                        Arn               = $U.Arn
+                        CreateDate        = $U.CreateDate
+                        PasswordLastUsed  = $U.PasswordLastUsed
                         DaysSinceLastUsed = $TimeSinceLastLogin.Days
-                        UserName          = $User.UserName
-                        UserId            = $User.UserId
+                        UserName          = $U.UserName
+                        UserId            = $U.UserId
                     }
 
                     # DISABLE USER
@@ -97,8 +97,8 @@ function Disable-InactiveUserProfile {
                         $New.Action = 'User profile disabled'
                     }
                     catch {
-                        Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $_.Exception.Message)
-                        $New.Action = 'Error: {0}' -f $_.Exception.Message
+                        Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $U.Exception.Message)
+                        $New.Action = 'Error: {0}' -f $U.Exception.Message
                     }
 
                     # ADD TO THE LIST
