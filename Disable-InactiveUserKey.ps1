@@ -112,7 +112,7 @@ function Disable-InactiveUserKey {
                             $Results.Add([PSCustomObject]$New)
                         }
                     }
-                    }
+                }
             }  
         }
     }
