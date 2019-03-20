@@ -44,6 +44,10 @@ function Disable-InactiveUserKey {
     Begin {
         # CREATE RESULTS ARRAY
         $Results = [System.Collections.Generic.List[PSObject]]::new()
+        
+        # SET VARS
+        $Date = Get-Date
+        $BadDate = Get-Date -Date "0001-01-01 00:00"
     }
 
     Process {
@@ -55,46 +59,60 @@ function Disable-InactiveUserKey {
 
             # GET ACCESS KEYS
             $Keys = Get-IAMAccessKey -UserName $user -ProfileName $ProfileName
+
+            # CHECK FOR KEYS
             if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $user) } 
             else {
-                # LOOP THROUGH KEYS
+
+                # EVALUATE KEYS
                 $Keys | ForEach-Object -Process {
 
-                    # GET LAST USED TIME
-                    $LastUsed = Get-IAMAccessKeyLastUsed -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
+                    # CHECK IF ACTIVE
+                    if ( $_.Status -eq 'Active' ) {
 
-                    # CREATE TIMESPAN
-                    $Span = New-TimeSpan -Start $LastUsed.AccessKeyLastUsed.LastUsedDate -End (Get-Date)
+                        # GET LAST USED TIME
+                        $IAMAccessKeyLastUsed = Get-IAMAccessKeyLastUsed -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
 
-                    # IF KEY NOT USED IN LAST 90 DAYS...
-                    if ( $Span.Days -ge $Age ) {
-                        # SET ACTION PARAMS
-                        $Splat = @{ UserName = $_.UserName; AccessKeyId = $_.AccessKeyId; ProfileName = $ProfileName }
-                        
-                        # CREATE NEW CUSTOM OBJECT
-                        $New = @{
-                            UserName     = $_.UserName
-                            AccessKeyId  = $_.AccessKeyId
-                            CreateDate   = $_.CreateDate
-                            LastUsedDate = $LastUsed.LastUsedDate
-                            Region       = $LastUsed.Region
-                            ServiceName  = $LastUsed.ServiceName
-                            Action       = 'none'
+                        # VALIDATE LAST USED DATE
+                        if ( $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -eq $BadDate ) {
+                            $LastUsed = $_.CreateDate
+                        } else {
+                            $LastUsed = $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate
                         }
 
-                        # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
-                        if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                            try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
-                            catch { $New.Action = $_.Exception.Message }
-                        } else  {
-                            try { Update-IAMAccessKey @Splat -Status Inactive ; $New.Action = 'Key deactivated' }
-                            catch { $New.Action = $_.Exception.Message }
-                        }
+                        # CREATE TIMESPAN
+                        $Span = New-TimeSpan -Start $LastUsed -End $Date
 
-                        # ADD OBJECT TO LIST
-                        $Results.Add([PSCustomObject]$New)
+                        # IF KEY ACTIVE AND NOT USED IN LAST 90 DAYS...
+                        if ( $Span.Days -ge $Age ) {
+                            # SET ACTION PARAMS
+                            $Splat = @{ UserName = $_.UserName; AccessKeyId = $_.AccessKeyId; ProfileName = $ProfileName }
+                            
+                            # CREATE NEW CUSTOM OBJECT
+                            $New = @{
+                                UserName     = $_.UserName
+                                AccessKeyId  = $_.AccessKeyId
+                                CreateDate   = $_.CreateDate
+                                LastUsedDate = $LastUsed.LastUsedDate
+                                Region       = $LastUsed.Region
+                                ServiceName  = $LastUsed.ServiceName
+                                Action       = 'none'
+                            }
+
+                            # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
+                            if ( $PSBoundParameters.ContainsKey('Remove') ) {
+                                try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
+                                catch { $New.Action = $_.Exception.Message }
+                            } else  {
+                                try { Update-IAMAccessKey @Splat -Status Inactive ; $New.Action = 'Key deactivated' }
+                                catch { $New.Action = $_.Exception.Message }
+                            }
+
+                            # ADD OBJECT TO LIST
+                            $Results.Add([PSCustomObject]$New)
+                        }
                     }
-                }
+                    }
             }  
         }
     }
