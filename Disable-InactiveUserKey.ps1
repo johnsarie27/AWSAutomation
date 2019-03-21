@@ -4,32 +4,30 @@ function Disable-InactiveUserKey {
         Deactivate unused IAM User Access Key
     .DESCRIPTION
         Deactivate IAM User Access Key that has not been used in 90 or more days
-    .PARAMETER UserName
-        User name
     .PARAMETER ProfileName
         AWS Credential Profile name
     .PARAMETER Age
         Age (in days) past which the keys should be disabled
+    .PARAMETER All
+        All users within the AWS account
     .PARAMETER Remove
         Remove key(s)
+    .PARAMETER User
+        AWS User Object
     .INPUTS
-        System.String.
+        Amazon.IdentityManagement.Model.User[].
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Disable-InactiveUserKey -UserName jsmith -ProfileName MyAWSAccount
-        Deactivate all access keys for jsmith that have not been used in 90 days
+        PS C:\> Disable-InactiveUserKey -ProfileName MyAWSAccount
+        Deactivate all access keys for all users that have not been used in 90 days
         for MyAWSAccount profile.
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'all')]
     Param(
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage='User name')]
-        [ValidateNotNullOrEmpty()]
-        [string[]] $UserName,
-
-        [Parameter(Mandatory, HelpMessage='AWS credential profile name')]
+        [Parameter(Mandatory, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
@@ -37,31 +35,36 @@ function Disable-InactiveUserKey {
         [ValidateRange(30,365)]
         [int] $Age = 90,
 
-        [Parameter(HelpMessage='Delete key')]
-        [switch] $Remove
+        [Parameter(HelpMessage = 'All users in account', ParameterSetName = 'all')]
+        [switch] $All,
+
+        [Parameter(HelpMessage = 'Delete key')]
+        [switch] $Remove,
+
+        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'User name', ParameterSetName = 'user')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.IdentityManagement.Model.User[]] $User
     )
 
     Begin {
         # CREATE RESULTS ARRAY
         $Results = [System.Collections.Generic.List[PSObject]]::new()
         
+        # GET ALL USERS IN AWS ACCOUNT
+        if ( $PSCmdlet.ParameterSetName -eq 'all' ) { $User = Get-IAMUserList -ProfileName $ProfileName }
+
         # SET VARS
         $Date = Get-Date
         $BadDate = Get-Date -Date "0001-01-01 00:00"
     }
 
     Process {
-        foreach ( $user in $UserName ) {
-            # VALIDATE USERNAME
-            if ( $user -notin (Get-IAMUserList -ProfileName $ProfileName).UserName ) {	
-                Write-Error ('User [{0}] not found in profile [{1}].' -f $user, $ProfileName); Break	
-            }
-
+        foreach ( $U in $User ) {
             # GET ACCESS KEYS
-            $Keys = Get-IAMAccessKey -UserName $user -ProfileName $ProfileName
+            $Keys = Get-IAMAccessKey -UserName $U.UserName -ProfileName $ProfileName
 
             # CHECK FOR KEYS
-            if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $user) } 
+            if ( !$Keys ) { Write-Verbose ('No keys found for user: [{0}]' -f $U.UserName) } 
             else {
 
                 # EVALUATE KEYS
@@ -69,6 +72,9 @@ function Disable-InactiveUserKey {
 
                     # CHECK IF ACTIVE
                     if ( $_.Status -eq 'Active' ) {
+
+                        # REPORT ACTIVE KEY FOUND
+                        Write-Verbose ('Active key found for user [{0}]' -f $U.UserName)
 
                         # GET LAST USED TIME
                         $IAMAccessKeyLastUsed = Get-IAMAccessKeyLastUsed -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName

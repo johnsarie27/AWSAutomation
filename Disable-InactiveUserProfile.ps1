@@ -17,8 +17,8 @@ function Disable-InactiveUserProfile {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Disable-InactiveUserProfile -UserName jsmith -ProfileName MyAWSAccount
-        Deactivate profile for jsmith if not used in 90 days for MyAWSAccount profile
+        PS C:\> Disable-InactiveUserProfile -ProfileName MyAWSAccount
+        Deactivate all profiles if not used in 90 days for MyAWSAccount
     .NOTES
         General notes
     ========================================================================= #>
@@ -56,7 +56,7 @@ function Disable-InactiveUserProfile {
         foreach ( $U in $User ) {
             # SET COMMON VARS
             $Splat = @{ UserName = $U.UserName ; ProfileName = $ProfileName }
-            
+
             # THE CMDLET Get-IAMLoginProfile HAS ISSUES AND DOES NOT RESPECT STANDARDS
             # LIKE ERRORACTION. THEREFORE, THE COMMANDS BELOW THAT UTILIZE Get-IAMloginProfile
             # WILL OUTPUT ERROR MESSAGES WHEN UNABLE TO LOCATE A LOGIN PROFILE
@@ -78,7 +78,7 @@ function Disable-InactiveUserProfile {
 
                 # GET DAYS SINCE LAST LOGIN
                 $TimeSinceLastLogin = New-TimeSpan -Start $LastUsed -End $Date
-                
+
                 if ( $TimeSinceLastLogin.Days -ge $Age ) {
                     # CREATE CUSTOM OBJECT
                     $New = @{
