@@ -14,12 +14,12 @@ Deactivate unused IAM User Access Key
 
 ### all (Default)
 ```
-Disable-InactiveUserKey -ProfileName <String> [-Age <Int32>] [-All] [-Remove] [<CommonParameters>]
+Disable-InactiveUserKey -ProfileName <String> [-Age <Int32>] [-All] [-Remove] [-ReportOnly] [<CommonParameters>]
 ```
 
 ### user
 ```
-Disable-InactiveUserKey -ProfileName <String> [-Age <Int32>] [-Remove] -User <User[]> [<CommonParameters>]
+Disable-InactiveUserKey -ProfileName <String> [-Age <Int32>] [-Remove] -User <User[]> [-ReportOnly] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -111,6 +111,20 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -ReportOnly
+Report non-compliant keys only
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
@@ -123,5 +137,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ### System.Object
 ## NOTES
+The identity running this function requires the following permissions:
+- iam:ListUsers
+- iam:ListAccessKeys
+- iam:GetAccessKeyLastUsed
+- iam:DeleteAccessKey
+- iam:UpdateAccessKey
 
 ## RELATED LINKS

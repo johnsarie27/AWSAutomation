@@ -22,7 +22,10 @@ function Disable-InactiveUserProfile {
         PS C:\> Disable-InactiveUserProfile -ProfileName MyAWSAccount
         Deactivate all profiles if not used in 90 days for MyAWSAccount
     .NOTES
-        General notes
+        The identity running this function requires the following permissions:
+        - iam:ListUsers
+        - iam:GetLoginProfile
+        - iam:DeleteLoginProfile
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
     Param(

@@ -25,7 +25,12 @@ function Disable-InactiveUserKey {
         Deactivate all access keys for all users that have not been used in 90 days
         for MyAWSAccount profile.
     .NOTES
-        General notes
+        The identity running this function requires the following permissions:
+        - iam:ListUsers
+        - iam:ListAccessKeys
+        - iam:GetAccessKeyLastUsed
+        - iam:DeleteAccessKey
+        - iam:UpdateAccessKey
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
     Param(

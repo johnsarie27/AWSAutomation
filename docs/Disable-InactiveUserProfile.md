@@ -14,12 +14,12 @@ Disable unused IAM User Profile
 
 ### all (Default)
 ```
-Disable-InactiveUserProfile -ProfileName <String> [-Age <Int32>] [-All] [<CommonParameters>]
+Disable-InactiveUserProfile -ProfileName <String> [-Age <Int32>] [-All] [-ReportOnly] [<CommonParameters>]
 ```
 
 ### user
 ```
-Disable-InactiveUserProfile -ProfileName <String> [-Age <Int32>] -User <User[]> [<CommonParameters>]
+Disable-InactiveUserProfile -ProfileName <String> [-Age <Int32>] -User <User[]> [-ReportOnly] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -96,6 +96,20 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -ReportOnly
+Report non-compliant keys only
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
@@ -108,5 +122,9 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ### System.Object
 ## NOTES
+The identity running this function requires the following permissions:
+- iam:ListUsers
+- iam:GetLoginProfile
+- iam:DeleteLoginProfile
 
 ## RELATED LINKS
