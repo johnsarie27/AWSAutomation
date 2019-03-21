@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-03-18
+# Updated:      2019-03-21
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -13,7 +13,7 @@
 . $PSScriptRoot\Export-SecurityGroup.ps1
 
 # IAM FUNCTIONS
-. $PSScriptRoot\Initialize-AWSProfile.ps1
+. $PSScriptRoot\Edit-AWSProfile.ps1
 . $PSScriptRoot\Get-IAMReport.ps1
 . $PSScriptRoot\Revoke-StaleAccessKey.ps1
 . $PSScriptRoot\Disable-InactiveUserKey.ps1

@@ -1,4 +1,4 @@
-function Initialize-AWSProfile {
+function Edit-AWSProfile {
     <# =========================================================================
     .SYNOPSIS
         Manage AWS Credential Profiles
@@ -25,13 +25,13 @@ function Initialize-AWSProfile {
     .OUTPUTS
         System.String.
     .EXAMPLE
-        PS C:\> Initialize-AWSProfile -List
+        PS C:\> Edit-AWSProfile -List
         Display all existing profiles
     .EXAMPLE
-        PS C:\> Initialize-AWSProfile -Create -ProfileName MyProfile
+        PS C:\> Edit-AWSProfile -Create -ProfileName MyProfile
         Create new profile named MyProfile
     .EXAMPLE
-        PS C:\> Initialize-AWSProfile -Update -ProfileName Profile1
+        PS C:\> Edit-AWSProfile -Update -ProfileName Profile1
         Update existing profile Profile1
     .LINK
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
@@ -98,8 +98,7 @@ function Initialize-AWSProfile {
                     if ( Confirm-Profile -ProfileName $ProfileName ) {
                         do {
                             Clear-Host
-                            Write-Output ('Profile name [{0}] already exists. Please enter new name.' -f $ProfileName)
-                            $ProfileName = Read-Input -Prompt 'Profile name'
+                            $ProfileName = Read-Input -Prompt 'Please enter a unique profile name'
                         } while ( Confirm-Profile -ProfileName $ProfileName )
                     }
                 }
@@ -108,8 +107,7 @@ function Initialize-AWSProfile {
                     if ( Confirm-Profile -ProfileName $ProfileName ) {
                         do {
                             Clear-Host
-                            Write-Output ('Profile name [{0}] already exists. Please enter new name.' -f $ProfileName)
-                            $ProfileName = Read-Input -Prompt 'Profile name'
+                            $ProfileName = Read-Input -Prompt 'Please enter a unique profile name'
                         } while ( Confirm-Profile -ProfileName $ProfileName )
                     }
                 }
