@@ -5,39 +5,39 @@ online version:
 schema: 2.0.0
 ---
 
-# Disable-InactiveUserKey
+# Disable-InactiveUserProfile
 
 ## SYNOPSIS
-Deactivate unused IAM User Access Key
+Disable unused IAM User Profile
 
 ## SYNTAX
 
 ### all (Default)
 ```
-Disable-InactiveUserKey -ProfileName <String> [-Age <Int32>] [-All] [-Remove] [<CommonParameters>]
+Disable-InactiveUserProfile -ProfileName <String> [-Age <Int32>] [-All] [<CommonParameters>]
 ```
 
 ### user
 ```
-Disable-InactiveUserKey -ProfileName <String> [-Age <Int32>] [-Remove] -User <User[]> [<CommonParameters>]
+Disable-InactiveUserProfile -ProfileName <String> [-Age <Int32>] -User <User[]> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Deactivate IAM User Access Key that has not been used in 90 or more days
+Disable any IAM User Profiles that has not been used in 90 or more days
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> Disable-InactiveUserKey -ProfileName MyAWSAccount
+PS C:\> Disable-InactiveUserProfile -ProfileName MyAWSAccount
 ```
 
-Deactivate all access keys for all users that have not been used in 90 days for MyAWSAccount profile.
+Deactivate all profiles if not used in 90 days for MyAWSAccount
 
 ## PARAMETERS
 
 ### -Age
-Age to disable keys
+Age to disable accounts
 
 ```yaml
 Type: Int32
@@ -75,21 +75,6 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Remove
-Delete key
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
