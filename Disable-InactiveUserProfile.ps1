@@ -73,12 +73,13 @@ function Disable-InactiveUserProfile {
             if ( $HasLoginProfile ) {
 
                 # VALIDATE LAST LOGIN DATE
-                if ( $BadDate -eq $U.PasswordLastUsed ) { $LastUsed = $U.CreateDate }
-                else { $LastUsed = $U.PasswordLastUsed }
+                if ( $U.PasswordLastUsed -eq $BadDate ) {
+                    $TimeSinceLastLogin = New-TimeSpan -Start $U.CreateDate -End $Date
+                } else {
+                    $TimeSinceLastLogin = New-TimeSpan -Start $U.PasswordLastUsed -End $Date
+                }
 
-                # GET DAYS SINCE LAST LOGIN
-                $TimeSinceLastLogin = New-TimeSpan -Start $LastUsed -End $Date
-
+                # IF DAYS SINCE LAST LOGIN GREATER OR EQUAL TO AGE
                 if ( $TimeSinceLastLogin.Days -ge $Age ) {
                     # CREATE CUSTOM OBJECT
                     $New = @{
