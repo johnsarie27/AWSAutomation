@@ -12,6 +12,8 @@ function Disable-InactiveUserProfile {
         All users within the AWS account
     .PARAMETER User
         AWS User object
+    .PARAMETER ReportOnly
+        Report non-compliant users only
     .INPUTS
         Amazon.IdentityManagement.Model.User[].
     .OUTPUTS
@@ -37,7 +39,10 @@ function Disable-InactiveUserProfile {
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'User name', ParameterSetName = 'user')]
         [ValidateNotNullOrEmpty()]
-        [Amazon.IdentityManagement.Model.User[]] $User
+        [Amazon.IdentityManagement.Model.User[]] $User,
+
+        [Parameter(HelpMessage = 'Report non-compliant users only')]
+        [switch] $ReportOnly
     )
 
     Begin {
@@ -91,15 +96,22 @@ function Disable-InactiveUserProfile {
                         UserId            = $U.UserId
                     }
 
-                    # DISABLE USER
-                    try {
-                        Remove-IAMLoginProfile @Splat -Force
-                        Write-Verbose 'DISABLED USER [{0}] in account [{1}]' -f $Splat.UserName, $ProfileName
-                        $New.Action = 'User profile disabled'
-                    }
-                    catch {
-                        Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $U.Exception.Message)
-                        $New.Action = 'Error: {0}' -f $U.Exception.Message
+                    # CHECK FOR REPORT ONLY
+                    if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
+                        # REPORT USER
+                        Write-Verbose ('No login for user [{0}] in {1} or more days' -f $Splat.UserName, $Age)
+                        $New.Action = 'Report user'
+                    } else {
+                        # DISABLE USER
+                        try {
+                            Remove-IAMLoginProfile @Splat -Force
+                            Write-Verbose ('DISABLED USER [{0}] in account [{1}]' -f $Splat.UserName, $ProfileName)
+                            $New.Action = 'User profile disabled'
+                        }
+                        catch {
+                            Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $U.Exception.Message)
+                            $New.Action = 'Error: {0}' -f $U.Exception.Message
+                        }
                     }
 
                     # ADD TO THE LIST
@@ -110,7 +122,12 @@ function Disable-InactiveUserProfile {
     }
 
     End {
-        Write-Verbose ('{0} user profile(s) disabled.' -f $Results.Count)
+        # WRITE VERBOSE OUTPUT
+        if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
+            Write-Verbose ('{0} user profile(s) reported. None disabled.' -f $Results.Count)
+        } else {
+            Write-Verbose ('{0} user profile(s) disabled.' -f $Results.Count)
+        }
 
         # RETURN REVOKED KEYS
         $Results
