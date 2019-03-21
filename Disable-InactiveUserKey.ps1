@@ -14,6 +14,8 @@ function Disable-InactiveUserKey {
         Remove key(s)
     .PARAMETER User
         AWS User Object
+    .PARAMETER ReportOnly
+        Report non-compliant keys only
     .INPUTS
         Amazon.IdentityManagement.Model.User[].
     .OUTPUTS
@@ -43,7 +45,10 @@ function Disable-InactiveUserKey {
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'User name', ParameterSetName = 'user')]
         [ValidateNotNullOrEmpty()]
-        [Amazon.IdentityManagement.Model.User[]] $User
+        [Amazon.IdentityManagement.Model.User[]] $User,
+
+        [Parameter(HelpMessage = 'Report non-compliant keys only')]
+        [switch] $ReportOnly
     )
 
     Begin {
@@ -81,13 +86,10 @@ function Disable-InactiveUserKey {
 
                         # VALIDATE LAST USED DATE
                         if ( $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -eq $BadDate ) {
-                            $LastUsed = $_.CreateDate
+                            $Span = New-TimeSpan -Start $_.CreateDate -End $Date
                         } else {
-                            $LastUsed = $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate
+                            $Span = New-TimeSpan -Start $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -End $Date
                         }
-
-                        # CREATE TIMESPAN
-                        $Span = New-TimeSpan -Start $LastUsed -End $Date
 
                         # IF KEY ACTIVE AND NOT USED IN LAST 90 DAYS...
                         if ( $Span.Days -ge $Age ) {
@@ -96,22 +98,29 @@ function Disable-InactiveUserKey {
                             
                             # CREATE NEW CUSTOM OBJECT
                             $New = @{
-                                UserName     = $_.UserName
-                                AccessKeyId  = $_.AccessKeyId
-                                CreateDate   = $_.CreateDate
-                                LastUsedDate = $LastUsed.LastUsedDate
-                                Region       = $LastUsed.Region
-                                ServiceName  = $LastUsed.ServiceName
-                                Action       = 'none'
+                                UserName          = $_.UserName
+                                AccessKeyId       = $_.AccessKeyId
+                                CreateDate        = $_.CreateDate
+                                LastUsedDate      = $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate
+                                DaysSinceLastUsed = $Span.Days
+                                Region            = $IAMAccessKeyLastUsed.AccessKeyLastUsed.Region
+                                ServiceName       = $IAMAccessKeyLastUsed.AccessKeyLastUsed.ServiceName
+                                Action            = 'none'
                             }
 
-                            # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
-                            if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                                try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
-                                catch { $New.Action = $_.Exception.Message }
-                            } else  {
-                                try { Update-IAMAccessKey @Splat -Status Inactive ; $New.Action = 'Key deactivated' }
-                                catch { $New.Action = $_.Exception.Message }
+                            # CHECK FOR REPORT ONLY
+                            if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
+                                # WRITE VERBOSE OUTPUT
+                                $New.Action = 'Report key'
+                            } else {
+                                # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
+                                if ( $PSBoundParameters.ContainsKey('Remove') ) {
+                                    try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
+                                    catch { $New.Action = $_.Exception.Message }
+                                } else  {
+                                    try { Update-IAMAccessKey @Splat -Status Inactive ; $New.Action = 'Key deactivated' }
+                                    catch { $New.Action = $_.Exception.Message }
+                                }
                             }
 
                             # ADD OBJECT TO LIST
@@ -125,6 +134,7 @@ function Disable-InactiveUserKey {
 
     End {
         if ( $PSBoundParameters.ContainsKey('Remove') ) { $Status = 'removed' }
+        elseif ( $PSBoundParameters.ContainsKey('ReportOnly') ) { $Status = 'reported' }
         else { $Status = 'deactivated' }
         if ( $Results.Count -eq 1 ) { $Num = 'key' } else { $Num = 'keys' }
         Write-Verbose ('{0} {1} {2}.' -f $Results.Count, $Num, $Status)
