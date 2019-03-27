@@ -13,7 +13,7 @@ Generate reports for instances offline and running without reservation
 ## SYNTAX
 
 ```
-New-QuarterlyReport [-ProfileName] <String[]> [[-Region] <String>] [<CommonParameters>]
+New-QuarterlyReport [[-Path] <String>] [-ProfileName] <String[]> [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,6 +30,21 @@ Generate new EC2 report for all instances in MyAccount in the us-west-1 region
 
 ## PARAMETERS
 
+### -Path
+Path to existing folder for report
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: Directory, Folder, FolderPath
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ProfileName
 AWS Credential Profie with key and secret
 
@@ -39,7 +54,7 @@ Parameter Sets: (All)
 Aliases: Profile, PN
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -55,7 +70,7 @@ Aliases:
 Accepted values: us-east-1, us-east-2, us-west-1, us-west-2
 
 Required: False
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -67,11 +82,11 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## INPUTS
 
-### System.String
+### None
 
 ## OUTPUTS
 
-### System.Object
+### None
 ## NOTES
 
 ## RELATED LINKS
