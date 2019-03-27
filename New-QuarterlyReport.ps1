@@ -88,8 +88,10 @@ function New-QuarterlyReport {
     }
     
     # REMOVE THE SUPPRESS OPEN PARAM AND EXPORT VOLUMES LIST
-    $Splat.Remove('SuppressOpen')
     if ( $AllVolumes ) {
         $AllVolumes | Export-ExcelBook @Splat -SheetName 'Unattached EBS'
     }
+
+    # OPEN REPORT
+    Invoke-Item -Path $Splat.Path
 }

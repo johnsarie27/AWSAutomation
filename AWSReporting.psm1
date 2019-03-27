@@ -33,8 +33,8 @@
 . $PSScriptRoot\Get-AWSPriceData.ps1
 . $PSScriptRoot\Remove-LapsedAMI.ps1
 
-# DEPRICATED
-#. $PSScriptRoot\Get-CostInfo.ps1
+# TO DEPRICATE SOMEDAY
+. $PSScriptRoot\Get-CostInfo.ps1
 
 # THIS IMPORT CAUSES PROBLEMS WITH USING Get-Command -Module AWSReporting
 # OR USING PLATYPS TO GENERATE AND UPDATE MODULE HLEP
