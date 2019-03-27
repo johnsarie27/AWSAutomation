@@ -110,7 +110,7 @@ function Export-SecurityGroup {
         $Output = Join-Path -Path "$HOME\Desktop" -ChildPath ('CFSecGroup-{0}.xlsx' -f (Get-Date -F "yyyy-MM-ddTHHmmss"))
         $Splat = @{
             Autosize     = $true
-            SavePath     = $Output
+            Path         = $Output
             SuppressOpen = $true
         }
     }
