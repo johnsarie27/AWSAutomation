@@ -11,7 +11,7 @@ function Send-SESMessage {
     .PARAMETER Body
         Body of email message
     .INPUTS
-        Inputs (if any)
+        System.String.
     .OUTPUTS
         None.
     .EXAMPLE
