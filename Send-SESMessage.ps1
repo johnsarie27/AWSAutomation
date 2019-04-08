@@ -24,7 +24,7 @@ function Send-SESMessage {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, HelpMessage = 'Path to configuration data file')]
-        [ValidateScript( { Test-Path -Path $_ -PathType Leaf -Include "*.json" })]
+        [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Include "*.json" })]
         [Alias('ConfigFile', 'DataFile', 'CP', 'Path')]
         [string] $ConfigPath,
 
@@ -41,30 +41,45 @@ function Send-SESMessage {
         $Config = Get-Content -Path $ConfigPath -Raw | ConvertFrom-Json
         
         # GET SERVER ROLE CREDS
-        $Uri = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/roleMemberServer'
-        $RoleMetadata = Invoke-RestMethod -Uri $Uri
-        $SecretKey = ConvertTo-SecureString -AsPlainText -String $RoleMetadata.SecretAccessKey -Force
+        $RoleMetadata = Invoke-RestMethod -Uri $Config.AWS.EC2.Metadata
+        #$SecretKey = ConvertTo-SecureString -AsPlainText -String $RoleMetadata.SecretAccessKey -Force
 
-        # SET EMAIL PARAMETERS
-        $EmailParams = @{
-            Credential = New-Object System.Management.Automation.PSCredential($RoleMetadata.AccessKeyId, $SecretKey)
-            SmtpServer = 'email-smtp.us-east-1.amazonaws.com'
-            From       = $Config.Notification.SecOpsEmail
-            To         = $Config.Notification.SecOpsEmail
-            UseSsl     = $true
-            Port       = 587
+        # SET SES PARAMS
+        $SESParams = @{
+            Source                = $Config.Notification.SecOpsEmail
+            Destination_ToAddress = $Config.Notification.SecOpsEmail
+            #Subject_Data          = ''
+            #Text_Data             = ''
+            AccessKey             = $RoleMetadata.AccessKeyId
+            SecretKey             = $RoleMetadata.SecretAccessKey
+            SessionToken          = $RoleMetadata.Token
+            ErrorAction           = 'Stop'
         }
+
+        <# # SET EMAIL PARAMETERS
+        $EmailParams = @{
+            Credential  = New-Object System.Management.Automation.PSCredential($RoleMetadata.AccessKeyId, $SecretKey)
+            SmtpServer  = 'email-smtp.us-east-1.amazonaws.com'
+            From        = $Config.Notification.SecOpsEmail
+            To          = $Config.Notification.SecOpsEmail
+            UseSsl      = $true
+            Port        = 587
+            ErrorAction = 'Stop'
+        } #>
     }
 
     Process {
         # ADD SUBJECT AND BODY
-        $EmailParams += @{
-            Subject = $Subject
-            Body    = $Body
-        }
+        $SESParams += @{ Subject_Data = $Subject; Text_Data = $Body }
+        #$EmailParams += @{ Subject = $Subject; Body = $Body }
 
         # SEND MESSAGE
-        try { Send-MailMessage @EmailParams -ErrorAction Stop }
-        catch { Write-Error $_.Exception.Message }
+        try {
+            Send-SESEmail @SESParams
+            #Send-MailMessage @EmailParams
+        }
+        catch {
+            Write-Error $_.Exception.Message
+        }
     }
 }
