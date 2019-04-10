@@ -10,6 +10,8 @@ function Send-SESMessage {
         Subject for email message
     .PARAMETER Body
         Body of email message
+    .PARAMETER To
+        To address for email message
     .INPUTS
         System.String.
     .OUTPUTS
