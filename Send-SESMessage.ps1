@@ -33,7 +33,11 @@ function Send-SESMessage {
         [string] $Subject,
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Message body')]
-        [string] $Body
+        [string] $Body,
+
+        [Parameter(HelpMessage = 'Email to address')]
+        [ValidatePattern('[\w-\.]+@.+\.com')]
+        [string] $To
     )
 
     Begin {
@@ -44,10 +48,14 @@ function Send-SESMessage {
         $RoleMetadata = Invoke-RestMethod -Uri $Config.AWS.EC2.Metadata
         #$SecretKey = ConvertTo-SecureString -AsPlainText -String $RoleMetadata.SecretAccessKey -Force
 
+        # GET TO ADDRESS
+        if ( -not $PSBoundParameters.ContainsKey('To') ) { $Destination = $Config.Notification.SecOpsEmail }
+        else { $Destination = $To }
+
         # SET SES PARAMS
         $SESParams = @{
             Source                = $Config.Notification.SecOpsEmail
-            Destination_ToAddress = $Config.Notification.SecOpsEmail
+            Destination_ToAddress = $Destination
             #Subject_Data          = ''
             #Text_Data             = ''
             AccessKey             = $RoleMetadata.AccessKeyId
