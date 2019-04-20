@@ -23,42 +23,57 @@ function Get-EC2 {
         Return all EC2 instances in all AWS accounts represented by the locally
         stored AWS credential profiles in the us-west-2 region.
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '__profile')]
     Param(
-        [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Profile containing access key and secret')]
+        [Parameter(
+            Mandatory,
+            ValueFromPipelineByPropertyName,
+            ParameterSetName = '__profile',
+            HelpMessage = 'AWS Profile containing access key and secret'
+        )]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [Alias('Profile')]
         [string[]] $ProfileName,
 
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
-        [ValidateSet('us-east-1','us-east-2','us-west-1','us-west-2')]
+        [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [string] $Region = 'us-east-1',
 
-        [Parameter(HelpMessage = 'All Profiles')]
+        [Parameter(Mandatory, ParameterSetName = '__all', HelpMessage = 'All Profiles')]
         [switch] $All,
 
         [Parameter(HelpMessage = 'Use AWSPowerShell module')]
         [switch] $AWSPowerShell
     )
 
-    $Results = @()
+    Begin {
+        # SET ARRAY FOR RESULTS
+        $Results = @()
 
-    if ( $PSBoundParameters.ContainsKey('All') ) {
-        $ProfileName = Get-AWSCredential -ListProfileDetail | Select-Object -EXP ProfileName
-        if ( $PSBoundParameters.ContainsKey('AWSPowerShell') ) {
-            foreach ( $PN in $ProfileName ) {
-                $Results += (Get-EC2Instance -ProfileName $PN -Region $Region).Instances
-            }
-        } else { $Results = Get-InstanceList -ProfileName $ProfileName -Region $Region }
-    } else {
-        if ( $PSBoundParameters.ContainsKey('AWSPowerShell') ) {
-            foreach ( $PN in $ProfileName ) {
-                $Results += (Get-EC2Instance -ProfileName $PN -Region $Region).Instances
-            }
-        } else { $Results = Get-InstanceList -ProfileName $ProfileName -Region $Region }
+        # GET ALL PROFILES
+        if ( $PSBoundParameters.ContainsKey('All') ) {
+            $ProfileName = (Get-AWSCredential -ListProfileDetail).ProfileName
+        }
     }
 
-    $Results
+    Process {
+        # LOOP ALL PROFILENAME
+        $ProfileName | ForEach-Object -Process {
+            # CHECK FOR AWSPOWERSHELL PARAM
+            if ( $PSBoundParameters.ContainsKey('AWSPowerShell') ) {
+                # ADD TO RESULTS ARRAY
+                $Results += (Get-EC2Instance -ProfileName $_ -Region $Region).Instances
+            } else {
+                # IF NOT AWSPOWERSHELL ADD CUSTOM OBJECTS TO REULTS ARRAY
+                $Results += Get-InstanceList -ProfileName $_ -Region $Region
+            }
+        }
+    }
+
+    End {
+        # RETURN RESULTS
+        $Results
+    }
 }
