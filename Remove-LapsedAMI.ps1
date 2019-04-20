@@ -169,7 +169,7 @@ function Remove-LapsedAMI {
             }
             
             # SETUP SPLATTER TABLE FOR PARAMETERS
-            $Splat.Remove('Owner'); $Splat.bolRunAsTestOnly = $RunAsTestOnly
+            $Splat.Remove('Owner'); $Splat['bolRunAsTestOnly'] = $RunAsTestOnly
             
             # UNREGISTER AMIS
             if ( $DailyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $DailyImagesToDelete }
