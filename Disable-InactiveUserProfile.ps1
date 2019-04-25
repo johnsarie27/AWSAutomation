@@ -103,17 +103,17 @@ function Disable-InactiveUserProfile {
                     if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
                         # REPORT USER
                         Write-Verbose ('No login for user [{0}] in {1} or more days' -f $Splat.UserName, $Age)
-                        $New.Action = 'Report user'
+                        $New['Action'] = 'Report user'
                     } else {
                         # DISABLE USER
                         try {
                             Remove-IAMLoginProfile @Splat -Force
                             Write-Verbose ('DISABLED USER [{0}] in account [{1}]' -f $Splat.UserName, $ProfileName)
-                            $New.Action = 'User profile disabled'
+                            $New['Action'] = 'User profile disabled'
                         }
                         catch {
                             Write-Warning ('User [{0}] was not disabled. Error message: {1}' -f $Splat.UserName, $U.Exception.Message)
-                            $New.Action = 'Error: {0}' -f $U.Exception.Message
+                            $New['Action'] = 'Error: {0}' -f $U.Exception.Message
                         }
                     }
 

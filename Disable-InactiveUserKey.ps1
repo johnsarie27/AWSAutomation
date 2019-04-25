@@ -116,15 +116,15 @@ function Disable-InactiveUserKey {
                             # CHECK FOR REPORT ONLY
                             if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
                                 # WRITE VERBOSE OUTPUT
-                                $New.Action = 'Report key'
+                                $New['Action'] = 'Report key'
                             } else {
                                 # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
                                 if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                                    try { Remove-IAMAccessKey @Splat ; $New.Action = 'Key deleted' }
-                                    catch { $New.Action = $_.Exception.Message }
+                                    try { Remove-IAMAccessKey @Splat ; $New['Action'] = 'Key deleted' }
+                                    catch { $New['Action'] = $_.Exception.Message }
                                 } else  {
-                                    try { Update-IAMAccessKey @Splat -Status Inactive ; $New.Action = 'Key deactivated' }
-                                    catch { $New.Action = $_.Exception.Message }
+                                    try { Update-IAMAccessKey @Splat -Status Inactive ; $New['Action'] = 'Key deactivated' }
+                                    catch { $New['Action'] = $_.Exception.Message }
                                 }
                             }
 
