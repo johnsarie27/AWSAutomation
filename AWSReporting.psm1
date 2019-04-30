@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-03-30
+# Updated:      2019-04-30
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -28,7 +28,7 @@
 . $PSScriptRoot\Get-ELB.ps1
 . $PSScriptRoot\Get-EC2.ps1
 . $PSScriptRoot\Get-AvailableEBS.ps1
-. $PSScriptRoot\New-QuarterlyReport.ps1
+. $PSScriptRoot\Export-QuarterlyReport.ps1
 . $PSScriptRoot\Get-InstanceList.ps1
 . $PSScriptRoot\Get-AWSPriceData.ps1
 . $PSScriptRoot\Remove-LapsedAMI.ps1

@@ -1,4 +1,4 @@
-function New-QuarterlyReport {
+function Export-QuarterlyReport {
     <# =========================================================================
     .SYNOPSIS
         Generate reports for instances offline and running without reservation
@@ -21,7 +21,7 @@ function New-QuarterlyReport {
     .OUTPUTS
         Excel spreadsheet.
     .EXAMPLE
-        PS C:\> New-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
+        PS C:\> Export-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
         region
     ========================================================================= #>

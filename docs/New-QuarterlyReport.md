@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# New-QuarterlyReport
+# Export-QuarterlyReport
 
 ## SYNOPSIS
 Generate reports for instances offline and running without reservation
@@ -13,7 +13,7 @@ Generate reports for instances offline and running without reservation
 ## SYNTAX
 
 ```
-New-QuarterlyReport [[-Path] <String>] [-ProfileName] <String[]> [[-Region] <String>] [<CommonParameters>]
+Export-QuarterlyReport [[-Path] <String>] [-ProfileName] <String[]> [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,7 +23,7 @@ This script iterates through all instances in a give AWS Region and creates a li
 
 ### Example 1
 ```powershell
-PS C:\> New-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
+PS C:\> Export-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
 ```
 
 Generate new EC2 report for all instances in MyAccount in the us-west-1 region
