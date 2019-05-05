@@ -5,7 +5,7 @@ function Remove-LapsedAMI {
     .DESCRIPTION
         The default use of this script is to scan all AMIs in a region with the
         suffix ".backup" and SIMULATE deleting any that are older than 7 days,
-        excepting every Thursday, and the first of every month, for 6 months.  
+        excepting every Thursday, and the first of every month, for 6 months.
         actually delete AMIs, supply the parameter: -RunAsTestOnly $false
     .PARAMETER ProfileName
         AWS Credential Profile name
@@ -33,11 +33,11 @@ function Remove-LapsedAMI {
         System.String.
     .EXAMPLE
         PS C:\> Remove-LapsedAMI -ProfileName 'myProfile' -region 'us-east-1'
-        
+
         This example shows the basic usage that SIMULATES deleting AMIs.
     .EXAMPLE
         PS C:\> Remove-LapsedAMI -ProfileName 'myProfile' -region 'us-east-1' -RunAsTestOnly $false
-        
+
         This example ACTUALLY deletes the AMIS.
     .EXAMPLE
         PS C:\> Remove-LapsedAMI -ProfileName 'myProfile' -region 'us-east-1' -BackupSuffix ''
@@ -102,12 +102,12 @@ function Remove-LapsedAMI {
                 # (INCLUDING NOTIFICATIONS) BUT WILL NOT ACTUALLY DELETE ANYTHING.
                 [Parameter(Mandatory)] $amisTargetedForDeletion
             )
-    
+
             # THE CONTENT WITHIN THIS BLOCK IS DESTRUCTIVE. ONLY EXECUTE NEXT LINE IF $RUNASTESTONLY = $false
             if ( $RunAsTestOnly -eq $false ) {
-        
+
                 foreach ($ami in $amisTargetedForDeletion) {
-                    $amiSnapshots = @($ami.BlockDeviceMapping.ebs.snapshotid) 
+                    $amiSnapshots = @($ami.BlockDeviceMapping.ebs.snapshotid)
                     Unregister-EC2Image -ImageId $ami.ImageId -Region $Region -ProfileName $ProfileName
                     Start-Sleep 10
                     foreach ($snapshot in $amiSnapshots) {
@@ -139,7 +139,7 @@ function Remove-LapsedAMI {
                     $Output += ($_.Name + "; " + [datetime]::parse($_.CreationDate).DateTime + "`n")
                 }
             }
-            
+
             #TARGET IMAGES OLDER THAN A MONTH, NEWER THAN A SIX MONTHS, EXCLUDING MONTHLY BACKUPS, WITH NAMES ENDING IN *.backup.
             $WeeklyImagesToDelete = Get-EC2Image @Splat | Where-Object {
                 [datetime]::Parse($_.CreationDate).Day -ne $MonthlyBackupDay -and `
@@ -154,7 +154,7 @@ function Remove-LapsedAMI {
                     $Output += ($_.Name + "; " + [datetime]::parse($_.CreationDate).DateTime + "`n")
                 }
             }
-            
+
             #TARGET IMAGES OLDER THAN 6 MONTHS, WITH NAMES ENDING IN *.backup.
             $MonthlyImagesToDelete = Get-EC2Image @Splat | Where-Object {
                 [datetime]::Parse($_.CreationDate) -lt (Get-Date).AddDays(-$MonthlyBackupRetentionPeriod) -and `
@@ -167,10 +167,10 @@ function Remove-LapsedAMI {
                     $Output += ($_.Name + "; " + [datetime]::parse($_.CreationDate).DateTime + "`n")
                 }
             }
-            
+
             # SETUP SPLATTER TABLE FOR PARAMETERS
             $Splat.Remove('Owner'); $Splat['bolRunAsTestOnly'] = $RunAsTestOnly
-            
+
             # UNREGISTER AMIS
             if ( $DailyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $DailyImagesToDelete }
             if ( $WeeklyImagesToDelete ) { Unregister-EC2AmisandSnapshot @Splat -amisTargetedForDeletion $WeeklyImagesToDelete }

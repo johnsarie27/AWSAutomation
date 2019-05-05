@@ -37,14 +37,14 @@ function Get-SecurityGroupInfo {
 
     $ParamSplat = @{ ProfileName = $ProfileName ; Region = $Region }
     $ParamSplat.Filter = @{Name = "vpc-id"; Value = $VpcId}
-    
+
     # SECURITY GROUP INFO
     $SecurityGroups = Get-EC2SecurityGroup @ParamSplat
     $SGList = @()
 
     # INSTANCES WITH SECURITY GROUPS
     $EC2 = (Get-EC2Instance @ParamSplat).Instances
-    
+
     foreach ( $sg in $SecurityGroups ) {
         $new = @{ GroupName = $sg.GroupName }
         $new.GroupId = $sg.GroupId

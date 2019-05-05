@@ -42,7 +42,7 @@ function Get-IAMReport {
                 $State = (Request-IAMCredentialReport -ProfileName $ProfileName |
                 Select-Object -ExpandProperty State).Value ; Start-Sleep -Seconds 10
             } while ( $State -eq 'STARTED' )
-    
+
             if ( $State -eq 'COMPLETE' ) {
                 $DataFile = "$env:TEMP\iam_acc_info.csv"
                 Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName |
@@ -51,10 +51,10 @@ function Get-IAMReport {
             else { Write-Warning 'Failed to retrieve report from AWS. Check report status in AWS console'; Break }
         }
         else { $DataFile = $Path }
-    
+
         # CONVERT DATAFILE TO OBJECTS
-        $IAMReport = Import-Csv -Path $DataFile    
-        
+        $IAMReport = Import-Csv -Path $DataFile
+
         # LOOP THROUGH REPORT
         foreach ( $row in $IAMReport ) {
             $new = New-Object -TypeName psobject
@@ -64,20 +64,20 @@ function Get-IAMReport {
             #$new | Add-Member -MemberType NoteProperty -Name 'ARN' -Value $row.arn.Substring(0, 25) #THIS 13, ($row.arn.length-13)
             $new | Add-Member -MemberType NoteProperty -Name 'Account' -Value $ProfileName
             $new | Add-Member -MemberType NoteProperty -Name 'PasswordEnabled' -Value $row.password_enabled
-            
+
             # CONVERT DATE FOR PASSWORD LAST CHANGED
             if ( $row.password_last_changed -match '\d{4}' ) {
                 [datetime] $plc = $row.password_last_changed
                 $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastChanged' -Value $plc
             } else { $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastChanged' -Value 'N/A' }
-            
+
             # LAST LOGIN GREATER THAN 90 DAYS
             if ( $row.password_last_used -match '\d{4}' ) {
                 [datetime] $PLastUsedDate = $row.password_last_used
                 $Span = New-TimeSpan -Start $PLastUsedDate -End $Date
                 $new | Add-Member -MemberType NoteProperty -Name 'DaysSinceLogin' -Value $Span.Days
                 $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastUsed' -Value $PLastUsedDate
-            } else { 
+            } else {
                 $new | Add-Member -MemberType NoteProperty -Name 'DaysSinceLogin' -Value 'N/A'
                 $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastUsed' -Value 'N/A'
             }

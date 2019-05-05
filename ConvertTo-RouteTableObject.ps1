@@ -6,7 +6,7 @@ function ConvertTo-RouteTableObject {
     .DESCRIPTION
         This function takes an existing set of Route Tables contained in an AWS
         account and outputs an object that can esily be converted into JSON for
-        a CloudFormation template. 
+        a CloudFormation template.
     .EXAMPLE
         PS C:\> $a = ConvertTo-RouteTableObject -ProfileName $P -Region us-east-1
         PS C:\> $a | ConvertTo-Json -Depth 8
@@ -34,7 +34,7 @@ function ConvertTo-RouteTableObject {
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
         [string] $VpcId
     )
-    
+
     Import-Module -Name AWSPowerShell
 
     $ParamSplat = @{
@@ -42,7 +42,7 @@ function ConvertTo-RouteTableObject {
         Region      = $Region
         Filter      = @{Name = "vpc-id"; Value = $VpcId}
     }
-    
+
     $RouteTables = Get-EC2Subnet @ParamSplat
     $MasterObject = New-Object -TypeName psobject
 
@@ -56,7 +56,7 @@ function ConvertTo-RouteTableObject {
             VpcId = $rt.VpcId
             Tags  = $rt.Tags
         }
-        
+
         # ADD ROUTETABLE OBJECT TO MASTER OBJECT
         $Object | Add-Member -MemberType NoteProperty -Name "Properties" -Value $Properties
         $MasterObject | Add-Member -MemberType NoteProperty -Name $Name -Value $Object

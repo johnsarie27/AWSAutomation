@@ -45,7 +45,7 @@ function Send-SESMessage {
     Begin {
         # GET CONFIG DATA
         $Config = Get-Content -Path $ConfigPath -Raw | ConvertFrom-Json
-        
+
         # GET SERVER ROLE CREDS
         $RoleMetadata = Invoke-RestMethod -Uri $Config.AWS.EC2.Metadata
         #$SecretKey = ConvertTo-SecureString -AsPlainText -String $RoleMetadata.SecretAccessKey -Force

@@ -46,13 +46,13 @@ function Revoke-StaleAccessKey {
 
     Process {
         # VALIDATE USERNAME
-        if ( $UserName -notin (Get-IAMUserList -ProfileName $ProfileName).UserName ) {	
-            Write-Error ('User [{0}] not found in profile [{1}].' -f $UserName, $ProfileName); Break	
+        if ( $UserName -notin (Get-IAMUserList -ProfileName $ProfileName).UserName ) {
+            Write-Error ('User [{0}] not found in profile [{1}].' -f $UserName, $ProfileName); Break
         }
 
         # GET ACCESS KEYS
         $Keys = Get-IAMAccessKey -UserName $UserName -ProfileName $ProfileName
-        if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) } 
+        if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) }
 
         # LOOP THROUGH KEYS
         $Keys | ForEach-Object -Process {
@@ -66,7 +66,7 @@ function Revoke-StaleAccessKey {
                 if ( $PSBoundParameters.ContainsKey('Remove') ) {
                     Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
                 }
-                
+
                 # DEACTIVATE KEY
                 if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
                     Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $ProfileName

@@ -11,12 +11,14 @@ function Find-PublicS3Objects {
     .INPUTS
         System.String. Find-S3BucketPolicy accepts a string value for BucketName
     .OUTPUTS
-        System.Object. 
+        System.Object.
     .EXAMPLE
         PS C:\> Find-PublicS3Objects -ProfileName MyAccount
         Search all objects in all S3 buckets for MyAccount and return a list of publicly accessible objects
     ========================================================================= #>
     [CmdletBinding()]
+    [OutputType([System.Object[]])]
+
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -30,11 +32,11 @@ function Find-PublicS3Objects {
     )
 
     $Splat = @{ ProfileName = $ProfileName }
-    
+
     # VALIDATE BUCKET
     if ($PSBoundParameters.ContainsKey('BucketName') ) {
         if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
-            $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)   
+            $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
         }
         else {
             Write-Warning ('Bucket [{0}] not found' -f $BucketName)

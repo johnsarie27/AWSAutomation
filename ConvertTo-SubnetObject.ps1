@@ -6,7 +6,7 @@ function ConvertTo-SubnetObject {
     .DESCRIPTION
         This function takes an existing set of Subnets contained in an AWS
         account and outputs an object that can esily be converted into JSON for
-        a CloudFormation template. 
+        a CloudFormation template.
     .EXAMPLE
         PS C:\> $a = ConvertTo-SubnetObject -ProfileName $P -Region us-east-1
         PS C:\> $a | ConvertTo-Json -Depth 8
@@ -34,14 +34,14 @@ function ConvertTo-SubnetObject {
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
         [string] $VpcId
     )
-    
+
     Import-Module -Name AWSPowerShell
 
     $ParamSplat = @{ ProfileName = $ProfileName ; Region = $Region }
     if ( $PSBoundParameters.ContainsKey('VpcId') ) {
         $ParamSplat.Filter = @{Name = "vpc-id"; Value = $VpcId}
     }
-    
+
     $Subnets = Get-EC2Subnet @ParamSplat
     $MasterObject = New-Object -TypeName psobject
 

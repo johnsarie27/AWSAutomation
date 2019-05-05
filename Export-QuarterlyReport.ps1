@@ -71,26 +71,26 @@ function Export-QuarterlyReport {
         $InstanceList += Get-InstanceList -Region $Region -ProfileName $ProfileName
         foreach ( $instance in $InstanceList ) { $instance.GetStopInfo() }
         Get-CostInfo -Region $Region -InstanceList $InstanceList | Out-Null
-    
+
         # CREATE ARRAY FOR STOPPED INSTANCES 90 DAYS OR MORE
         $90DayList = @( $InstanceList | Where-Object State -eq 'stopped' |
             Select-Object ProfileName, Id, Name, LastStart, LastStopped, DaysStopped, Stopper |
             Sort-Object DaysStopped )
-    
+
         # CREATE ARRAY FOR RUNNING INSTANCES NOT RESERVED
         $60DayList = @( $InstanceList | Where-Object State -eq 'running' |
             Select-Object ProfileName, Name, Type, Reserved, LastStart, DaysRunning, OnDemandPrice, ReservedPrice, Savings |
             Sort-Object LastStart )
-    
+
         # CREATE ARRAY FOR UNATTACHED VOLUMES
         $AllVolumes = Get-AvailableEBS -ProfileName $ProfileName | Group-Object -Property Account | Select-Object Name, Count
-    
+
         # IF EXISTS EXPORT 60 DAY LIST
         if ( $60DayList.Count -ge 1 ) { $60DayList | Export-ExcelBook @Splat -SheetName '60-Day Report' }
-        
+
         # IF EXISTS EXPORT 90 DAY LIST
         if ( $90DayList.Count -gt 0 ) { $90DayList | Export-ExcelBook @Splat -SheetName '90-Day Report' }
-        
+
         # EXPORT VOLUMES LIST
         if ( $AllVolumes ) { $AllVolumes | Export-ExcelBook @Splat -SheetName 'Unattached EBS' }
     }

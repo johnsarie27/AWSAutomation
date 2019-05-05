@@ -33,6 +33,8 @@ function Disable-InactiveUserKey {
         - iam:UpdateAccessKey
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
+    [OutputType([System.Object[]])]
+    
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -59,7 +61,7 @@ function Disable-InactiveUserKey {
     Begin {
         # CREATE RESULTS ARRAY
         $Results = [System.Collections.Generic.List[PSObject]]::new()
-        
+
         # GET ALL USERS IN AWS ACCOUNT
         if ( $PSCmdlet.ParameterSetName -eq 'all' ) { $User = Get-IAMUserList -ProfileName $ProfileName }
 
@@ -74,7 +76,7 @@ function Disable-InactiveUserKey {
             $Keys = Get-IAMAccessKey -UserName $U.UserName -ProfileName $ProfileName
 
             # CHECK FOR KEYS
-            if ( !$Keys ) { Write-Verbose ('No keys found for user: [{0}]' -f $U.UserName) } 
+            if ( !$Keys ) { Write-Verbose ('No keys found for user: [{0}]' -f $U.UserName) }
             else {
 
                 # EVALUATE KEYS
@@ -100,7 +102,7 @@ function Disable-InactiveUserKey {
                         if ( $Span.Days -ge $Age ) {
                             # SET ACTION PARAMS
                             $Splat = @{ UserName = $_.UserName; AccessKeyId = $_.AccessKeyId; ProfileName = $ProfileName }
-                            
+
                             # CREATE NEW CUSTOM OBJECT
                             $New = @{
                                 UserName          = $_.UserName
@@ -133,7 +135,7 @@ function Disable-InactiveUserKey {
                         }
                     }
                 }
-            }  
+            }
         }
     }
 

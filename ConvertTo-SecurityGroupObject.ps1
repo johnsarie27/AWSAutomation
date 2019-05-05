@@ -6,7 +6,7 @@ function ConvertTo-SecurityGroupObject {
     .DESCRIPTION
         This function takes an existing set of Security Groups contained in a
         VPC and outputs an object that can esily be converted into JSON for a
-        CloudFormation template. 
+        CloudFormation template.
     .EXAMPLE
         PS C:\> $a = ConvertTo-SecurityGroupObject -ProfileName $P -Region us-east-1 -VpcId $v
         PS C:\> $a | ConvertTo-Json -Depth 8
@@ -49,9 +49,9 @@ function ConvertTo-SecurityGroupObject {
 
     # CONVERT THOSE OBJECTS TO CUSTOM OBJECTS
     $MasterObject = New-Object -TypeName psobject
-    
+
     foreach ( $sg in $SecurityGroups ) {
-        
+
         $Name = $sg.GroupName
         $Object = [PSCustomObject] @{ Type = "AWS::EC2::SecurityGroup" }
 
@@ -61,7 +61,7 @@ function ConvertTo-SecurityGroupObject {
             Tags             = $sg.Tag
         }
         $Object | Add-Member -MemberType NoteProperty -Name "Properties" -Value $Properties
-        
+
         # CREATE SECURITY GROUP INGRESS
         $SecurityGroupIngress = @()
         foreach ( $IpPermissions in $sg.IpPermissions ) {
@@ -79,7 +79,7 @@ function ConvertTo-SecurityGroupObject {
             $SecurityGroupIngress += $SecurityGroup
         }
         $Properties | Add-Member -MemberType NoteProperty -Name "SecurityGroupIngress" -Value $SecurityGroupIngress
-        
+
         # CREATE SECURITY GROUP EGRESS
         $SecurityGroupEgress = @()
         foreach ( $IpPermissions in $sg.IpPermissionsEgress ) {
@@ -97,7 +97,7 @@ function ConvertTo-SecurityGroupObject {
             $SecurityGroupEgress += $SecurityGroup
         }
         $Properties | Add-Member -MemberType NoteProperty -Name "SecurityGroupEgress" -Value $SecurityGroupEgress
-        
+
         $MasterObject | Add-Member -MemberType NoteProperty -Name $Name -Value $Object
     }
 

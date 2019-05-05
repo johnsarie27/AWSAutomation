@@ -20,6 +20,8 @@ function Get-AvailableEBS {
         Get unattached EBS volumes, group them by Account, and display Name and Count
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
+    [OutputType([System.Object[]])]
+
     Param(
         [Parameter(Mandatory, ParameterSetName = 'targeted', HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]

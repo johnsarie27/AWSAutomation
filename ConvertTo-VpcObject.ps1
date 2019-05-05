@@ -6,7 +6,7 @@ function ConvertTo-VpcObject {
     .DESCRIPTION
         This function takes an existing set of VPCs contained in an AWS account
         and outputs an object that can esily be converted into JSON for a
-        CloudFormation template. 
+        CloudFormation template.
     .EXAMPLE
         PS C:\> $a = ConvertTo-VpcObject -ProfileName $P -Region us-east-1
         PS C:\> $a | ConvertTo-Json -Depth 8
@@ -30,7 +30,7 @@ function ConvertTo-VpcObject {
         [ValidateSet('us-east-1', 'us-east-2', 'us-west-1', 'us-west-2')]
         [string] $Region = 'us-east-1'
     )
-    
+
     Import-Module -Name AWSPowerShell
 
     $VPCs = Get-EC2Vpc -ProfileName $ProfileName -Region $Region

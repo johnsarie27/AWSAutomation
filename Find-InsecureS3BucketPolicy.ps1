@@ -12,13 +12,15 @@ function Find-InsecureS3BucketPolicy {
     .INPUTS
         System.String. Find-S3BucketPolicy accepts a string value for BucketName
     .OUTPUTS
-        System.Object. 
+        System.Object.
     .EXAMPLE
         PS C:\> Find-InsecureS3BucketPolicy -ProfileName MyProfile
         Search through all buckets in account represented by MyProfile for bucket
         policies that allow non-authenticated principles.
     ========================================================================= #>
     [CmdletBinding()]
+    [OutputType([System.Object[]])]
+
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -32,11 +34,11 @@ function Find-InsecureS3BucketPolicy {
     )
 
     $Splat = @{ ProfileName = $ProfileName }
-    
+
     # VALIDATE BUCKET
     if ($PSBoundParameters.ContainsKey('BucketName') ) {
         if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
-            $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)   
+            $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
         }
         else {
             Write-Warning ('Bucket [{0}] not found' -f $BucketName)

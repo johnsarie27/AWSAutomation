@@ -104,7 +104,7 @@ function Get-ELB {
 
         # LOOP ALL ELBS
         foreach ( $elb in $AllELBs ) {
-            
+
             # LOOP ALL NETWORK INTERFACES
             $Net | ForEach-Object -Process {
                 if ( $_.Description -match ('^ELB\s{0}' -f $elb.LoadBalancerName) ) {

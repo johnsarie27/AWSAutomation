@@ -114,13 +114,13 @@ function Export-SecurityGroup {
             SuppressOpen = $true
         }
     }
-    
+
     Process {
         # GET AND CONVERT
         $SGObjects = ConvertTo-SGObject -TemplateFile $TemplateFile
 
     }
-    
+
     End {
         # EXPORT TO EXCEL FILE
         $i=0

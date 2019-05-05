@@ -24,6 +24,8 @@ function Get-EC2 {
         stored AWS credential profiles in the us-west-2 region.
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = '__profile')]
+    [OutputType([System.Object[]])]
+
     Param(
         [Parameter(
             Mandatory,

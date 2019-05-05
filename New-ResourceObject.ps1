@@ -53,8 +53,8 @@ function New-ResourceObject {
             $ResourceType = 'NatGateway'
             $Hash = @{
                 AllocationId = [PSCustomObject] @{ "Fn::GetAtt" = @($EipName, "AllocationId") }
-                SubnetId     = [PSCustomObject] @{ Ref = "$SubnetName" } 
-            }    
+                SubnetId     = [PSCustomObject] @{ Ref = "$SubnetName" }
+            }
         }
         'IGW' { $ResourceType = 'InternetGateway' }
         'VGA' {
@@ -67,10 +67,10 @@ function New-ResourceObject {
     }
 
     if ( $Hash -and $NameTag ) {
-        $Hash.Tags = [PSCustomObject] @{ Key = "Name" ; Value = $NameTag } 
+        $Hash.Tags = [PSCustomObject] @{ Key = "Name" ; Value = $NameTag }
     }
     if ( -not $Hash -and $NameTag ) {
-        $Hash = @{ Tags = [PSCustomObject] @{ Key = "Name" ; Value = $NameTag } } 
+        $Hash = @{ Tags = [PSCustomObject] @{ Key = "Name" ; Value = $NameTag } }
     }
 
     # ADD DATA VALUES AND OBJECTS

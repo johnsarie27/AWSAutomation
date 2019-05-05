@@ -74,13 +74,13 @@ class EC2Instance {
     [string] $SubnetName
     [string[]] $SecurityGroups
 
-    <# 
+    <#
     # DEFAULT CONSTRUCTOR
     EC2Instance() {}
 
     # CUSTOM CONSTRUCTOR
     EC2Instance([Amazon.EC2.Model.Instance] $EC2) {
-        
+
         $this.DR_Region = ( $EC2.Tags | Where-Object Key -eq DR_Region ).Value
         $this.Id = $EC2.InstanceId
         $this.Name = ( $EC2.Tags | Where-Object Key -ceq Name ).Value
@@ -101,7 +101,7 @@ class EC2Instance {
         $this.VpcId = $EC2.VpcId
         $this.SubnetId = $EC2.SubnetId
         $this.SecurityGroups = $EC2.SecurityGroups.GroupName
-        
+
     }
     #>
 

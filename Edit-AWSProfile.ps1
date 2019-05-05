@@ -74,7 +74,7 @@ function Edit-AWSProfile {
     Begin {
         # VARS
         $OpParams = @('Default', 'Region', 'ProfileName')
-        
+
         # FUNCTIONS
         function Confirm-Profile ([string] $ProfileName) {
             $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
@@ -124,7 +124,7 @@ function Edit-AWSProfile {
             }
             Update {
                 if ( !(Confirm-Profile -ProfileName $ProfileName) ) { Write-Error ('Profile [{0}] not found' -f $ProfileName); Break }
-            
+
                 Write-Output `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
                 $SecretKey = Read-Host -Prompt 'Secret Key'
@@ -132,7 +132,7 @@ function Edit-AWSProfile {
                 if ( $PSBoundParameters.ContainsKey('Default') ) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
-            
+
                 'Profile [{0}] updated.' -f $ProfileName
             }
             Delete {
