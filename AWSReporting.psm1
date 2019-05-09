@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-04-30
+# Updated:      2019-05-09
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -35,6 +35,7 @@
 
 # OTHER FUNCTIONS
 . $PSScriptRoot\Send-SESMessage.ps1
+. $PSScriptRoot\New-CWRecoveryAlarm.ps1
 
 # TO DEPRICATE SOMEDAY
 . $PSScriptRoot\Get-CostInfo.ps1
