@@ -22,7 +22,7 @@ function New-CWRecoveryAlarm {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'EC2 Instance Id')]
+        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'EC2 Instance Id')]
         [ValidatePattern('i-[\w\d]{8,17}')]
         [Alias('Id', 'Instance')]
         [string[]] $InstanceId,
@@ -43,8 +43,6 @@ function New-CWRecoveryAlarm {
             ProfileName        = $ProfileName
             Region             = $Region
             AlarmAction        = ('arn:aws:automate:{0}:ec2:recover' -f $Region)
-            AlarmName          = ('awsec2-{0}-High-Status-Check-Failed-System' -f $_ )
-            Dimension          = @{ Name = 'InstanceId'; Value = $_ }
             ComparisonOperator = 'GreaterThanOrEqualToThreshold'
             EvaluationPeriod   = 2
             Period             = 300
@@ -58,7 +56,11 @@ function New-CWRecoveryAlarm {
 
     Process {
         # LOOP ALL INSTANCES
-        $InstanceId | ForEach-Object -Process {
+        foreach ( $Id in $InstanceId ) {
+            # UPDATE INSTANCE ID VALUES
+            $AlarmParams['AlarmName'] = 'awsec2-{0}-High-Status-Check-Failed-System' -f $Id
+            $AlarmParams['Dimension'] = @{ Name = 'InstanceId'; Value = $Id }
+
             # CREATE NEW ALARM
             Write-CWMetricAlarm @AlarmParams
         }
