@@ -24,7 +24,7 @@ function Get-R53Record {
         [Parameter(Mandatory, HelpMessage = 'AWS Profile containing access key and secret')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile')]
-        [string[]] $ProfileName,
+        [string] $ProfileName,
 
         [Parameter(Mandatory, HelpMessage = 'Hosted zone name')]
         [ValidateNotNullOrEmpty()]
