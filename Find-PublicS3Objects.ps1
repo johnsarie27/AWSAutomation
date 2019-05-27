@@ -31,50 +31,56 @@ function Find-PublicS3Objects {
         [string] $BucketName
     )
 
-    $Splat = @{ ProfileName = $ProfileName }
+    Begin {
+        $Splat = @{ ProfileName = $ProfileName }
 
-    # VALIDATE BUCKET
-    if ($PSBoundParameters.ContainsKey('BucketName') ) {
-        if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
-            $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
+        # VALIDATE BUCKET
+        if ($PSBoundParameters.ContainsKey('BucketName') ) {
+            if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
+                $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
+            }
+            else {
+                Write-Warning ('Bucket [{0}] not found' -f $BucketName)
+                break
+            }
+        } else {
+            $Buckets = @(Get-S3Bucket @Splat)
         }
-        else {
-            Write-Warning ('Bucket [{0}] not found' -f $BucketName)
-            break
-        }
+
+        $Results = [System.Collections.Generic.List[PSObject]]::new()
     }
-    else { $Buckets = @(Get-S3Bucket @Splat) }
 
-    #$Results = @()
-    $Results = [System.Collections.Generic.List[PSObject]]::new()
+    Process {
+        # ITERATE THROUGH ALL BUCKETS IN ACCOUNT
+        foreach ( $b in $Buckets ) {
 
-    # ITERATE THROUGH ALL BUCKETS IN ACCOUNT
-    $Buckets | ForEach-Object -Process {
+            # $BName = $bucket.BucketName
+            $Splat.BucketName = $b.BucketName
 
-        # $BName = $bucket.BucketName
-        $Splat.BucketName = $_.BucketName
+            # ITERATE THROUGH ALL OBJECTS IN BUCKET
+            foreach ( $i in Get-S3Object @Splat ) {
 
-        # ITERATE THROUGH ALL OBJECTS IN BUCKET
-        Get-S3Object @Splat | ForEach-Object -Process {
+                # GET ACL FOR OBJECTS
+                $ACL = Get-S3ACL @Splat -Key $i.Key
 
-            # GET ACL FOR OBJECTS
-            $ACL = Get-S3ACL @Splat -Key $_.Key
-
-            # EVALUATE
-            foreach ( $grant in $ACL.Grants ) {
-                if ( $grant.Grantee.URI -match 'AllUsers' ) {
-                    $New = [PSCustomObject] @{
-                        BucketName = $Splat.BucketName
-                        Key        = $_.Key
-                        Permission = $grant.Permission
-                        URI        = $grant.Grantee.URI
+                # EVALUATE
+                foreach ( $grant in $ACL.Grants ) {
+                    if ( $grant.Grantee.URI -match 'AllUsers' ) {
+                        $New = [PSCustomObject] @{
+                            BucketName = $Splat.BucketName
+                            Key        = $i.Key
+                            Permission = $grant.Permission
+                            URI        = $grant.Grantee.URI
+                        }
+                        #$Results += $New
+                        $Results.Add($New)
                     }
-                    #$Results += $New
-                    $Results.Add($New)
                 }
             }
         }
     }
 
-    $Results
+    End {
+        $Results
+    }
 }

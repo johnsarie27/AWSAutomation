@@ -33,34 +33,41 @@ function Find-InsecureS3BucketPolicy {
         [string] $BucketName
     )
 
-    $Splat = @{ ProfileName = $ProfileName }
+    Begin {
+        $Splat = @{ ProfileName = $ProfileName }
 
-    # VALIDATE BUCKET
-    if ($PSBoundParameters.ContainsKey('BucketName') ) {
-        if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
-            $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
+        # VALIDATE BUCKET
+        if ($PSBoundParameters.ContainsKey('BucketName') ) {
+            if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
+                $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
+            }
+            else {
+                Write-Warning ('Bucket [{0}] not found' -f $BucketName)
+                break
+            }
+        } else {
+            $Buckets = @(Get-S3Bucket @Splat)
         }
-        else {
-            Write-Warning ('Bucket [{0}] not found' -f $BucketName)
-            break
-        }
+
+        $Results = [System.Collections.Generic.List[System.Object]]::new()
     }
-    else { $Buckets = @(Get-S3Bucket @Splat) }
 
-    $Results = @()
+    Process {
+        foreach ( $b in $Buckets ) {
+            $Splat.BucketName = $b.BucketName
 
-    $Buckets | ForEach-Object -Process {
-        $Splat.BucketName = $_.BucketName
+            $Policy = Get-S3BucketPolicy @Splat | ConvertFrom-Json
 
-        $Policy = Get-S3BucketPolicy @Splat | ConvertFrom-Json
-
-        $Policy.Statement | ForEach-Object -Process {
-            if ( $_ -and ([string] $_.Principal) -notmatch '(ARN|Service)' ) {
-                $_ | Add-Member -MemberType NoteProperty -Name BucketName -Value $Splat.BucketName
-                $Results += $_
+            foreach ( $i in $Policy.Statement ) {
+                if ( $i -and ([string] $i.Principal) -notmatch '(ARN|Service)' ) {
+                    $i | Add-Member -MemberType NoteProperty -Name BucketName -Value $Splat.BucketName
+                    $Results.Add($i)
+                }
             }
         }
     }
 
-    $Results
+    End {
+        $Results
+    }
 }

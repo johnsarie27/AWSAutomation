@@ -45,7 +45,8 @@ function Get-ELB {
         $ProfileName = Get-AWSCredential -ListProfileDetail | Select-Object -EXP ProfileName
     }
 
-    $AllELBs = @()
+    #$AllELBs = @()
+    $AllELBs = [System.Collections.Generic.List[System.Object]]::new()
 
     foreach ( $Name in $ProfileName ) {
         # GET NETWORK ELASTIC LOAD BALANCERS (ELBs)
@@ -77,7 +78,7 @@ function Get-ELB {
             $new.PrivateIp = @()
 
             # ADD CUSTOM OBJECT TO LIST
-            $AllELBs += [PSCustomObject] $new
+            $AllELBs.Add([PSCustomObject] $new)
         }
 
         # GET APPLICATION LOAD BALANCERS (ALBS)
@@ -99,16 +100,16 @@ function Get-ELB {
             $new.PrivateIp = @()
 
             # ADD CUSTOM OBJECT TO LIST
-            $AllELBs += [PSCustomObject] $new
+            $AllELBs.Add([PSCustomObject] $new)
         }
 
         # LOOP ALL ELBS
         foreach ( $elb in $AllELBs ) {
 
             # LOOP ALL NETWORK INTERFACES
-            $Net | ForEach-Object -Process {
-                if ( $_.Description -match ('^ELB\s{0}' -f $elb.LoadBalancerName) ) {
-                    $elb.PrivateIp += $_.PrivateIpAddress
+            foreach ( $n in $Net ) {
+                if ( $n.Description -match ('^ELB\s{0}' -f $elb.LoadBalancerName) ) {
+                    $elb.PrivateIp += $n.PrivateIpAddress
                 }
             }
         }

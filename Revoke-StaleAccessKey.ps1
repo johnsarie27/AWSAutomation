@@ -55,25 +55,25 @@ function Revoke-StaleAccessKey {
         if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) }
 
         # LOOP THROUGH KEYS
-        $Keys | ForEach-Object -Process {
+        foreach ( $key in $Keys ) {
 
             # CREATE TIMESPAN
-            $Span = New-TimeSpan -Start $_.CreateDate -End (Get-Date)
+            $Span = New-TimeSpan -Start $key.CreateDate -End (Get-Date)
 
             # IF KEY OLDER THAN 90 DAYS...
             if ( $Span.Days -gt 90 ) {
                 # REMOVE KEY
                 if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                    Remove-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
+                    Remove-IAMAccessKey -UserName $key.UserName -AccessKeyId $key.AccessKeyId -ProfileName $ProfileName
                 }
 
                 # DEACTIVATE KEY
                 if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
-                    Update-IAMAccessKey -UserName $_.UserName -AccessKeyId $_.AccessKeyId -Status Inactive -ProfileName $ProfileName
+                    Update-IAMAccessKey -UserName $key.UserName -AccessKeyId $key.AccessKeyId -Status Inactive -ProfileName $ProfileName
                 }
 
                 # ADD KEY TO LIST
-                $Results.Add($_)
+                $Results.Add($key)
             }
         }
     }
