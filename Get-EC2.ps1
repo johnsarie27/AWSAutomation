@@ -52,9 +52,8 @@ function Get-EC2 {
 
     Begin {
         # SET ARRAY FOR RESULTS
-        #$Results = @()
-        $Results = [System.Collections.Generic.List[System.Object]]::new()
-
+        $Results = @()
+        
         # GET ALL PROFILES
         if ( $PSBoundParameters.ContainsKey('All') ) {
             $ProfileName = (Get-AWSCredential -ListProfileDetail).ProfileName
@@ -67,10 +66,10 @@ function Get-EC2 {
             # CHECK FOR AWSPOWERSHELL PARAM
             if ( $PSBoundParameters.ContainsKey('AWSPowerShell') ) {
                 # ADD TO RESULTS ARRAY
-                $Results.Add( (Get-EC2Instance -ProfileName $p -Region $Region).Instances )
+                $Results += (Get-EC2Instance -ProfileName $p -Region $Region).Instances
             } else {
                 # IF NOT AWSPOWERSHELL ADD CUSTOM OBJECTS TO REULTS ARRAY
-                $Results.Add( (Get-InstanceList -ProfileName $p -Region $Region) )
+                $Results += (Get-InstanceList -ProfileName $p -Region $Region) 
             }
         }
     }
