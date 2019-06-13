@@ -37,11 +37,13 @@ function Get-IAMReport {
 
         # IMPORT AWS IAM REPORT
         if ( -not $PSBoundParameters.ContainsKey('Path') ) {
+            # INITIATE REQUEST FOR IAM REPORT AND CHECK FOR STATUS CHANGE EVERY 10 SECONDS
             do {
                 $State = (Request-IAMCredentialReport -ProfileName $ProfileName).State.Value
                 Start-Sleep -Seconds 10
             } while ( $State -eq 'STARTED' )
 
+            # IF THE REPORT STATUS CHANGES TO 'COMPLETE' SET THE REPORT DETAILS TO A VARIABLE
             if ( $State -eq 'COMPLETE' ) {
                 $IAMReport = Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName | ConvertFrom-Csv
             }
