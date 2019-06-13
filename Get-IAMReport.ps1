@@ -7,7 +7,7 @@ function Get-IAMReport {
         parse the IAM Credential Report. It then returns the account information.
     .PARAMETER ProfileName
         Name property of an AWS credential profile
-    .PARAMETER FilePath
+    .PARAMETER Path
         File path to existing AWS Credential Report
     .INPUTS
         System.String.
@@ -18,13 +18,13 @@ function Get-IAMReport {
         Generate IAM report for MyAccount
     ========================================================================= #>
     [OutputType([System.Collections.Generic.List`1[System.Object]])]
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '__report')]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential profile')]
+        [Parameter(Mandatory, ParameterSetName = '__report', HelpMessage = 'AWS Credential profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(HelpMessage = 'Existing AWS Credential Report')]
+        [Parameter(Mandatory, ParameterSetName = '__file', HelpMessage = 'Existing AWS Credential Report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Include "*.csv" })]
         [Alias('Data', 'CredentialReport', 'File', 'FilePath', 'Report', 'ReportPath')]
         [string] $Path
@@ -36,7 +36,7 @@ function Get-IAMReport {
         $Accounts = [System.Collections.Generic.List[System.Object]]::new()
 
         # IMPORT AWS IAM REPORT
-        if ( -not $PSBoundParameters.ContainsKey('Path') ) {
+        if ( $PSCmdlet.ParameterSetName -eq '__report' ) {
             # INITIATE REQUEST FOR IAM REPORT AND CHECK FOR STATUS CHANGE EVERY 10 SECONDS
             do {
                 $State = (Request-IAMCredentialReport -ProfileName $ProfileName).State.Value
