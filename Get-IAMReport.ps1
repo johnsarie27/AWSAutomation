@@ -12,14 +12,15 @@ function Get-IAMReport {
     .INPUTS
         System.String.
     .OUTPUTS
-        System.Object.
+        System.Object[].
     .EXAMPLE
         PS C:\> Get-IAMReport -ProfileName MyAccount
         Generate IAM report for MyAccount
     ========================================================================= #>
+    [OutputType([System.Collections.Generic.List`1[System.Object]])]
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Credential profile')]
+        [Parameter(Mandatory, HelpMessage = 'AWS Credential profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
@@ -32,29 +33,30 @@ function Get-IAMReport {
     Begin {
         # SET VARS
         $Date = Get-Date
-        $Accounts = @()
-    }
+        $Accounts = [System.Collections.Generic.List[System.Object]]::new()
 
-    Process {
         # IMPORT AWS IAM REPORT
         if ( -not $PSBoundParameters.ContainsKey('Path') ) {
             do {
-                $State = (Request-IAMCredentialReport -ProfileName $ProfileName |
-                Select-Object -ExpandProperty State).Value ; Start-Sleep -Seconds 10
+                $State = (Request-IAMCredentialReport -ProfileName $ProfileName).State.Value
+                # verify this code change works???
+                Start-Sleep -Seconds 10
             } while ( $State -eq 'STARTED' )
 
             if ( $State -eq 'COMPLETE' ) {
-                $DataFile = "$env:TEMP\iam_acc_info.csv"
-                Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName |
-                Set-Content -Path $DataFile
+                $IAMReport = Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName
+                # remove the -AsTextArray???
             }
-            else { Write-Warning 'Failed to retrieve report from AWS. Check report status in AWS console'; Break }
+            else {
+                Throw 'Failed to retrieve report from AWS. Check report status in AWS console'
+            }
         }
-        else { $DataFile = $Path }
+        else {
+            $IAMReport = Import-Csv -Path $Path
+        }
+    }
 
-        # CONVERT DATAFILE TO OBJECTS
-        $IAMReport = Import-Csv -Path $DataFile
-
+    Process {
         # LOOP THROUGH REPORT
         foreach ( $row in $IAMReport ) {
             $new = New-Object -TypeName psobject
@@ -67,13 +69,15 @@ function Get-IAMReport {
 
             # CONVERT DATE FOR PASSWORD LAST CHANGED
             if ( $row.password_last_changed -match '\d{4}' ) {
-                [datetime] $plc = $row.password_last_changed
+                [System.DateTime] $plc = $row.password_last_changed
                 $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastChanged' -Value $plc
-            } else { $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastChanged' -Value 'N/A' }
+            } else {
+                $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastChanged' -Value 'N/A'
+            }
 
             # LAST LOGIN GREATER THAN 90 DAYS
             if ( $row.password_last_used -match '\d{4}' ) {
-                [datetime] $PLastUsedDate = $row.password_last_used
+                [System.DateTime] $PLastUsedDate = $row.password_last_used
                 $Span = New-TimeSpan -Start $PLastUsedDate -End $Date
                 $new | Add-Member -MemberType NoteProperty -Name 'DaysSinceLogin' -Value $Span.Days
                 $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastUsed' -Value $PLastUsedDate
@@ -82,7 +86,7 @@ function Get-IAMReport {
                 $new | Add-Member -MemberType NoteProperty -Name 'PasswordLastUsed' -Value 'N/A'
             }
             if ( $row.access_key_1_last_used_date -match '\d{4}' ) {
-                [datetime] $KLastUsedDate = $row.access_key_1_last_used_date
+                [System.DateTime] $KLastUsedDate = $row.access_key_1_last_used_date
                 $Span = New-TimeSpan -Start $KLastUsedDate -End $Date
                 $new | Add-Member -MemberType NoteProperty -Name 'DaysSinceKeyUsed' -Value $Span.Days
                 $new | Add-Member -MemberType NoteProperty -Name 'KeyLastUsed' -Value $KLastUsedDate
@@ -98,22 +102,22 @@ function Get-IAMReport {
             }
             else {
                 $Groups = Get-IAMGroupForUser -UserName $row.user -ProfileName $ProfileName |
-                Select-Object -ExpandProperty GroupName |
-                Measure-Object | Select-Object -ExpandProperty Count
+                    Select-Object -ExpandProperty GroupName |
+                    Measure-Object | Select-Object -ExpandProperty Count
                 $PrimaryGroup = Get-IAMGroupForUser -UserName $row.user -ProfileName $ProfileName |
-                Select-Object -ExpandProperty GroupName -First 1
+                    Select-Object -ExpandProperty GroupName -First 1
                 if ( -not $PrimaryGroup ) { $PrimaryGroup = 'None' }
                 $new | Add-Member -MemberType NoteProperty -Name 'Groups' -Value $Groups
                 $new | Add-Member -MemberType NoteProperty -Name 'PrimaryGroup' -Value $PrimaryGroup
             }
-            $Accounts += $new
+
+            # ADD TO COLLECTION
+            $Accounts.Add($new)
         }
     }
 
     End {
+        # RETURN ACCOUNTS
         $Accounts
-        if ( Test-Path $env:TEMP\iam_acc_info.csv ) {
-            Remove-Item -Path $env:TEMP\iam_acc_info.csv -Force
-        }
     }
 }
