@@ -1,3 +1,5 @@
+#Requires -Module UtilityFunctions
+
 function Export-QuarterlyReport {
     <# =========================================================================
     .SYNOPSIS
