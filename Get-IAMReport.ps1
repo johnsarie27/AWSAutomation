@@ -39,13 +39,11 @@ function Get-IAMReport {
         if ( -not $PSBoundParameters.ContainsKey('Path') ) {
             do {
                 $State = (Request-IAMCredentialReport -ProfileName $ProfileName).State.Value
-                # verify this code change works???
                 Start-Sleep -Seconds 10
             } while ( $State -eq 'STARTED' )
 
             if ( $State -eq 'COMPLETE' ) {
-                $IAMReport = Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName
-                # remove the -AsTextArray???
+                $IAMReport = Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName | ConvertFrom-Csv
             }
             else {
                 Throw 'Failed to retrieve report from AWS. Check report status in AWS console'
