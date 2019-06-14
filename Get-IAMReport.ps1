@@ -114,9 +114,7 @@ function Get-IAMReport {
             # ADD TO COLLECTION
             $Accounts.Add($new)
         }
-    }
 
-    End {
         # RETURN ACCOUNTS
         $Accounts
     }
