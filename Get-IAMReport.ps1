@@ -17,8 +17,8 @@ function Get-IAMReport {
         PS C:\> Get-IAMReport -ProfileName MyAccount
         Generate IAM report for MyAccount
     ========================================================================= #>
-    [OutputType([System.Collections.Generic.List`1[System.Object]])]
     [CmdletBinding(DefaultParameterSetName = '__report')]
+    [OutputType([System.Collections.Generic.List`1[System.Object]])]
     Param(
         [Parameter(Mandatory, ParameterSetName = '__report', HelpMessage = 'AWS Credential profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
