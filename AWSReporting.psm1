@@ -36,6 +36,7 @@
 
 # CREATION FUNCTIONS
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1
+. $PSScriptRoot\Deploy-Instance.ps1
 
 # TO DEPRICATE SOMEDAY
 . $PSScriptRoot\Get-CostInfo.ps1
