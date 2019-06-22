@@ -23,13 +23,14 @@ function Deploy-Instance {
     .INPUTS
         System.String.
     .OUTPUTS
-        None.
+        Amazon.EC2.Model.Reservation.
     .EXAMPLE
         PS C:\> Deploy-Instance -PN MyAcc -Name MyInstance -SN sn-12u98732 -SG sg-19823894
         Launch new EC2 instance in us-east-1 with name tag MyInstance
     .NOTES
     ========================================================================= #>
     [CmdletBinding()]
+    [OutputType([Amazon.EC2.Model.Reservation[]])]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
