@@ -94,10 +94,10 @@ function Deploy-Instance {
 
             # SET TAG DATA
             $role = switch -Regex ( $n ) {
-                { $_ -match '^\w{6}AGS\d{2}$' } { 'ArcGIS Server' }
-                { $_ -match '^\w{6}HST\d{2}$' } { 'ArcGIS Server (Hosted)' }
-                { $_ -match '^\w{6}PTL\d{2}$' } { 'Portal for ArcGIS' }
-                { $_ -match '^\w{6}DS\d{2}$' } { 'DataStore for ArcGIS' }
+                '^\w{6}AGS\d{2}$' { 'ArcGIS Server' }
+                '^\w{6}HST\d{2}$' { 'ArcGIS Server (Hosted)' }
+                '^\w{6}PTL\d{2}$' { 'Portal for ArcGIS' }
+                '^\w{6}DS\d{2}$'  { 'DataStore for ArcGIS' }
             }
 
             # ADD TAGS
