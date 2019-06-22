@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-06-06
+# Updated:      2019-06-21
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -34,7 +34,7 @@
 . $PSScriptRoot\Remove-LapsedAMI.ps1
 . $PSScriptRoot\Get-R53Record.ps1
 
-# OTHER FUNCTIONS
+# CREATION FUNCTIONS
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1
 
 # TO DEPRICATE SOMEDAY
