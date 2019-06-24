@@ -98,6 +98,7 @@ function Deploy-Instance {
                 '^\w{6}HST\d{2}$' { 'ArcGIS Server (Hosted)' }
                 '^\w{6}PTL\d{2}$' { 'Portal for ArcGIS' }
                 '^\w{6}DS\d{2}$'  { 'DataStore for ArcGIS' }
+                default           { 'Unknown role' }
             }
 
             # ADD TAGS
