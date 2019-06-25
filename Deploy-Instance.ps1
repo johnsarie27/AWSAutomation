@@ -67,6 +67,10 @@ function Deploy-Instance {
         [Alias('T')]
         [string] $Type = 'm4.xlarge',
 
+        [Parameter(HelpMessage = 'User data string')]
+        [Alias('UD')]
+        [string] $UserData,
+
         [Parameter(HelpMessage = 'Return EC2 Instance object')]
         [Alias('PT')]
         [switch] $PassThru
@@ -84,6 +88,13 @@ function Deploy-Instance {
             SecurityGroupId      = $SecurityGroupId
             SubnetId             = $SubnetId
             InstanceProfile_Name = 'roleMemberServer'
+        }
+
+        # ENCODE USER DATA AND ADD TO PARAMETERS
+        if ( $PSBoundParameters.ContainsKey('UserData') ) {
+            $bytes = [System.Text.Encoding]::Unicode.GetBytes($UserData)
+            $userDataB64 = [Convert]::ToBase64String($bytes)
+            $instanceParams['UserData'] = $userDataB64
         }
     }
 
@@ -103,9 +114,9 @@ function Deploy-Instance {
 
             # ADD TAGS
             $tagScheme = @{
-                Name   = $n
                 Agency = $n.Substring(0, 3)
                 Role   = $role
+                Name   = $n
             }
 
             foreach ( $i in $tagScheme.GetEnumerator() ) {
@@ -117,7 +128,7 @@ function Deploy-Instance {
             }
 
             # RETURN INSTANCE OBJECT
-            if ( $PSBoundParameters.ContainsKey('PassThru') ) { $instance }
+            if ( $PSBoundParameters.ContainsKey('PassThru') ) { $instance.Instances }
         }
     }
 }
