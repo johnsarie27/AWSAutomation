@@ -50,7 +50,7 @@ function Deploy-Instance {
         [string] $AmiId = 'ami-e80e2993',
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'New EC2 instance name tag')]
-        [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS)\d{2}$')]
+        [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL)\d{2}$')]
         [Alias('N')]
         [string[]] $Name,
 
@@ -110,6 +110,7 @@ function Deploy-Instance {
                 '^\w{6}AGS\d{2}$' { 'ArcGIS Server' }
                 '^\w{6}HST\d{2}$' { 'ArcGIS Server (Hosted)' }
                 '^\w{6}PTL\d{2}$' { 'Portal for ArcGIS' }
+                '^\w{6}SQL\d{2}$' { 'SQL Server' }
                 '^\w{6}DS\d{2}$'  { 'DataStore for ArcGIS' }
                 default           { 'Unknown role' }
             }
