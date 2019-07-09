@@ -1,3 +1,5 @@
+#Requires -Module ImportExcel
+
 function Export-SecurityGroup {
     <# =========================================================================
     .SYNOPSIS
@@ -105,34 +107,31 @@ function Export-SecurityGroup {
         }
 
         # IMPORT MODULE FOR EXCEL CREATION
-        Import-Module -Name UtilityFunctions
+        Import-Module -Name ImportExcel
 
-        $Output = Join-Path -Path "$HOME\Desktop" -ChildPath ('CFSecGroup-{0}.xlsx' -f (Get-Date -F "yyyy-MM-ddTHHmmss"))
-        $Splat = @{
-            Autosize     = $true
-            Path         = $Output
-            SuppressOpen = $true
+        $date = Get-Date -F "yyyy-MM-ddTHHmmss"
+        $excelParams = @{
+            Path         = Join-Path -Path "$HOME\Desktop" -ChildPath ('CFSecGroup-{0}.xlsx' -f $date)
+            AutoSize     = $true
+            FreezeTopRow = $true
+            MoveToEnd    = $true
+            BoldTopRow   = $true
+            AutoFilter   = $true
         }
     }
 
     Process {
         # GET AND CONVERT
-        $SGObjects = ConvertTo-SGObject -TemplateFile $TemplateFile
+        $sgObjects = ConvertTo-SGObject -TemplateFile $TemplateFile
 
     }
 
     End {
         # EXPORT TO EXCEL FILE
-        $i=0
-        $SGObjects | ForEach-Object -Process {
-            #$_.Name
-            #$_.Rules | Format-Table
-            if ( $i -eq 1 ) { $Splat.Remove('SavePath') ; $Splat.Path = $Output }
-            if ( $_ -eq $SGObjects[($SGObjects.Count-1)] ) { $Splat.Remove('SuppressOpen') }
-            $_.Rules | Export-ExcelBook @Splat -SheetName $_.Name
-            $i++
+        foreach ( $object in $sgObjects ) {
+            $object.Rules | Export-Excel @excelParams -WorksheetName $object.Name
         }
-
+        
         <# # OUTPUT TO CSV
         $SgName = 'rSecurityGroupDomainServices'
         $Props = @('Direction', 'IpProtocol', 'FromPort', 'ToPort', 'CidrIp')
