@@ -1,4 +1,4 @@
-#Requires -Module UtilityFunctions
+#Requires -Module ImportExcel
 
 function Export-QuarterlyReport {
     <# =========================================================================
@@ -11,7 +11,7 @@ function Export-QuarterlyReport {
         stopped (if possible) and creates a data sheet (CSV). The data sheet is then
         imported into Excel and formatted.  This can be done for a single or
         multiple accounts based on AWS Credentail Profiles.
-    .PARAMETER Path
+    .PARAMETER DestinationPath
         Path to existing folder for report
     .PARAMETER ProfileName
         This is the name of the AWS Credential profile containing the Access Key and
@@ -19,9 +19,9 @@ function Export-QuarterlyReport {
     .PARAMETER Region
         This is the AWS region containing the desired resources to be processed
     .INPUTS
-        System.String.
+        None.
     .OUTPUTS
-        Excel spreadsheet.
+        None.
     .EXAMPLE
         PS C:\> Export-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
@@ -31,12 +31,12 @@ function Export-QuarterlyReport {
     Param(
         [Parameter(HelpMessage = 'Path to existing folder for report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Container })]
-        [Alias('Directory', 'Folder', 'FolderPath')]
-        [string] $Path,
+        [Alias('Path')]
+        [string] $DestinationPath,
 
         [Parameter(Mandatory, HelpMessage = 'AWS Credential Profie with key and secret')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [Alias('Profile', 'PN')]
+        [Alias('PN')]
         [string[]] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Region')]
@@ -46,59 +46,66 @@ function Export-QuarterlyReport {
 
     Begin {
         # IMPORT REQUIRED MODULES
-        Import-Module -Name UtilityFunctions
+        Import-Module -Name ImportExcel
 
         # SET OUTPUT REPORT PATH
-        $ReportName = 'AWS-QuarterlyReport' ; $Date = Get-Date -Format "yyyy-MM"
-        if ( $PSBoundParameters.ContainsKey('Path') ) {
-            $ReportPath = Join-Path -Path $Path -ChildPath ('{0}_{1}.xlsx' -f $Date, $ReportName)
-        } else {
-            $ReportPath = Join-Path -Path "$HOME\Desktop" -ChildPath ('{0}_{1}.xlsx' -f $Date, $ReportName)
+        $reportName = 'AWS-QuarterlyReport'
+        $date = Get-Date -Format "yyyy-MM"
+        if ( $PSBoundParameters.ContainsKey('DestinationPath') ) {
+            $ReportPath = Join-Path -Path $DestinationPath -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
+        }
+        else {
+            $ReportPath = Join-Path -Path "$HOME\Desktop" -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
         }
 
         # SET VAR FOR INSTANCES
-        $InstanceList = @()
+        $instanceList = [System.Collections.Generic.List[System.Object]]::new()
+        $90DayList = [System.Collections.Generic.List[System.Object]]::new()
+        $60DayList = [System.Collections.Generic.List[System.Object]]::new()
 
         # CREATE PARAMETERS FOR EXCEL EXPORT
-        $Splat = @{
+        $excelParams = @{
             Path         = $ReportPath
             AutoSize     = $true
-            Freeze       = $true
-            SuppressOpen = $true
+            FreezeTopRow = $true
+            MoveToEnd    = $true
+            BoldTopRow   = $true
+            AutoFilter   = $true
         }
     }
 
     Process {
         # POPULATE ARRAY AND ADD DATA VALUES FOR STOP AND COST INFO
-        $InstanceList += Get-InstanceList -Region $Region -ProfileName $ProfileName
-        foreach ( $instance in $InstanceList ) { $instance.GetStopInfo() }
-        Get-CostInfo -Region $Region -InstanceList $InstanceList | Out-Null
+        foreach ( $i in (Get-InstanceList -Region $Region -ProfileName $ProfileName) ) { $instanceList.Add($i) }
+        foreach ( $instance in $instanceList ) { $instance.GetStopInfo() }
+        Get-CostInfo -Region $Region -InstanceList $instanceList | Out-Null
 
-        # CREATE ARRAY FOR STOPPED INSTANCES 90 DAYS OR MORE
-        $90DayList = @( $InstanceList | Where-Object State -eq 'stopped' |
-            Select-Object ProfileName, Id, Name, LastStart, LastStopped, DaysStopped, Stopper |
-            Sort-Object DaysStopped )
-
-        # CREATE ARRAY FOR RUNNING INSTANCES NOT RESERVED
-        $60DayList = @( $InstanceList | Where-Object State -eq 'running' |
-            Select-Object ProfileName, Name, Type, Reserved, LastStart, DaysRunning, OnDemandPrice, ReservedPrice, Savings |
-            Sort-Object LastStart )
+        foreach ( $i in $instanceList ) { if ( $i.State -eq 'stopped' ) { $90DayList.Add($i) } }
+        foreach ( $i in $instanceList ) { if ( $i.State -eq 'running' ) { $60DayList.Add($i) } }
 
         # CREATE ARRAY FOR UNATTACHED VOLUMES
         $AllVolumes = Get-AvailableEBS -ProfileName $ProfileName | Group-Object -Property Account | Select-Object Name, Count
 
         # IF EXISTS EXPORT 60 DAY LIST
-        if ( $60DayList.Count -ge 1 ) { $60DayList | Export-ExcelBook @Splat -SheetName '60-Day Report' }
+        if ( $60DayList.Count -ge 1 ) {
+            $props = @('ProfileName', 'Name', 'Type', 'Reserved', 'LastStart', 'DaysRunning', 'OnDemandPrice', 'ReservedPrice', 'Savings')
+            $60DayList | Select-Object -Property $props | Sort-Object LastStart | Export-Excel @excelParams -WorksheetName '60-Day Report'
+        }
 
         # IF EXISTS EXPORT 90 DAY LIST
-        if ( $90DayList.Count -gt 0 ) { $90DayList | Export-ExcelBook @Splat -SheetName '90-Day Report' }
+        if ( $90DayList.Count -gt 0 ) {
+            $props = @('ProfileName', 'Id', 'Name', 'LastStart', 'LastStopped', 'DaysStopped', 'Stopper')
+            $90DayList | Select-Object -Property $props | Sort-Object DaysStopped | Export-Excel @excelParams -WorksheetName '90-Day Report'
+        }
 
         # EXPORT VOLUMES LIST
-        if ( $AllVolumes ) { $AllVolumes | Export-ExcelBook @Splat -SheetName 'Unattached EBS' }
+        if ( $AllVolumes ) {
+            $AllVolumes | Export-Excel @excelParams -WorksheetName 'Unattached EBS'
+        }
     }
 
     End {
         # OPEN REPORT
-        Invoke-Item -Path $Splat.Path
+        Invoke-Item -Path $excelParams['Path']
     }
 }
