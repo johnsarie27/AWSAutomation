@@ -34,20 +34,23 @@ function Get-AWSPriceData {
     )
 
     # SET VARS
-    $URL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{0}/current/index{1}" -f $OfferCode, $Format
-    $DataFile = '{0}\{1}_Raw{2}' -f $env:TEMP, $OfferCode, $Format
+    $url = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{0}/current/index{1}" -f $OfferCode, $Format
+    $dataFile = '{0}\{1}_Raw{2}' -f $env:TEMP, $OfferCode, $Format
 
     # DOWNLOAD RAW DATA
-    $WC = New-Object System.Net.WebClient
-    $WC.DownloadFile($URL, $DataFile)
+    (New-Object System.Net.WebClient).DownloadFile($url, $dataFile)
 
-    # GET DATA AND STRIP OUT HEADER INFO
-    $TotalLines = (Get-Content -Path $DataFile | Measure-Object -Line).Lines
-    $RawData = Import-Csv $DataFile -Tail ($TotalLines-5)
+    # IMPORTING THE DATA BEEN A DIFFICULT TASK BECAUSE THE SHEER VOLUME. I'VE TRIED USING JSON WHICH DOESN'T
+    # SEEM TO WORK WELL IMPORTING OR WORKING THE OBJECT. THE BEST/FASTEST SOLUTION I'VE COME UP WITH AFTER
+    # HOURS OF TESTING IS CUTTING THE TOP 5 ROWS OFF THE ORIGINAL DOWNLOAD, WRITING THAT TO DISK, THEN
+    # IMPORTING THAT DATA FROM THE CSV. THIS STILL TAKES AGES BUT IS QUICKER THAN ANYTHING ELSE I'VE TRIED
+    $content = Get-Content -Path $dataFile | Select-Object -Skip 5
+    Set-Content -Value $content -Path $dataFile -Force
+    $data = Import-Csv -Path $dataFile
 
     # CULL DOWN TO RELEVANT DATA FOR ALL US REGIONS
-    $Output = '{0}\AWS\{1}_PriceData{2}' -f $env:ProgramData, $OfferCode, $Format
-    $RawData | Where-Object {
+    $output = '{0}\AWS\{1}_PriceData{2}' -f $env:ProgramData, $OfferCode, $Format
+    <# $data | Where-Object {
         (
             $_.Location -eq 'US East (N. Virginia)' -or `
             $_.Location -eq 'US East (Ohio)' -or `
@@ -68,8 +71,35 @@ function Get-AWSPriceData {
             ) -or `
             $_.TermType -eq 'OnDemand'
         )
-    } | Sort-Object -Property 'Instance Type' | Export-Csv $Output -NoTypeInformation
+    } | Sort-Object -Property 'Instance Type' | Export-Csv $output -NoTypeInformation #>
+
+    # NEW STUFF
+    $results = [System.Collections.Generic.List[System.Object]]::new()
+    $targetRegions = @('US East (N. Virginia)', 'US East (Ohio)', 'US West (N. California)', 'US West (Oregon)')
+    foreach ( $row in $data ) {
+        if (
+            $row.Location -in $targetRegions -and `
+            $row.'Operating System' -eq 'Windows' -and `
+            $row.Tenancy -eq 'Shared' -and `
+            $row.'Pre Installed S/W' -eq 'NA' -and `
+            $row.'License Model' -ne 'Bring your own license' -and `
+            (
+                (
+                    $row.OfferingClass -eq 'standard' -and `
+                        $row.PurchaseOption -eq 'All Upfront' -and `
+                        $row.Unit -eq 'Quantity' -and `
+                        $row.LeaseContractLength -eq '1yr'  #*** EDIT/REMOVE THIS VALUE TO GET MORE INFO ***
+                ) -or `
+                    $row.TermType -eq 'OnDemand'
+            )
+        ) {
+            $results.Add($row)
+        }
+    }
+
+    # EXPORT NEW CSV FILE
+    $results | Sort-Object -Property 'Instance Type' | Export-Csv -Path $output -NoTypeInformation
 
     # DELETE REMNANT ARTIFACTS
-    Remove-Item -Path $DataFile -Force
+    Remove-Item -Path $dataFile -Force
 }
