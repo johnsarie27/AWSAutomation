@@ -142,11 +142,10 @@ class EC2Instance {
             'us-west-1' = 'US West (N. California)'
             'us-west-2' = 'US West (Oregon)'
         }
-        $DataFile = "$env:ProgramData\AWS\AmazonEC2_PriceData.csv"
-        if ( -not ( Test-Path $DataFile ) ) { Get-AWSPriceData }
+        $dataFile = Get-AWSPriceData
 
-        $PriceInfo = Import-Csv -Path $DataFile | Where-Object Location -eq $RegionTable[$this.Region]
-        foreach ( $price in $PriceInfo ) {
+        $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $RegionTable[$this.Region]
+        foreach ( $price in $priceInfo ) {
             if ( ( $this.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'OnDemand' ) ) {
                 [double]$ODP = [math]::Round($price.PricePerUnit,3)
                 $this.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )

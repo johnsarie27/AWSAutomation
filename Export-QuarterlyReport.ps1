@@ -78,7 +78,7 @@ function Export-QuarterlyReport {
         # POPULATE ARRAY AND ADD DATA VALUES FOR STOP AND COST INFO
         foreach ( $i in (Get-InstanceList -Region $Region -ProfileName $ProfileName) ) { $instanceList.Add($i) }
         foreach ( $instance in $instanceList ) { $instance.GetStopInfo() }
-        Get-CostInfo -Region $Region -InstanceList $instanceList | Out-Null
+        Get-CostInfo -Region $Region -Ec2Instance $instanceList | Out-Null
 
         foreach ( $i in $instanceList ) { if ( $i.State -eq 'stopped' ) { $90DayList.Add($i) } }
         foreach ( $i in $instanceList ) { if ( $i.State -eq 'running' ) { $60DayList.Add($i) } }
