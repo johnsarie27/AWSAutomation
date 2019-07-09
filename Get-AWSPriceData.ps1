@@ -9,10 +9,12 @@ function Get-AWSPriceData {
         Offer code for price object resources. Only AmazonEC2 supported at this time
     .PARAMETER Format
         Output format of resulting file. Only CSV supported at this time
+    .PARAMETER Force
+        Overwrite existing data file if present
     .INPUTS
-        System.String.
+        None.
     .OUTPUTS
-        CSV file.
+        None.
     .EXAMPLE
         PS C:\> GetPriceInfo -Region us-west-2
         Get pricing info for EC2 resources in the us-west-2 region
@@ -30,10 +32,28 @@ function Get-AWSPriceData {
         [Parameter(HelpMessage = 'Output format')]
         [ValidateSet('.csv')]
         [Alias('Output')]
-        [string] $Format = '.csv'
+        [string] $Format = '.csv',
+
+        [Parameter(HelpMessage = 'Overwrite existing file')]
+        [switch] $Force
     )
 
     Begin {
+        $destFolder = Join-Path -Path $env:ProgramData -ChildPath 'AWS'
+        $destFile = Join-Path -Path $destFolder -ChildPath ('{0}_PriceData.csv' -f $OfferCode)
+
+        $dataStats = Get-Item -Path $destFile
+        if ( $dataStats.LastWriteTime -ge (Get-Date).AddMonths(-6) ) {
+            if ( $PSBoundParameters.ContainsKey('Force') ) {
+                Write-Warning 'Overwriting existing data file'
+                Remove-Item -Path $destFile -Force
+            }
+            else {
+                Write-Verbose 'Data file less than 6 months old'
+                Break
+            }
+        }
+        
         # SET VARS
         $url = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/{0}/current/index{1}" -f $OfferCode, $Format
         $dataFile = '{0}\{1}_Raw{2}' -f $env:TEMP, $OfferCode, $Format
@@ -52,29 +72,6 @@ function Get-AWSPriceData {
 
     Process {
         # CULL DOWN TO RELEVANT DATA FOR ALL US REGIONS
-        <# $data | Where-Object {
-        (
-            $_.Location -eq 'US East (N. Virginia)' -or `
-            $_.Location -eq 'US East (Ohio)' -or `
-            $_.Location -eq 'US West (N. California)' -or `
-            $_.Location -eq 'US West (Oregon)'
-        ) -and `
-        $_.'Operating System' -eq 'Windows' -and `
-        $_.Tenancy -eq 'Shared' -and `
-        $_.'Pre Installed S/W' -eq 'NA' -and `
-        $_.'License Model' -ne 'Bring your own license' -and `
-        #$_.PriceDescription -notcontains 'BYOL' -and `
-        (
-            (
-                $_.OfferingClass -eq 'standard' -and `
-                $_.PurchaseOption -eq 'All Upfront' -and `
-                $_.Unit -eq 'Quantity' -and `
-                $_.LeaseContractLength -eq '1yr'  #*** EDIT/REMOVE THIS VALUE TO GET MORE INFO ***
-            ) -or `
-            $_.TermType -eq 'OnDemand'
-        )
-    } | Sort-Object -Property 'Instance Type' | Export-Csv $output -NoTypeInformation #>
-
         $results = [System.Collections.Generic.List[System.Object]]::new()
         $targetRegions = @('US East (N. Virginia)', 'US East (Ohio)', 'US West (N. California)', 'US West (Oregon)')
         foreach ( $row in $data ) {
@@ -99,13 +96,10 @@ function Get-AWSPriceData {
         }
 
         # WRITE NEW FILE WITH PRICE DATA
-        $destFolder = Join-Path -Path $env:ProgramData -ChildPath 'AWS'
-        $destFile = Join-Path -Path $destFolder -ChildPath ('{0}_PriceData.csv' -f $OfferCode)
-
         if ( -not (Test-Path -Path $destFolder -PathType Container) ) {
-            New-Item -Path $destFolder -ItemType Directory
+            New-Item -Path $destFolder -ItemType Directory | Out-Null
         }
-    
+
         $results | Sort-Object -Property 'Instance Type' | Export-Csv -Path $destFile -NoTypeInformation
 
         # DELETE REMNANT ARTIFACTS
