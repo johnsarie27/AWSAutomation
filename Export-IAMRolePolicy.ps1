@@ -39,7 +39,7 @@ function Export-IAMRolePolicy {
     )
 
     Begin {
-        Import-Module -Name AWSPowerShell.NetCore, ImportExcel
+        Import-Module -Name ImportExcel
 
         $excelParams = @{
             AutoSize     = $true
