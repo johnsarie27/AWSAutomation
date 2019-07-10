@@ -1,4 +1,4 @@
-#Requires -Module ImportModule
+#Requires -Module ImportExcel
 
 function Export-IAMRolePolicy {
     <# =========================================================================
@@ -10,6 +10,8 @@ function Export-IAMRolePolicy {
         AWS Credential Profile name
     .PARAMETER Path
         Path to new report file
+    .PARAMETER Pattern
+        Regex pattern to match Role names
     .INPUTS
         System.String.
     .OUTPUTS
@@ -25,6 +27,10 @@ function Export-IAMRolePolicy {
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
+
+        [Parameter(HelpMessage = 'Regex pattern to match Role names')]
+        [ValidateNotNullOrEmpty()]
+        [string] $Pattern = '_Administrator|_Manager',
 
         [Parameter(HelpMessage = 'Path to new report file')]
         [ValidateScript( { Test-Path -Path ([System.IO.Path]::GetDirectoryName($_)) })]
@@ -54,8 +60,7 @@ function Export-IAMRolePolicy {
             $splat = @{ ProfileName = $pn }
 
             # GET ROLES
-            $pattern = '_Administrator|_Manager'
-            $roleName = Get-IAMRoleList @splat | Where-Object RoleName -Match $pattern | Select-Object -EXP RoleName
+            $roleName = Get-IAMRoleList @splat | Where-Object RoleName -Match $Pattern | Select-Object -EXP RoleName
 
             # THIS GETS ALL THE POLICIES FOR EACH ROLE AND CREATES A COLLECTION OF CUSTOM OBJECTS
             $policies = [System.Collections.Generic.List[System.Object]]::new()
