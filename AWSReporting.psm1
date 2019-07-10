@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-06-21
+# Updated:      2019-07-09
 # Created by:   Justin Johns
 # Filename:     AWSReporting.psm1
 # Link:         https://github.com/johnsarie27/AWSReporting
@@ -19,6 +19,7 @@
 . $PSScriptRoot\Revoke-StaleAccessKey.ps1
 . $PSScriptRoot\Disable-InactiveUserKey.ps1
 . $PSScriptRoot\Disable-InactiveUserProfile.ps1
+. $PSScriptRoot\Export-IAMRolePolicy.ps1
 
 # INVENTORY AND BUDGETARY FUNCTIONS
 . $PSScriptRoot\Find-InsecureS3BucketPolicy.ps1
