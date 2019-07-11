@@ -34,7 +34,7 @@
 . $PSScriptRoot\Get-AWSPriceData.ps1
 . $PSScriptRoot\Remove-LapsedAMI.ps1
 . $PSScriptRoot\Get-R53Record.ps1
-. $PSScriptRoot\Copy-RDSSnapshotToRegion.ps1
+. $PSScriptRoot\Copy-DBSnapshotToRegion.ps1
 
 # CREATION FUNCTIONS
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1

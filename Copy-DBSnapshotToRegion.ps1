@@ -1,4 +1,4 @@
-function Copy-RDSSnapshotToRegion {
+function Copy-DBSnapshotToRegion {
     <# =========================================================================
     .SYNOPSIS
         Copy RDS snapshot to another Region
@@ -17,7 +17,7 @@ function Copy-RDSSnapshotToRegion {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Copy-RDSSnapshotToRegion -ProfileName MyProfile
+        PS C:\> Copy-DBSnapshotToRegion -ProfileName MyProfile
         Explanation of what the example does
     .NOTES
         The "RDSDBCluster" cmdlets like "Get-RDSDBCluster" appear to be for other DBMS
@@ -56,12 +56,13 @@ function Copy-RDSSnapshotToRegion {
         $drSplat = @{ ProfileName = $ProfileName; Region = $DestinationRegion }
 
         # GET DB INSTANCE
-        if ( $PSBoundParameters.ContainsKey('DBInstance') ) { $rdsDb = $DBInstance }
-        else { $rdsDb = Get-RDSDBInstance @srSplat }
+        if ( -not $PSBoundParameters.ContainsKey('DBInstance') ) {
+            $DBInstance = Get-RDSDBInstance @srSplat
+        }
     }
 
     Process {
-        foreach ( $db in $rdsDb ) {
+        foreach ( $db in $DBInstance ) {
             # GET SNAPSHOTS
             $snapParams = @{
                 DBInstanceIdentifier = $db.DBInstanceIdentifier
