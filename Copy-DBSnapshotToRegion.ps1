@@ -15,10 +15,10 @@ function Copy-DBSnapshotToRegion {
     .INPUTS
         Amazon.RDS.Model.DBInstance.
     .OUTPUTS
-        System.Object.
+        System.String.
     .EXAMPLE
         PS C:\> Copy-DBSnapshotToRegion -ProfileName MyProfile
-        Explanation of what the example does
+        Copies all RDS DB Instances in MyProfile account from us-east-1 to us-west-1
     .NOTES
         The "RDSDBCluster" cmdlets like "Get-RDSDBCluster" appear to be for other DBMS
         Permissions added:
@@ -89,7 +89,9 @@ function Copy-DBSnapshotToRegion {
                     ErrorAction                = 'Stop'
                 }
                 try {
-                    Copy-RDSDBSnapshot @copyParams
+                    # I'M SUPPRESSING THE OUTPUT FROM THE NATIVE AWS CMDLET USING "| Out-Null" AS ITS NOT
+                    # CURRENTLY NEEDED. THE OUTPUT ON THE NEXT LINE IS SUFFICIENT FOR THE BACKUP-DR SCENARIO
+                    Copy-RDSDBSnapshot @copyParams | Out-Null
                     Write-Output ('Copied snapshot [{0}] to Region [{1}]' -f $snapshot.DBSnapshotIdentifier, $copyParams.Region)
                 }
                 catch {
