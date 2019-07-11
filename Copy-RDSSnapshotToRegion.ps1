@@ -4,6 +4,8 @@ function Copy-RDSSnapshotToRegion {
         Copy RDS snapshot to another Region
     .DESCRIPTION
         Copy the latest RDS snapshot to another Region
+    .PARAMETER DBInstance
+        AWS DBInstance object
     .PARAMETER ProfileName
         AWS Credential Profile Name
     .PARAMETER SourceRegion
@@ -11,7 +13,7 @@ function Copy-RDSSnapshotToRegion {
     .PARAMETER DestinationRegion
         Destination Region to copy snapshot
     .INPUTS
-        None.
+        Amazon.RDS.Model.DBInstance.
     .OUTPUTS
         System.Object.
     .EXAMPLE
@@ -26,19 +28,20 @@ function Copy-RDSSnapshotToRegion {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
+        [Parameter(ValueFromPipeline, HelpMessage = 'RDS DB Instance to copy')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.RDS.Model.DBInstance[]] $DBInstance,
+
         [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [Alias('SR')]
-        [string[]] $ProfileName,
+        [string] $ProfileName,
 
         [Parameter(HelpMessage = 'Region of existing RDS DB snapshot')]
         [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
-        [Alias('SR')]
         [string] $SourceRegion = 'us-east-1',
 
         [Parameter(HelpMessage = 'Destination Region to copy snapshot')]
         [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
-        [Alias('DR')]
         [string] $DestinationRegion = 'us-west-1'
     )
 
@@ -47,23 +50,21 @@ function Copy-RDSSnapshotToRegion {
         if ( !$SourceRegion -or !$DestinationRegion ) {
             Throw 'Source or Destination Region not found.'
         }
+
+        # SET PARAMETERS FOR AWS CALLS BELOW
+        $srSplat = @{ ProfileName = $ProfileName; Region = $SourceRegion }
+        $drSplat = @{ ProfileName = $ProfileName; Region = $DestinationRegion }
+
+        # GET DB INSTANCE
+        if ( $PSBoundParameters.ContainsKey('DBInstance') ) { $rdsDb = $DBInstance }
+        else { $rdsDb = Get-RDSDBInstance @srSplat }
     }
 
     Process {
-        foreach ( $p in $ProfileName ) {
-            # SET PARAMETERS FOR AWS CALLS BELOW
-            $srSplat = @{ ProfileName = 'esripsfedramp'; Region = $SourceRegion }
-            $drSplat = @{ ProfileName = 'esripsfedramp'; Region = $DestinationRegion }
-
-            # IMPORT REQUIRED MODULES
-            Import-Module -Name AWSPowerShell.NetCore
-
-            # GET DB INSTANCE
-            $rdsDb = Get-RDSDBInstance @srSplat
-
+        foreach ( $db in $rdsDb ) {
             # GET SNAPSHOTS
             $snapParams = @{
-                DBInstanceIdentifier = $rdsDb.DBInstanceIdentifier
+                DBInstanceIdentifier = $db.DBInstanceIdentifier
                 SnapshotType         = 'automated' #'manual', 'awsbackup'
             }
             $snapshot = Get-RDSDBSnapshot @snapParams @srSplat | Select-Object -Last 1
@@ -91,12 +92,12 @@ function Copy-RDSSnapshotToRegion {
                     Write-Output ('Copied snapshot [{0}] to Region [{1}]' -f $snapshot.DBSnapshotIdentifier, $copyParams.Region)
                 }
                 catch {
-                    Write-Output ('Failed to copy snapshot [{0}] to Region [{1}]' -f $snapshot.DBSnapshotIdentifier, $copyParams.Region)
-                    Write-Output ('Error message: {0}' -f $_.Exception.Message)
+                    $vars = @($snapshot.DBSnapshotIdentifier, $copyParams.Region, $_.Exception.Message)
+                    Write-Error ('Failed to copy snapshot [{0}] to Region [{1}]. Error message: {2}' -f $vars)
                 }
             }
             else {
-                Write-Error ('No recent snapshots found for {0}' -f $snapshot.DBInstanceIdentifier)
+                Write-Warning ('No recent snapshots found for {0}' -f $snapshot.DBInstanceIdentifier)
             }
         }
     }
