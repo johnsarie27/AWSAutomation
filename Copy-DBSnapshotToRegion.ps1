@@ -21,10 +21,6 @@ function Copy-DBSnapshotToRegion {
         Copies all RDS DB Instances in MyProfile account from us-east-1 to us-west-1
     .NOTES
         The "RDSDBCluster" cmdlets like "Get-RDSDBCluster" appear to be for other DBMS
-        Permissions added:
-        - AmazonRDSFullAccess
-        - policyKMSFullAccess
-        # NEED SOME CODE TO CLEAN UP "OLD" BACKUPS
     ========================================================================= #>
     [CmdletBinding()]
     Param(
