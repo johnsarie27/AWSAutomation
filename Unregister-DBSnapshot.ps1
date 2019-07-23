@@ -1,24 +1,26 @@
 function Unregister-DBSnapshot {
     <# =========================================================================
     .SYNOPSIS
-        Copy RDS snapshot to another Region
+        Delete RDS snapshot
     .DESCRIPTION
-        Copy the latest RDS snapshot to another Region
+        Delete RDS snapshot(s) older than provided age
     .PARAMETER DBInstance
         AWS DBInstance object
     .PARAMETER ProfileName
         AWS Credential Profile Name
     .PARAMETER Region
         Region of existing RDS DB snapshot
+    .PARAMETER Age
+        Age (in days) past which the snapshot(s) should be deleted
     .INPUTS
         Amazon.RDS.Model.DBInstance.
     .OUTPUTS
-        System.String.
+        System.Object.
     .EXAMPLE
         PS C:\> Unregister-DBSnapshot -ProfileName MyProfile
-        Copies all RDS DB Instances in MyProfile account from us-east-1 to us-west-1
+        Deletes all RDS DB Snapshots in MyProfile account from us-east-1
     .NOTES
-        The "RDSDBCluster" cmdlets like "Get-RDSDBCluster" appear to be for other DBMS
+        General notes
     ========================================================================= #>
     [CmdletBinding()]
     Param(
@@ -34,6 +36,7 @@ function Unregister-DBSnapshot {
         [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
         [string] $Region = 'us-west-1',
 
+        [Parameter(HelpMessage = 'Age (in days) past which the snapshot will be deleted')]
         [int] $Age = 90
     )
 
@@ -42,7 +45,10 @@ function Unregister-DBSnapshot {
         if ( !$Region ) { Throw 'Region not found.' }
 
         # SET PARAMETERS FOR AWS CALLS BELOW
-        $splat = @{ ProfileName = $ProfileName; Region = $SourceRegion }
+        $splat = @{
+            ProfileName = $ProfileName
+            Region      = $Region
+        }
         
         # GET DB INSTANCE
         if ( -not $PSBoundParameters.ContainsKey('DBInstance') ) {
@@ -53,19 +59,26 @@ function Unregister-DBSnapshot {
     Process {
         foreach ( $db in $DBInstance ) {
             # GET SNAPSHOTS
-            $snapParams = @{
+            $snapshotParams = @{
                 DBInstanceIdentifier = $db.DBInstanceIdentifier
-                SnapshotType         = 'automated' #'manual', 'awsbackup'
+                SnapshotType         = 'manual' # 'automated' , 'awsbackup'
             }
-            $snapshot = Get-RDSDBSnapshot @snapParams @splat
+            
+            $snapshot = Get-RDSDBSnapshot @splat @snapshotParams
 
             # REMOVE "OLD" SNAPSHOTS
             foreach ( $ss in $snapshot ) {
+
                 if ( $ss.SnapshotCreateTime -lt (Get-Date).AddDays(-$Age) ) {
-                    Remove-RDSDBSnapshot -DBSnapshotIdentifier $ss.DBSnapshotIdentifier
+                    $removeParams = @{
+                        DBSnapshotIdentifier = $ss.DBSnapshotIdentifier
+                        Force                = $true
+                    }
+
+                    Remove-RDSDBSnapshot @splat @removeParams
+                    #$ss | Select-Object -Property DBSnapshotIdentifier, SnapshotCreateTime
                 }
             }
-
         }
     }
 }
