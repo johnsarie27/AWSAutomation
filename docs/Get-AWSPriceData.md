@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-AWSPriceData
+# Export-AWSPriceData
 
 ## SYNOPSIS
 Get price data for EC2 resources
@@ -13,7 +13,7 @@ Get price data for EC2 resources
 ## SYNTAX
 
 ```
-Get-AWSPriceData [[-OfferCode] <String>] [[-Format] <String>] [<CommonParameters>]
+Export-AWSPriceData [[-OfferCode] <String>] [[-Format] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION

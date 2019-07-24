@@ -29,7 +29,7 @@ function Get-CostInfo {
     )
 
     # GET AWS PRICE DATA
-    $dataFile = Get-AWSPriceData
+    $dataFile = Export-AWSPriceData
     
     $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $RegionTable[$Region]
     foreach ( $instance in $Ec2Instance ) {

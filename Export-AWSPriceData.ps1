@@ -1,4 +1,4 @@
-function Get-AWSPriceData {
+function Export-AWSPriceData {
     <# =========================================================================
     .SYNOPSIS
         Get price data for EC2 resources
@@ -108,6 +108,6 @@ function Get-AWSPriceData {
         $destFile
 
         # DELETE REMNANT ARTIFACTS
-        if ( Test-Path -Path $dataFile ) { Remove-Item -Path $dataFile -Force }
+        if ( $dataFile -and (Test-Path -Path $dataFile) ) { Remove-Item -Path $dataFile -Force }
     }
 }

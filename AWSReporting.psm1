@@ -31,7 +31,7 @@
 . $PSScriptRoot\Get-AvailableEBS.ps1
 . $PSScriptRoot\Export-QuarterlyReport.ps1
 . $PSScriptRoot\Get-InstanceList.ps1
-. $PSScriptRoot\Get-AWSPriceData.ps1
+. $PSScriptRoot\Export-AWSPriceData.ps1
 . $PSScriptRoot\Remove-LapsedAMI.ps1
 . $PSScriptRoot\Get-R53Record.ps1
 . $PSScriptRoot\Copy-DBSnapshotToRegion.ps1
@@ -145,7 +145,7 @@ class EC2Instance {
             'us-west-1' = 'US West (N. California)'
             'us-west-2' = 'US West (Oregon)'
         }
-        $dataFile = Get-AWSPriceData
+        $dataFile = Export-AWSPriceData
 
         $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $RegionTable[$this.Region]
         foreach ( $price in $priceInfo ) {
