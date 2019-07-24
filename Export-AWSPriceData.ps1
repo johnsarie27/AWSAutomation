@@ -42,7 +42,7 @@ function Export-AWSPriceData {
         $destFolder = Join-Path -Path $env:ProgramData -ChildPath 'AWS'
         $destFile = Join-Path -Path $destFolder -ChildPath ('{0}_PriceData.csv' -f $OfferCode)
 
-        $dataStats = Get-Item -Path $destFile
+        $dataStats = Get-Item -Path $destFile -ErrorAction SilentlyContinue
         if ( $dataStats.LastWriteTime -ge (Get-Date).AddMonths(-6) -and !$PSBoundParameters.ContainsKey('Force') ) {
             Write-Verbose 'Data file less than 6 months old. Use "Force" parameter to overwrite.'
         }
@@ -66,7 +66,7 @@ function Export-AWSPriceData {
             # DOWNLOAD RAW DATA
             (New-Object System.Net.WebClient).DownloadFile($url, $dataFile)
 
-            # IMPORTING THE DATA BEEN A DIFFICULT TASK BECAUSE THE SHEER VOLUME. I'VE TRIED USING JSON WHICH DOESN'T
+            # IMPORTING THE DATA HAS BEEN A DIFFICULT TASK BECAUSE THE SHEER VOLUME. I'VE TRIED USING JSON WHICH DOESN'T
             # SEEM TO WORK WELL IMPORTING OR WORKING THE OBJECT. THE BEST/FASTEST SOLUTION I'VE COME UP WITH AFTER
             # HOURS OF TESTING IS CUTTING THE TOP 5 ROWS OFF THE ORIGINAL DOWNLOAD, WRITING THAT TO DISK, THEN
             # IMPORTING THAT DATA FROM THE CSV. THIS STILL TAKES AGES BUT IS QUICKER THAN ANYTHING ELSE I'VE TRIED

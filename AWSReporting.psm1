@@ -41,7 +41,7 @@
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1
 . $PSScriptRoot\Deploy-Instance.ps1
 
-# TO DEPRICATE SOMEDAY
+# INTERNAL FUNCTIONS
 . $PSScriptRoot\Get-CostInfo.ps1
 
 # THIS IMPORT CAUSES PROBLEMS WITH USING Get-Command -Module AWSReporting
@@ -149,10 +149,11 @@ class EC2Instance {
 
         $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $RegionTable[$this.Region]
         foreach ( $price in $priceInfo ) {
-            if ( ( $this.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'OnDemand' ) ) {
+            if ( $price.'Instance Type' -eq $this.Type -and $price.TermType -eq 'OnDemand' -and $price.CapacityStatus -eq 'Used' ) {
                 [double]$ODP = [math]::Round($price.PricePerUnit,3)
                 $this.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
             }
+
             if ( ( $this.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
                 $this.ReservedPrice = $price.PricePerUnit
             }

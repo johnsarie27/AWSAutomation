@@ -11,7 +11,7 @@ function Get-CostInfo {
     .INPUTS
         None.
     .OUTPUTS
-        EC2Instance[]
+        EC2Instance
     .EXAMPLE
         PS C:\> <example usage>
         Explanation of what the example does
@@ -28,22 +28,35 @@ function Get-CostInfo {
         [string] $Region
     )
 
-    # GET AWS PRICE DATA
-    $dataFile = Export-AWSPriceData
-    
-    $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $RegionTable[$Region]
-    foreach ( $instance in $Ec2Instance ) {
-        foreach ( $price in $priceInfo ) {
-            if ( ( $instance.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'OnDemand' ) ) {
-                [double]$ODP = [math]::Round($price.PricePerUnit,3)
-                $instance.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
-            }
-            if ( ( $instance.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
-                $instance.ReservedPrice = $price.PricePerUnit
-            }
+    Begin {
+        # GET AWS PRICE DATA
+        $dataFile = Export-AWSPriceData
+
+        $regionTable = @{
+            'us-east-1' = 'US East (N. Virginia)'
+            'us-east-2' = 'US East (Ohio)'
+            'us-west-1' = 'US West (N. California)'
+            'us-west-2' = 'US West (Oregon)'
         }
-        $instance.Savings = ( 1 - ( $instance.ReservedPrice / $instance.OnDemandPrice ) ).ToString("P")
+
+        $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $regionTable[$Region]
     }
 
-    $Ec2Instance
+    Process {
+        foreach ( $instance in $Ec2Instance ) {
+            foreach ( $price in $priceInfo ) {
+                if ( $price.'Instance Type' -eq $instance.Type -and $price.TermType -eq 'OnDemand' -and $price.CapacityStatus -eq 'Used' ) {
+                    [double]$ODP = [math]::Round($price.PricePerUnit, 3)
+                    $instance.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
+                }
+                
+                if ( ( $instance.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
+                    $instance.ReservedPrice = $price.PricePerUnit
+                }
+            }
+            $instance.Savings = ( 1 - ( $instance.ReservedPrice / $instance.OnDemandPrice ) ).ToString("P")
+        }
+
+        $Ec2Instance
+    }
 }
