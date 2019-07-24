@@ -66,17 +66,34 @@ function Export-AWSPriceData {
             # DOWNLOAD RAW DATA
             (New-Object System.Net.WebClient).DownloadFile($url, $dataFile)
 
-            # IMPORTING THE DATA HAS BEEN A DIFFICULT TASK BECAUSE THE SHEER VOLUME. I'VE TRIED USING JSON WHICH DOESN'T
-            # SEEM TO WORK WELL IMPORTING OR WORKING THE OBJECT. THE BEST/FASTEST SOLUTION I'VE COME UP WITH AFTER
-            # HOURS OF TESTING IS CUTTING THE TOP 5 ROWS OFF THE ORIGINAL DOWNLOAD, WRITING THAT TO DISK, THEN
-            # IMPORTING THAT DATA FROM THE CSV. THIS STILL TAKES AGES BUT IS QUICKER THAN ANYTHING ELSE I'VE TRIED
+            # GET THE RAW DATA
             $content = Get-Content -Path $dataFile | Select-Object -Skip 5
-            Set-Content -Value $content -Path $dataFile -Force
+            
+            # OVERWRITE THE FILE WITH ONLY THE CSV HEADER
+            Set-Content -Path $dataFile -Value $content[0] -Force
+            Write-Verbose -Message ('Total rows in raw data: {0}' -f $content.Count)
+            
+            # GET THE DATA THAT MATCHES A FEW DESIRED ATTRIBUTES -- THIS IS TO SIGNIFICANTLY REDUCE THE AMOUNT
+            # OF DATA THAT IS CONVERTED INTO POWERSHELL OBJECTS WHICH IS A VERY EXPENSIVE TASK IN TERMS OF
+            # MEMORY CONSUMPTION
+            $matchedContent = $content -match '^.+US\s(East|West).+Shared.+Windows.+$'
+            Write-Verbose -Message ('Rows of data matching our Regex filter: {0}' -f $matchedContent.Count)
+            
+            # ADD THE MATCHED DATA TO THE FILE
+            Add-Content -Path $dataFile -Value $matchedContent
+
+            # RELEASE THE VARIABLES AND COLLECT GARBAGE -- IN TESTING THIS PROCESS RELEASED OVER 3GB OF RAM
+            Remove-Variable -Name 'content', 'matchedContent'
+            [System.GC]::Collect()
+            
+            # IMPORT THE DATA -- THIS TAKES SIGNIFICANTLY LESS TIME NOW THAT WE'VE REMOVE THE BULK OF THE
+            # DATA USING THE REGEX
             $data = Import-Csv -Path $dataFile
-    
-            # CULL DOWN TO RELEVANT DATA FOR ALL U.S. REGIONS
+
             $results = [System.Collections.Generic.List[System.Object]]::new()
             $regions = @('US East (N. Virginia)', 'US East (Ohio)', 'US West (N. California)', 'US West (Oregon)')
+            
+            # CULL DOWN TO RELEVANT DATA FOR ALL U.S. REGIONS
             foreach ( $row in $data ) {
                 if (
                     $row.Location -in $regions -and `
