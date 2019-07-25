@@ -50,7 +50,7 @@ function Deploy-Instance {
         [string] $AmiId = 'ami-e80e2993',
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'New EC2 instance name tag')]
-        [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL)\d{2}$')]
+        [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL|QRM)\d{2}$')]
         [Alias('N')]
         [string[]] $Name,
 
@@ -65,7 +65,7 @@ function Deploy-Instance {
         [string[]] $SecurityGroupId,
 
         [Parameter(HelpMessage = 'EC2 instance type')]
-        [ValidateSet('m4.xlarge', 'm4.2xlarge')]
+        [ValidateSet('t2.small', 't2.medium', 'm4.large', 'm4.xlarge', 'm4.2xlarge')]
         [Alias('T')]
         [string] $Type = 'm4.xlarge',
 
