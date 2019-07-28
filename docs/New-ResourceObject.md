@@ -1,6 +1,6 @@
 ---
-external help file: AWSReporting-help.xml
-Module Name: AWSReporting
+external help file: AWSAutomation-help.xml
+Module Name: AWSAutomation
 online version:
 schema: 2.0.0
 ---

@@ -1,3 +1,3 @@
-# AWSReporting
+# AWSAutomation
 
 A PowerShell module for AWS reporting tools
