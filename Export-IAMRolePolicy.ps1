@@ -47,6 +47,7 @@ function Export-IAMRolePolicy {
             MoveToEnd    = $true
             BoldTopRow   = $true
             AutoFilter   = $true
+            Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
         }
 
         if ( !$PSBoundParameters.ContainsKey('Path') ) {
