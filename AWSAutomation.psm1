@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-07-23
+# Updated:      2019-08-15
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
@@ -40,6 +40,7 @@
 # CREATION FUNCTIONS
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1
 . $PSScriptRoot\Deploy-Instance.ps1
+. $PSScriptRoot\Find-NextSubnet.ps1
 
 # INTERNAL FUNCTIONS
 . $PSScriptRoot\Get-CostInfo.ps1
