@@ -29,7 +29,7 @@
 . $PSScriptRoot\Get-ELB.ps1
 . $PSScriptRoot\Get-EC2.ps1
 . $PSScriptRoot\Get-AvailableEBS.ps1
-. $PSScriptRoot\Export-QuarterlyReport.ps1
+. $PSScriptRoot\Export-EC2UsageReport.ps1
 . $PSScriptRoot\Get-InstanceList.ps1
 . $PSScriptRoot\Export-AWSPriceData.ps1
 . $PSScriptRoot\Remove-LapsedAMI.ps1

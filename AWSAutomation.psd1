@@ -69,7 +69,7 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Edit-AWSProfile', 'Get-IAMReport', 'Revoke-StaleAccessKey', 'Disable-InactiveUserKey', 'Disable-InactiveUserProfile', 'Find-InsecureS3BucketPolicy', 'Find-PublicS3Objects', 'Get-SecurityGroupInfo', 'Get-NetworkInfo', 'Get-ELB', 'Get-EC2', 'Get-AvailableEBS', 'Export-QuarterlyReport', 'Get-InstanceList', 'Export-AWSPriceData', 'Remove-LapsedAMI', 'Get-R53Record', 'New-CWRecoveryAlarm', 'Deploy-Instance', 'Export-IAMRolePolicy', 'Copy-DBSnapshotToRegion', 'Unregister-DBSnapshot', 'Find-NextSubnet')
+FunctionsToExport = @('Edit-AWSProfile', 'Get-IAMReport', 'Revoke-StaleAccessKey', 'Disable-InactiveUserKey', 'Disable-InactiveUserProfile', 'Find-InsecureS3BucketPolicy', 'Find-PublicS3Objects', 'Get-SecurityGroupInfo', 'Get-NetworkInfo', 'Get-ELB', 'Get-EC2', 'Get-AvailableEBS', 'Export-EC2UsageReport', 'Get-InstanceList', 'Export-AWSPriceData', 'Remove-LapsedAMI', 'Get-R53Record', 'New-CWRecoveryAlarm', 'Deploy-Instance', 'Export-IAMRolePolicy', 'Copy-DBSnapshotToRegion', 'Unregister-DBSnapshot', 'Find-NextSubnet')
 # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject', 
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

@@ -1,6 +1,6 @@
 #Requires -Module ImportExcel
 
-function Export-QuarterlyReport {
+function Export-EC2UsageReport {
     <# =========================================================================
     .SYNOPSIS
         Generate reports for instances offline and running without reservation
@@ -23,7 +23,7 @@ function Export-QuarterlyReport {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> Export-QuarterlyReport -Region us-west-1 -ProfileName MyAccount
+        PS C:\> Export-EC2UsageReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
         region
     ========================================================================= #>
