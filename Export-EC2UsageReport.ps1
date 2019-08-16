@@ -41,7 +41,10 @@ function Export-EC2UsageReport {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateSet('us-east-1','us-east-2','us-west-1','us-west-2')]
-        [string] $Region = 'us-east-1'
+        [string] $Region = 'us-east-1',
+
+        [Parameter(HelpMessage = 'Return path to report file')]
+        [switch] $PassThru
     )
 
     Begin {
@@ -49,7 +52,7 @@ function Export-EC2UsageReport {
         Import-Module -Name ImportExcel
 
         # SET OUTPUT REPORT PATH
-        $reportName = 'AWS-QuarterlyReport'
+        $reportName = 'EC2UsageReport'
         $date = Get-Date -Format "yyyy-MM"
         if ( $PSBoundParameters.ContainsKey('DestinationPath') ) {
             $ReportPath = Join-Path -Path $DestinationPath -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
@@ -106,7 +109,9 @@ function Export-EC2UsageReport {
     }
 
     End {
-        # OPEN REPORT
-        Invoke-Item -Path $excelParams['Path']
+        # RETURN REPORT PATH
+        if ( $PSBoundParameters.ContainsKey('PassThru') ) {
+            Write-Output $ReportPath
+        }
     }
 }
