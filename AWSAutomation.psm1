@@ -41,7 +41,7 @@
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1
 . $PSScriptRoot\Deploy-Instance.ps1
 . $PSScriptRoot\Find-NextSubnet.ps1
-. $PSScriptRoot\Deploy-CFStack.ps1
+. $PSScriptRoot\ConvertTo-CFStackParams.ps1
 
 # INTERNAL FUNCTIONS
 . $PSScriptRoot\Get-CostInfo.ps1
