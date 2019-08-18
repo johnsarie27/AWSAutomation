@@ -1,3 +1,5 @@
+#Requires -Module AWSPowerShell.NetCore
+
 function ConvertTo-CFStackParams {
     <# =========================================================================
     .SYNOPSIS
@@ -23,15 +25,22 @@ function ConvertTo-CFStackParams {
     )
 
     Process {
-        # CREATE NEW PARAMETER OBJECTS FROM PARAMETER NAMES AND VALUES
-        $paramList = [System.Collections.Generic.List[Amazon.CloudFormation.Model.Parameter]]::new()
+        #$paramList = [System.Collections.Generic.List[Amazon.CloudFormation.Model.Parameter]]::new()
+        
+        # LOOP THROUGH EACH KEY-VALUE PAIR IN THE HASH TABLE
         foreach ( $p in $Parameters.Keys ) {
+            # CREATE NEW PARAMETER OBJECT
             $new = New-Object -TypeName Amazon.CloudFormation.Model.Parameter
+
+            # SET THE KEY TO THE HASH KEY AND VALUE TO THE HASH VALUE
             $new.ParameterKey = $p ; $new.ParameterValue = $Parameters[$p]
-            $paramList.Add($new)
+            
+            # RETURN THE OBJECT
+            $new
+
+            #$paramList.Add($new)
         }
 
-        # RETURN PARAMETER OBJECTS
-        $paramList
+        #$paramList
     }
 }
