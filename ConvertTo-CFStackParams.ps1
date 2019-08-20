@@ -13,7 +13,7 @@ function ConvertTo-CFStackParams {
     .OUTPUTS
         Amazon.CloudFormation.Model.Parameter[].
     .EXAMPLE
-        PS C:\> ConvertTo-CFStackParams -Parameters @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
+        PS C:\> ConvertTo-CFStackParams -Parameter @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
         Output new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
     .NOTES
         General notes
@@ -32,7 +32,7 @@ function ConvertTo-CFStackParams {
 
             # SET THE KEY TO THE HASH KEY AND VALUE TO THE HASH VALUE
             $new.ParameterKey = $p ; $new.ParameterValue = $Parameter[$p]
-            
+
             # RETURN THE OBJECT
             $new
         }
