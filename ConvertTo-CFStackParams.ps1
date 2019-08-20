@@ -6,7 +6,7 @@ function ConvertTo-CFStackParams {
         Deploy CloudFomration Stack
     .DESCRIPTION
         Deploy CloudFomration Stack
-    .PARAMETER Parameters
+    .PARAMETER Parameter
         Hashtable with CloudFormation Stack Parameters
     .INPUTS
         None.
@@ -20,20 +20,20 @@ function ConvertTo-CFStackParams {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Hashtable with CloudFormation Stack Parameters')]
-        [hashtable] $Parameters
+        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Hashtable with CloudFormation Stack Parameter(s)')]
+        [hashtable] $Parameter
     )
 
     Process {
         #$paramList = [System.Collections.Generic.List[Amazon.CloudFormation.Model.Parameter]]::new()
         
         # LOOP THROUGH EACH KEY-VALUE PAIR IN THE HASH TABLE
-        foreach ( $p in $Parameters.Keys ) {
+        foreach ( $p in $Parameter.Keys ) {
             # CREATE NEW PARAMETER OBJECT
             $new = New-Object -TypeName Amazon.CloudFormation.Model.Parameter
 
             # SET THE KEY TO THE HASH KEY AND VALUE TO THE HASH VALUE
-            $new.ParameterKey = $p ; $new.ParameterValue = $Parameters[$p]
+            $new.ParameterKey = $p ; $new.ParameterValue = $Parameter[$p]
             
             # RETURN THE OBJECT
             $new
