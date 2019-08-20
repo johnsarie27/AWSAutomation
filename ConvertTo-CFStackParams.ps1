@@ -3,18 +3,18 @@
 function ConvertTo-CFStackParams {
     <# =========================================================================
     .SYNOPSIS
-        Deploy CloudFomration Stack
+        Convert hashtable to CloudFormation Parameter object
     .DESCRIPTION
-        Deploy CloudFomration Stack
+        Convert hashtable to CloudFormation Parameter object
     .PARAMETER Parameter
-        Hashtable with CloudFormation Stack Parameters
+        Hashtable with CloudFormation Stack Parameter(s)
     .INPUTS
         None.
     .OUTPUTS
         Amazon.CloudFormation.Model.Parameter[].
     .EXAMPLE
         PS C:\> ConvertTo-CFStackParams -Parameters @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
-        Creates and returns new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
+        Output new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
     .NOTES
         General notes
     ========================================================================= #>
@@ -25,8 +25,6 @@ function ConvertTo-CFStackParams {
     )
 
     Process {
-        #$paramList = [System.Collections.Generic.List[Amazon.CloudFormation.Model.Parameter]]::new()
-        
         # LOOP THROUGH EACH KEY-VALUE PAIR IN THE HASH TABLE
         foreach ( $p in $Parameter.Keys ) {
             # CREATE NEW PARAMETER OBJECT
@@ -37,10 +35,6 @@ function ConvertTo-CFStackParams {
             
             # RETURN THE OBJECT
             $new
-
-            #$paramList.Add($new)
         }
-
-        #$paramList
     }
 }
