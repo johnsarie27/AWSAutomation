@@ -1,6 +1,6 @@
 #Requires -Module AWSPowerShell.NetCore
 
-function ConvertTo-CFStackParams {
+function ConvertTo-CFStackParam {
     <# =========================================================================
     .SYNOPSIS
         Convert hashtable to CloudFormation Parameter object
@@ -13,7 +13,7 @@ function ConvertTo-CFStackParams {
     .OUTPUTS
         Amazon.CloudFormation.Model.Parameter[].
     .EXAMPLE
-        PS C:\> ConvertTo-CFStackParams -Parameter @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
+        PS C:\> ConvertTo-CFStackParam -Parameter @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
         Output new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
     .NOTES
         General notes
