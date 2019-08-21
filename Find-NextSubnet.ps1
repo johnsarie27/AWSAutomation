@@ -41,7 +41,7 @@ function Find-NextSubnet {
     }
 
     Process {
-        foreach ( $p in $Profilename ) {
+        foreach ( $p in $ProfileName ) {
             foreach ( $vpc in (Get-EC2Vpc -ProfileName $p -Region $Region) ) {
                 $vpcs.Add($vpc)
             }
