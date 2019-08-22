@@ -31,7 +31,8 @@ function ConvertTo-CFStackParam {
             $new = New-Object -TypeName Amazon.CloudFormation.Model.Parameter
 
             # SET THE KEY TO THE HASH KEY AND VALUE TO THE HASH VALUE
-            $new.ParameterKey = $p ; $new.ParameterValue = $Parameter[$p]
+            $new.ParameterKey = $p
+            $new.ParameterValue = $Parameter[$p]
 
             # RETURN THE OBJECT
             $new
