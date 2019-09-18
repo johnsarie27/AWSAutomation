@@ -1,5 +1,3 @@
-#Requires -Module AWSPowerShell.NetCore
-
 function ConvertTo-CFStackParam {
     <# =========================================================================
     .SYNOPSIS
