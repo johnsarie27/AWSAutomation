@@ -49,7 +49,8 @@ function Get-InstanceList {
             # GET NAME TAG AND ENVIRONMENT
             $nameTag = ( $ec2.Tags | Where-Object Key -ceq Name ).Value
             try {
-                if ( $nameTag.Substring(3, 3) -match '^(PRD|STG)$' ) { $envName = $nameTag.Substring(3, 3) }
+                if ( $nameTag.Substring(3, 3) -match '^PRD$' ) { $envName = 'Production' }
+                elseif ( $nameTag.Substring(3, 3) -match '^STG$' ) { $envName = 'Staging' }
             }
             catch {
                 $envName = 'n/a'
