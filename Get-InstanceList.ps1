@@ -51,6 +51,7 @@ function Get-InstanceList {
             try {
                 if ( $nameTag.Substring(3, 3) -match '^PRD$' ) { $envName = 'Production' }
                 elseif ( $nameTag.Substring(3, 3) -match '^STG$' ) { $envName = 'Staging' }
+                else { $envName = 'n/a' }
             }
             catch {
                 $envName = 'n/a'
