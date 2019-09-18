@@ -92,13 +92,13 @@ function Export-EC2UsageReport {
 
         # IF EXISTS EXPORT 60 DAY LIST
         if ( $60DayList.Count -ge 1 ) {
-            $props = @('ProfileName', 'Name', 'Type', 'Reserved', 'LastStart', 'DaysRunning', 'OnDemandPrice', 'ReservedPrice', 'Savings')
+            $props = @('ProfileName', 'Environment', 'Name', 'Type', 'Reserved', 'LastStart', 'DaysRunning', 'OnDemandPrice', 'ReservedPrice', 'Savings')
             $60DayList | Select-Object -Property $props | Sort-Object LastStart | Export-Excel @excelParams -WorksheetName '60-Day Report'
         }
 
         # IF EXISTS EXPORT 90 DAY LIST
         if ( $90DayList.Count -gt 0 ) {
-            $props = @('ProfileName', 'Id', 'Name', 'LastStart', 'LastStopped', 'DaysStopped', 'Stopper')
+            $props = @('ProfileName', 'Environment', 'Id', 'Name', 'LastStart', 'LastStopped', 'DaysStopped', 'Stopper')
             $90DayList | Select-Object -Property $props | Sort-Object DaysStopped | Export-Excel @excelParams -WorksheetName '90-Day Report'
         }
 

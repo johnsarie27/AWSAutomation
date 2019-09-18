@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-08-15
+# Updated:      2019-09-18
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
@@ -55,6 +55,7 @@
 class EC2Instance {
     [String] $Id
     [String] $Name
+    [String] $Environment
     [String] $Type
     [String] $Reserved
     [String] $AZ

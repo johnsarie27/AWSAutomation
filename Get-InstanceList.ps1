@@ -46,10 +46,21 @@ function Get-InstanceList {
 
         # CREATE NEW OBJECTS
         foreach ( $ec2 in $EC2Instances ) {
+            # GET NAME TAG AND ENVIRONMENT
+            $nameTag = ( $ec2.Tags | Where-Object Key -ceq Name ).Value
+            try {
+                if ( $nameTag.Substring(3, 3) -match '^(PRD|STG)$' ) { $envName = $nameTag.Substring(3, 3) }
+            }
+            catch {
+                $envName = 'n/a'
+            }
+
+            # CREATE OBJECT AND ADD PROPERTIES
             $new = New-Object EC2Instance #-TypeName EC2Instance
             $new.DR_Region = ( $ec2.Tags | Where-Object Key -eq DR_Region ).Value
             $new.Id = $ec2.InstanceId
-            $new.Name = ( $ec2.Tags | Where-Object Key -ceq Name ).Value
+            $new.Name = $nameTag
+            $new.Environment = $envName
             $new.Type = $ec2.InstanceType.Value
             $new.Reserved = ( $ec2.Tags | Where-Object Key -eq RI_Candidate ).Value
             $new.AZ = $ec2.Placement.AvailabilityZone
