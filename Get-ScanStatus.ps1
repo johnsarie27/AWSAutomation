@@ -1,18 +1,22 @@
 function Get-ScanStatus {
     <# =========================================================================
     .SYNOPSIS
-        Short description
+        Get S3 Virus Scan Status
     .DESCRIPTION
-        Long description
-    .PARAMETER abc
-        Parameter description (if any)
+        Get S3 Virus Scan Status
+    .PARAMETER BucketName
+        S3 Bucket Name
+    .PARAMETER KeyPrefix
+        Key prefix to filter bucket resutls
+    .PARAMETER ProfileName
+        AWS Credential Profile Name
     .INPUTS
-        Inputs (if any)
+        None.
     .OUTPUTS
-        Output (if any)
+        System.Object[].
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Get-ScanStatus -ProfileName myAcc -BucketName 'test-bucket-02340989' -KeyPrefix 'Docs'
+        Search all S3 objects in folder 'Docs' of bucket 'test-bucket-02340989' for tags with value "infected"
     .NOTES
         General notes
     ========================================================================= #>
@@ -32,22 +36,21 @@ function Get-ScanStatus {
     )
 
     Begin {
-        Import-Module -Name AWSPowerShell.NetCore
-
-        #$bucket = 's3-virus-scan-test' #'esricloud-software'
-
+        # CONFIGURE CREDENTIALS AND ADD KEY PREFIX IF SPECIFIED
         $creds = @{ ProfileName = $ProfileName ; BucketName = $BucketName }
         if ( $PSBoundParameters.ContainsKey('KeyPrefix') ) { $creds.Add('KeyPrefix', $KeyPrefix) }
 
         $objects = Get-S3Object @creds
 
+        # REMOVE KEY PREFIX
         if ( $creds['KeyPrefix'] ) { $creds.Remove('KeyPrefix') }
     }
 
     Process {
-
+        # LOOP THROUGH EACH S3 OBJECT
         foreach ( $i in $objects ) {
 
+            # CHECK TAGS FOR 'INFECTED' AND RETURN OBJECT
             if ( (Get-S3ObjectTagSet @creds -Key $i.Key).Value -match 'infected' ) {
                 [PSCustomObject] @{ Status = 'INFECTED'; Key = $i.Key }
             }

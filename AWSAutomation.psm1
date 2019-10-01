@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-09-18
+# Updated:      2019-10-01
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
@@ -36,6 +36,7 @@
 . $PSScriptRoot\Get-R53Record.ps1
 . $PSScriptRoot\Copy-DBSnapshotToRegion.ps1
 . $PSScriptRoot\Unregister-DBSnapshot.ps1
+. $PSScriptRoot\Get-ScanStatus.ps1
 
 # CREATION FUNCTIONS
 . $PSScriptRoot\New-CWRecoveryAlarm.ps1
