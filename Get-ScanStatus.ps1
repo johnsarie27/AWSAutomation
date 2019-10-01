@@ -50,12 +50,20 @@ function Get-ScanStatus {
         # LOOP THROUGH EACH S3 OBJECT
         foreach ( $i in $objects ) {
 
+            $tags = Get-S3ObjectTagSet @creds -Key $i.Key
+
             # CHECK TAGS FOR 'INFECTED' AND RETURN OBJECT
-            if ( (Get-S3ObjectTagSet @creds -Key $i.Key).Value -match 'infected' ) {
-                [PSCustomObject] @{ Status = 'INFECTED'; Key = $i.Key }
-            }
-            else {
-                [PSCustomObject] @{ Status = 'CLEAN'; Key = $i.Key }
+            # SKIP ANY KEYS ENDING WITH "/"
+            if ( $i.Key -notmatch '^.+\/$' ) {
+                if ( $tags.Value -match 'infected' ) {
+                    [PSCustomObject] @{ Status = 'INFECTED'; Key = $i.Key }
+                }
+                elseif ( $tags.Value -match 'clean' ) {
+                    [PSCustomObject] @{ Status = 'CLEAN'; Key = $i.Key }
+                }
+                else {
+                    [PSCustomObject] @{ Status = 'UNKNOWN'; Key = $i.Key }
+                }
             }
         }
     }
