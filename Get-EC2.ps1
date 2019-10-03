@@ -39,7 +39,7 @@ function Get-EC2 {
         [string[]] $ProfileName,
 
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
-        [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [string] $Region = 'us-east-1',
 
@@ -53,7 +53,7 @@ function Get-EC2 {
     Begin {
         # SET ARRAY FOR RESULTS
         $Results = @()
-        
+
         # GET ALL PROFILES
         if ( $PSBoundParameters.ContainsKey('All') ) {
             $ProfileName = (Get-AWSCredential -ListProfileDetail).ProfileName
@@ -69,7 +69,7 @@ function Get-EC2 {
                 $Results += (Get-EC2Instance -ProfileName $p -Region $Region).Instances
             } else {
                 # IF NOT AWSPOWERSHELL ADD CUSTOM OBJECTS TO REULTS ARRAY
-                $Results += (Get-InstanceList -ProfileName $p -Region $Region) 
+                $Results += (Get-InstanceList -ProfileName $p -Region $Region)
             }
         }
     }
