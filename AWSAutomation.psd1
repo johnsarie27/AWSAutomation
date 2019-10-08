@@ -12,7 +12,7 @@
 RootModule = 'AWSAutomation.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.4.3'
+ModuleVersion = '0.4.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -52,7 +52,25 @@ PowerShellVersion = '5.0'
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @('AWSPowerShell')
-RequiredModules = @('AWS.Tools.CertificateManager', 'AWS.Tools.CloudFormation', 'AWS.Tools.CloudTrail', 'AWS.Tools.CloudWatchLogs', 'AWS.Tools.DirectoryService', 'AWS.Tools.EC2', 'AWS.Tools.ElasticBeanstalk', 'AWS.Tools.IdentityManagement', 'AWS.Tools.Lambda', 'AWS.Tools.RDS', 'AWS.Tools.Route53', 'AWS.Tools.Route53Domains', 'AWS.Tools.Route53Resolver', 'AWS.Tools.SecretsManager', 'AWS.Tools.S3', 'AWS.Tools.SimpleEmail', 'AWS.Tools.SQS')
+RequiredModules = @(
+    'AWS.Tools.CertificateManager'
+    'AWS.Tools.CloudFormation'
+    'AWS.Tools.CloudTrail'
+    'AWS.Tools.CloudWatchLogs'
+    'AWS.Tools.DirectoryService'
+    'AWS.Tools.EC2'
+    'AWS.Tools.ElasticBeanstalk'
+    'AWS.Tools.IdentityManagement'
+    'AWS.Tools.Lambda'
+    'AWS.Tools.RDS'
+    'AWS.Tools.Route53'
+    'AWS.Tools.Route53Domains'
+    'AWS.Tools.Route53Resolver'
+    'AWS.Tools.SecretsManager'
+    'AWS.Tools.S3'
+    'AWS.Tools.SimpleEmail'
+    'AWS.Tools.SQS'
+)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -70,7 +88,33 @@ RequiredModules = @('AWS.Tools.CertificateManager', 'AWS.Tools.CloudFormation', 
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Edit-AWSProfile', 'Get-IAMReport', 'Revoke-StaleAccessKey', 'Disable-InactiveUserKey', 'Disable-InactiveUserProfile', 'Find-InsecureS3BucketPolicy', 'Find-PublicS3Objects', 'Get-SecurityGroupInfo', 'Get-NetworkInfo', 'Get-ELB', 'Get-EC2', 'Get-AvailableEBS', 'Export-EC2UsageReport', 'Get-InstanceList', 'Export-AWSPriceData', 'Remove-LapsedAMI', 'Get-R53Record', 'New-CWRecoveryAlarm', 'Deploy-Instance', 'Export-IAMRolePolicy', 'Copy-DBSnapshotToRegion', 'Unregister-DBSnapshot', 'Find-NextSubnet', 'ConvertTo-CFStackParam', 'Get-ScanStatus')
+FunctionsToExport = @(
+    'ConvertTo-CFStackParam'
+    'Copy-DBSnapshotToRegion'
+    'Deploy-Instance'
+    'Disable-InactiveUserKey'
+    'Disable-InactiveUserProfile'
+    'Edit-AWSProfile'
+    'Export-AWSPriceData'
+    'Export-EC2UsageReport'
+    'Export-IAMRolePolicy'
+    'Find-InsecureS3BucketPolicy'
+    'Find-NextSubnet'
+    'Find-PublicS3Objects'
+    'Get-AvailableEBS'
+    'Get-EC2'
+    'Get-ELB'
+    'Get-IAMReport'
+    'Get-InstanceList'
+    'Get-NetworkInfo'
+    'Get-R53Record'
+    'Get-ScanStatus'
+    'Get-SecurityGroupInfo'
+    'New-CWRecoveryAlarm'
+    'Remove-LapsedAMI'
+    'Revoke-StaleAccessKey'
+    'Unregister-DBSnapshot'
+)
 # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
