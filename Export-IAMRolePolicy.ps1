@@ -1,4 +1,4 @@
-#Requires -Module ImportExcel
+#Requires -Module AWS.Tools.IdentityManagement, ImportExcel
 
 function Export-IAMRolePolicy {
     <# =========================================================================
@@ -73,7 +73,7 @@ function Export-IAMRolePolicy {
                         PolicyArn  = $policy.PolicyArn
                     }
                     $policies.Add($new)
-                }    
+                }
             }
 
             # THIS FINDS THE ROLE WITH THE MOST POLICIES AND PUTS THEM IN A HASHTABLE WITH THE ROLE NAME
@@ -108,9 +108,9 @@ function Export-IAMRolePolicy {
 $new = @{}
 foreach ( $rn in $roleName ) {
     $role = Get-IAMRole -RoleName $rn @splat
-    
+
     $policies = Get-IAMAttachedRolePolicies -RoleName $role.RoleName @splat
-    
+
     $new[$role.RoleName] = $policies.PolicyName
 }
 

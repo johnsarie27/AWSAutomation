@@ -1,3 +1,5 @@
+#Requires -Module AWS.Tools.EC2
+
 function ConvertTo-SecurityGroupObject {
     <# =========================================================================
     .SYNOPSIS
@@ -36,8 +38,6 @@ function ConvertTo-SecurityGroupObject {
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
         [string] $VpcId
     )
-
-    Import-Module AWSPowerShell
 
     $ParamSplat = @{ ProfileName = $ProfileName ; Region = $Region }
     if ( $PSBoundParameters.ContainsKey('VpcId') ) {

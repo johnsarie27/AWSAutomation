@@ -1,3 +1,6 @@
+#Requires -Module AWS.Tools.EC2, AWS.Tools.ElasticLoadBalancingV2
+# AWSPowerShell.NetCore
+
 function Get-ELB {
     <# =========================================================================
     .SYNOPSIS

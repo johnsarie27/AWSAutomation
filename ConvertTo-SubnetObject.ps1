@@ -1,3 +1,5 @@
+#Requires -Module AWS.Tools.EC2
+
 function ConvertTo-SubnetObject {
     <# =========================================================================
     .SYNOPSIS
@@ -34,8 +36,6 @@ function ConvertTo-SubnetObject {
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
         [string] $VpcId
     )
-
-    Import-Module -Name AWSPowerShell
 
     $ParamSplat = @{ ProfileName = $ProfileName ; Region = $Region }
     if ( $PSBoundParameters.ContainsKey('VpcId') ) {

@@ -1,3 +1,5 @@
+#Requires -Module AWS.Tools.EC2
+
 function ConvertTo-VpcObject {
     <# =========================================================================
     .SYNOPSIS
@@ -30,8 +32,6 @@ function ConvertTo-VpcObject {
         [ValidateSet('us-east-1', 'us-east-2', 'us-west-1', 'us-west-2')]
         [string] $Region = 'us-east-1'
     )
-
-    Import-Module -Name AWSPowerShell
 
     $VPCs = Get-EC2Vpc -ProfileName $ProfileName -Region $Region
     $MasterObject = New-Object -TypeName psobject

@@ -1,3 +1,5 @@
+#Requires -Module AWS.Tools.EC2
+
 function Get-InstanceList {
     <# =========================================================================
     .SYNOPSIS

@@ -49,7 +49,7 @@ function Get-CostInfo {
                     [double]$ODP = [math]::Round($price.PricePerUnit, 3)
                     $instance.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
                 }
-                
+
                 if ( ( $instance.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
                     $instance.ReservedPrice = $price.PricePerUnit
                 }

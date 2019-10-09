@@ -1,3 +1,5 @@
+#Requires -Module AWS.Tools.RDS
+
 function Unregister-DBSnapshot {
     <# =========================================================================
     .SYNOPSIS
@@ -49,7 +51,7 @@ function Unregister-DBSnapshot {
             ProfileName = $ProfileName
             Region      = $Region
         }
-        
+
         # GET DB INSTANCE
         if ( -not $PSBoundParameters.ContainsKey('DBInstance') ) {
             $DBInstance = Get-RDSDBInstance @splat
@@ -63,7 +65,7 @@ function Unregister-DBSnapshot {
                 DBInstanceIdentifier = $db.DBInstanceIdentifier
                 SnapshotType         = 'manual' # 'automated' , 'awsbackup'
             }
-            
+
             $snapshot = Get-RDSDBSnapshot @splat @snapshotParams
 
             # REMOVE "OLD" SNAPSHOTS

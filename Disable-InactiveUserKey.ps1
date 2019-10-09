@@ -1,3 +1,5 @@
+#Requires -Module AWS.Tools.IdentityManagement
+
 function Disable-InactiveUserKey {
     <# =========================================================================
     .SYNOPSIS
@@ -34,7 +36,7 @@ function Disable-InactiveUserKey {
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
     [OutputType([System.Object[]])]
-    
+
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
