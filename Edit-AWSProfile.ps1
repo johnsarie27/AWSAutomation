@@ -1,5 +1,3 @@
-#Requires -Module AWS.Tools.Common
-
 function Edit-AWSProfile {
     <# =========================================================================
     .SYNOPSIS

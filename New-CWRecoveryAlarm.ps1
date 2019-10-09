@@ -1,4 +1,4 @@
-#Requires -Module AWS.Tools.CloudWatch
+# Requires -Module AWS.Tools.CloudWatch
 
 function New-CWRecoveryAlarm {
     <# =========================================================================
