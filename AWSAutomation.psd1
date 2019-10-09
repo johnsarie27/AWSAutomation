@@ -12,7 +12,7 @@
 RootModule = 'AWSAutomation.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.4.4'
+ModuleVersion = '0.5.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -52,25 +52,6 @@ PowerShellVersion = '5.0'
 
 # Modules that must be imported into the global environment prior to importing this module
 # RequiredModules = @('AWSPowerShell')
-RequiredModules = @(
-    'AWS.Tools.CertificateManager'
-    'AWS.Tools.CloudFormation'
-    'AWS.Tools.CloudTrail'
-    'AWS.Tools.CloudWatchLogs'
-    'AWS.Tools.DirectoryService'
-    'AWS.Tools.EC2'
-    'AWS.Tools.ElasticBeanstalk'
-    'AWS.Tools.IdentityManagement'
-    'AWS.Tools.Lambda'
-    'AWS.Tools.RDS'
-    'AWS.Tools.Route53'
-    'AWS.Tools.Route53Domains'
-    'AWS.Tools.Route53Resolver'
-    'AWS.Tools.SecretsManager'
-    'AWS.Tools.S3'
-    'AWS.Tools.SimpleEmail'
-    'AWS.Tools.SQS'
-)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()

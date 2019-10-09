@@ -1,5 +1,5 @@
 # ==============================================================================
-# Updated:      2019-10-01
+# Updated:      2019-10-08
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
