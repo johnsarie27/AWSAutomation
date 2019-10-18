@@ -1,9 +1,17 @@
 # ==============================================================================
-# Updated:      2019-10-08
+# Updated:      2019-10-18
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
 # ==============================================================================
+
+# CHECK FOR THE FOLLOWING MODULES
+<# 'AWS.Tools.CloudFormation'
+'AWS.Tools.EC2'
+'AWS.Tools.IdentityManagement'
+'AWS.Tools.RDS'
+'AWS.Tools.Route53'
+'AWS.Tools.S3' #>
 
 # CFTEMPLATEBUILDER FUNCTIONS
 . $PSScriptRoot\ConvertTo-SecurityGroupObject.ps1
@@ -46,11 +54,6 @@
 
 # INTERNAL FUNCTIONS
 . $PSScriptRoot\Get-CostInfo.ps1
-
-# THIS IMPORT CAUSES PROBLEMS WITH USING Get-Command -Module AWSAutomation
-# OR USING PLATYPS TO GENERATE AND UPDATE MODULE HLEP
-#if ( $PSVersionTable.PSVersion.Major -eq 6 ) { Import-Module -Name AWSPowerShell.NetCore }
-#else { Import-Module -Name AWSPowershell }
 
 # CLASS
 class EC2Instance {

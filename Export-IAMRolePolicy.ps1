@@ -1,5 +1,3 @@
-#Requires -Module AWS.Tools.IdentityManagement, ImportExcel
-
 function Export-IAMRolePolicy {
     <# =========================================================================
     .SYNOPSIS

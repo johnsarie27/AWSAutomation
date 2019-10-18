@@ -1,5 +1,3 @@
-#Requires -Module AWS.Tools.CloudFormation
-
 function ConvertTo-CFStackParam {
     <# =========================================================================
     .SYNOPSIS

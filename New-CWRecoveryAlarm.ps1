@@ -1,5 +1,3 @@
-# Requires -Module AWS.Tools.CloudWatch
-
 function New-CWRecoveryAlarm {
     <# =========================================================================
     .SYNOPSIS

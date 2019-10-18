@@ -12,7 +12,7 @@
 RootModule = 'AWSAutomation.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.5.0'
+ModuleVersion = '0.5.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,7 +51,7 @@ PowerShellVersion = '5.0'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @('AWSPowerShell')
+RequiredModules = @('AWS.Tools.Common', 'ImportExcel')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()

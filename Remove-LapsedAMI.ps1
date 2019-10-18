@@ -1,5 +1,3 @@
-#Requires -Module AWS.Tools.EC2
-
 function Remove-LapsedAMI {
     <# =============================================================================
     .SYNOPSIS

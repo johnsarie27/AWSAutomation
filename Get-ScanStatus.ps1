@@ -1,5 +1,3 @@
-#Requires -Module AWS.Tools.S3
-
 function Get-ScanStatus {
     <# =========================================================================
     .SYNOPSIS

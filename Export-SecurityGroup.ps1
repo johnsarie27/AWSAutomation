@@ -1,5 +1,3 @@
-#Requires -Module ImportExcel
-
 function Export-SecurityGroup {
     <# =========================================================================
     .SYNOPSIS
@@ -132,7 +130,7 @@ function Export-SecurityGroup {
         foreach ( $object in $sgObjects ) {
             $object.Rules | Export-Excel @excelParams -WorksheetName $object.Name
         }
-        
+
         <# # OUTPUT TO CSV
         $SgName = 'rSecurityGroupDomainServices'
         $Props = @('Direction', 'IpProtocol', 'FromPort', 'ToPort', 'CidrIp')
