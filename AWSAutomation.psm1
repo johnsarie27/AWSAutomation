@@ -1,17 +1,23 @@
 # ==============================================================================
-# Updated:      2019-10-18
+# Updated:      2019-10-24
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
 # ==============================================================================
 
 # CHECK FOR THE FOLLOWING MODULES
-<# 'AWS.Tools.CloudFormation'
-'AWS.Tools.EC2'
-'AWS.Tools.IdentityManagement'
-'AWS.Tools.RDS'
-'AWS.Tools.Route53'
-'AWS.Tools.S3' #>
+$modules = Get-Module -ListAvailable
+$requiredModules = @(
+    'AWS.Tools.CloudFormation', 'AWS.Tools.EC2', 'AWS.Tools.IdentityManagement', 'AWS.Tools.RDS',
+    'AWS.Tools.Route53', 'AWS.Tools.S3', 'ImportExcel'
+)
+
+foreach ( $rm in $requiredModules ) {
+    if ( $rm -notin $modules.Name ) {
+        Write-Warning -Message ("One or more of the following modules was not found:`n{0}" -f ($requiredModules -join ", "))
+        Break
+    }
+}
 
 # CFTEMPLATEBUILDER FUNCTIONS
 . $PSScriptRoot\ConvertTo-SecurityGroupObject.ps1
