@@ -1,9 +1,11 @@
+#Requires -Module ImportExcel
+
 function Export-IAMRolePolicy {
     <# =========================================================================
     .SYNOPSIS
         Export a spreadsheet of each Role with accompanying Policies
     .DESCRIPTION
-        Export a spreadsheet of each Role with accompanying Policies
+        Export a spreadsheet of each Role with accompanying Policies and details
     .PARAMETER ProfileName
         AWS Credential Profile name
     .PARAMETER RoleName
@@ -15,18 +17,18 @@ function Export-IAMRolePolicy {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> Export-IAMRolePolicy -ProfileName MyAwsAccount
+        PS C:\> Export-IAMRolePolicy -ProfileName MyAwsAccount -RoleName MyNewRole
         Generates an Excel Spreadsheet of all matching Roles with a list of their Policies
     .NOTES
         General notes
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
 
-        [Parameter(HelpMessage = 'One or more Role names')]
+        [Parameter(ValueFromPipeline, HelpMessage = 'One or more Role names')]
         [ValidateNotNullOrEmpty()]
         [string[]] $RoleName,
 
@@ -37,8 +39,7 @@ function Export-IAMRolePolicy {
     )
 
     Begin {
-        Import-Module -Name ImportExcel
-
+        # SET EXCEL PARAMETERS
         $excelParams = @{
             AutoSize     = $true
             FreezeTopRow = $true
@@ -48,6 +49,7 @@ function Export-IAMRolePolicy {
             Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
         }
 
+        # SET PATH
         if ( $PSBoundParameters.ContainsKey('Path') ) {
             $excelParams['Path'] = $Path
         }
