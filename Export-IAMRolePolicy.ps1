@@ -6,10 +6,10 @@ function Export-IAMRolePolicy {
         Export a spreadsheet of each Role with accompanying Policies
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER RoleName
+        Name of one or more AWS IAM Roles
     .PARAMETER Path
         Path to new report file
-    .PARAMETER Pattern
-        Regex pattern to match Role names
     .INPUTS
         System.String.
     .OUTPUTS
@@ -26,9 +26,9 @@ function Export-IAMRolePolicy {
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
 
-        [Parameter(HelpMessage = 'Regex pattern to match Role names')]
+        [Parameter(HelpMessage = 'One or more Role names')]
         [ValidateNotNullOrEmpty()]
-        [string] $Pattern = '_Administrator|_Manager',
+        [string[]] $RoleName,
 
         [Parameter(HelpMessage = 'Path to new report file')]
         [ValidateScript( { Test-Path -Path ([System.IO.Path]::GetDirectoryName($_)) })]
@@ -48,24 +48,42 @@ function Export-IAMRolePolicy {
             Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
         }
 
-        if ( !$PSBoundParameters.ContainsKey('Path') ) {
-            $date = Get-Date -Format "yyyy-MM"
-            $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('IAMRolePolicies_{0}.xlsx' -f $date)
+        if ( $PSBoundParameters.ContainsKey('Path') ) {
+            $excelParams['Path'] = $Path
+        }
+        else {
+            $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('IAMRolePolicies_{0}.xlsx' -f (Get-Date -Format "yyyy-MM"))
         }
     }
 
     Process {
+        # LOOP EACH ACCOUNT PROFILE
         foreach ( $pn in $ProfileName ) {
-            $splat = @{ ProfileName = $pn }
-
             # GET ROLES
-            $roleName = Get-IAMRoleList @splat | Where-Object RoleName -Match $Pattern | Select-Object -EXP RoleName
+            if ( !$PSBoundParameters.ContainsKey('RoleName') ) { $RoleName = (Get-IAMRoleList -ProfileName $pn).RoleName }
 
             # THIS GETS ALL THE POLICIES FOR EACH ROLE AND CREATES A COLLECTION OF CUSTOM OBJECTS
             $policies = [System.Collections.Generic.List[System.Object]]::new()
-            foreach ( $rn in $roleName ) {
-                foreach ( $policy in (Get-IAMAttachedRolePolicies -RoleName $rn @splat) ) {
+
+            # LOOP ALL PROVIDED ROLES
+            foreach ( $rn in $RoleName ) {
+                # LOOP ALL MANAGED POLICIES IN ROLE AND ADD TO LIST
+                foreach ( $policy in (Get-IAMAttachedRolePolicyList -RoleName $rn -ProfileName $pn) ) {
                     $new = [PSCustomObject] @{
+                        Profile    = $pn
+                        RoleType   = 'Managed'
+                        RoleName   = $rn
+                        PolicyName = $policy.PolicyName
+                        PolicyArn  = $policy.PolicyArn
+                    }
+                    $policies.Add($new)
+                }
+
+                # LOOP ALL IN-LINE POLICIES IN ROLE AND ADD TO LIST
+                foreach ( $policy in (Get-IAMRolePolicyList -RoleName $rn -ProfileName $pn) ) {
+                    $new = [PSCustomObject] @{
+                        Profile    = $pn
+                        RoleType   = 'In-line'
                         RoleName   = $rn
                         PolicyName = $policy.PolicyName
                         PolicyArn  = $policy.PolicyArn
@@ -74,42 +92,8 @@ function Export-IAMRolePolicy {
                 }
             }
 
-            # THIS FINDS THE ROLE WITH THE MOST POLICIES AND PUTS THEM IN A HASHTABLE WITH THE ROLE NAME
-            # AND HOW MANY POLICIES IT HAS
-            $longest = @{ Name = 'default'; Count = 0 }
-            foreach ( $i in ($policies | Sort-Object RoleName -Unique) ) {
-                $count = ($policies | Where-Object RoleName -EQ $i.RoleName | Measure-Object).Count
-                if ( $count -gt $longest.Count ) { $longest['Name'] = $i.RoleName; $longest['Count'] = $count }
-            }
-
-            # THIS IS WHERE THE MAGIC HAPPENS
-            $results = [System.Collections.Generic.List[System.Object]]::new()
-            for ($i = 0; $i -lt $longest['Count']; $i++) {
-                $new = [PSCustomObject] @{
-                    $roleName[0] = ($policies | Where-Object RoleName -EQ $roleName[0])[$i].PolicyName
-                    $roleName[1] = ($policies | Where-Object RoleName -EQ $roleName[1])[$i].PolicyName
-                    $roleName[2] = ($policies | Where-Object RoleName -EQ $roleName[2])[$i].PolicyName
-                    $roleName[3] = ($policies | Where-Object RoleName -EQ $roleName[3])[$i].PolicyName
-                }
-                $results.Add($new)
-            }
-
-            $results | Export-Excel @excelParams -WorksheetName $splat['ProfileName']
+            # WRITE POLICIES TO EXCEL
+            $policies | Export-Excel @excelParams -WorksheetName $pn
         }
     }
 }
-
-# GET ROLE POLICIES
-#Get-IAMRolePolicyList # THIS GETS IN-LINE POLICIES ONLY
-
-<# # CREATE AN ARRAY OF POLICIES AS THE VALUE OF EACH ROLE AN OBJECT PROPERTY
-$new = @{}
-foreach ( $rn in $roleName ) {
-    $role = Get-IAMRole -RoleName $rn @splat
-
-    $policies = Get-IAMAttachedRolePolicies -RoleName $role.RoleName @splat
-
-    $new[$role.RoleName] = $policies.PolicyName
-}
-
-[PSCustomObject] $new | Format-List #>
