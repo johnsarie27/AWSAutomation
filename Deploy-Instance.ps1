@@ -36,45 +36,36 @@ function Deploy-Instance {
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [Alias('PN')]
         [string] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Region')]
-        [ValidateSet('us-east-1', 'us-east-2', 'us-west-1', 'us-west-2')]
-        [Alias('R')]
+        [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [String] $Region = 'us-east-1',
 
         [Parameter(HelpMessage = 'EC2 AMI ID')]
         [ValidatePattern('^ami-\w{8,17}$')]
-        [Alias('A')]
         [string] $AmiId = 'ami-e80e2993',
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'New EC2 instance name tag')]
         [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL|QRM)\d{2}$')]
-        [Alias('N')]
         [string[]] $Name,
 
         [Parameter(Mandatory, HelpMessage = 'EC2 subnet')]
         [ValidatePattern('^subnet-\w{8,17}$')]
-        [Alias('SN')]
         [string] $SubnetId,
 
         [Parameter(Mandatory, HelpMessage = 'New EC2 instance name tag')]
         [ValidatePattern('^sg-\w{8,17}$')]
-        [Alias('SG')]
         [string[]] $SecurityGroupId,
 
         [Parameter(HelpMessage = 'EC2 instance type')]
         [ValidateSet('t2.small', 't2.medium', 'm4.large', 'm4.xlarge', 'm4.2xlarge')]
-        [Alias('T')]
         [string] $Type = 'm4.xlarge',
 
         [Parameter(HelpMessage = 'User data string')]
-        [Alias('UD')]
         [string] $UserData,
 
         [Parameter(HelpMessage = 'Return EC2 Instance object')]
-        [Alias('PT')]
         [switch] $PassThru
     )
 

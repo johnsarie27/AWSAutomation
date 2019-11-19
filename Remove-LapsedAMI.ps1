@@ -60,7 +60,7 @@ function Remove-LapsedAMI {
         [string[]] $ProfileName,
 
         [Parameter(Mandatory, HelpMessage = 'AWS Region')]
-        [ValidateSet('us-east-1','us-east-2','us-west-1','us-west-2')]
+        [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [string] $Region,
 
         [Parameter(HelpMessage = 'Backup suffix')]
