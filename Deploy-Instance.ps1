@@ -1,3 +1,5 @@
+#Requires -Modules @{ ModuleName = 'AWS.Tools.EC2'; ModuleVersion = '4.0.1.1' }
+
 function Deploy-Instance {
     <# =========================================================================
     .SYNOPSIS
@@ -59,7 +61,7 @@ function Deploy-Instance {
         [string[]] $SecurityGroupId,
 
         [Parameter(HelpMessage = 'EC2 instance type')]
-        [ValidateSet('t2.small', 't2.medium', 'm4.large', 'm4.xlarge', 'm4.2xlarge')]
+        [ValidateNotNullOrEmpty()]
         [string] $Type = 'm4.xlarge',
 
         [Parameter(HelpMessage = 'User data string')]
@@ -70,6 +72,11 @@ function Deploy-Instance {
     )
 
     Begin {
+        # VALIDATE INSTANCE TYPE
+        if ( $Type -notin (Get-EC2InstanceType -ProfileName $ProfileName -Region $Region).InstanceType ) {
+            Throw 'Invalid instance type provided.'
+        }
+
         # SET INSTANCE PARAMS
         $instanceParams = @{
             ProfileName          = $ProfileName
