@@ -1,3 +1,5 @@
+#Requires -Modules ImportExcel
+
 function Export-SecurityGroup {
     <# =========================================================================
     .SYNOPSIS
@@ -103,9 +105,6 @@ function Export-SecurityGroup {
             # RETURN LIST
             $SecurityGroups
         }
-
-        # IMPORT MODULE FOR EXCEL CREATION
-        Import-Module -Name ImportExcel
 
         $date = Get-Date -F "yyyy-MM-ddTHHmmss"
         $excelParams = @{

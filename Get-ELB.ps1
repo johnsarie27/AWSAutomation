@@ -1,3 +1,5 @@
+#Requires -Modules AWS.Tools.EC2, AWS.Tools.ElasticLoadBalancingV2
+
 function Get-ELB {
     <# =========================================================================
     .SYNOPSIS

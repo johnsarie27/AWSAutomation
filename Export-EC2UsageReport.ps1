@@ -1,3 +1,5 @@
+#Requires -Modules ImportExcel
+
 function Export-EC2UsageReport {
     <# =========================================================================
     .SYNOPSIS
@@ -46,9 +48,6 @@ function Export-EC2UsageReport {
     )
 
     Begin {
-        # IMPORT REQUIRED MODULES
-        Import-Module -Name ImportExcel
-
         # SET OUTPUT REPORT PATH
         $reportName = 'EC2UsageReport'
         $date = Get-Date -Format "yyyy-MM"

@@ -1,3 +1,5 @@
+#Requires -Modules AWS.Tools.RDS, AWS.Tools.KeyManagementService
+
 function Copy-DBSnapshotToRegion {
     <# =========================================================================
     .SYNOPSIS

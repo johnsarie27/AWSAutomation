@@ -1,3 +1,5 @@
+#Requires -Modules AWS.Tools.S3
+
 function Find-InsecureS3BucketPolicy {
     <# =========================================================================
     .SYNOPSIS

@@ -1,3 +1,5 @@
+#Requires -Modules AWS.Tools.Route53
+
 function Get-R53Record {
     <# =========================================================================
     .SYNOPSIS

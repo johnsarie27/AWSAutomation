@@ -1,3 +1,5 @@
+#Requires -Modules 'AWS.Tools.EC2'
+
 function ConvertTo-RouteTableObject {
     <# =========================================================================
     .SYNOPSIS

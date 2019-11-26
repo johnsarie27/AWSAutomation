@@ -1,3 +1,5 @@
+#Requires -Modules AWS.Tools.IdentityManagement
+
 function Revoke-StaleAccessKey {
     <# =========================================================================
     .SYNOPSIS
