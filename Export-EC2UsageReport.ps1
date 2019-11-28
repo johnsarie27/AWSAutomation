@@ -11,7 +11,7 @@ function Export-EC2UsageReport {
         stopped (if possible) and creates a data sheet (CSV). The data sheet is then
         imported into Excel and formatted.  This can be done for a single or
         multiple accounts based on AWS Credentail Profiles.
-    .PARAMETER DestinationPath
+    .PARAMETER OutputDirectory
         Path to existing folder for report
     .PARAMETER ProfileName
         This is the name of the AWS Credential profile containing the Access Key and
@@ -31,8 +31,8 @@ function Export-EC2UsageReport {
     Param(
         [Parameter(HelpMessage = 'Path to existing folder for report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Container })]
-        [Alias('Path')]
-        [string] $DestinationPath,
+        [Alias('DestinationPath')]
+        [string] $OutputDirectory,
 
         [Parameter(Mandatory, HelpMessage = 'AWS Credential Profie with key and secret')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -52,7 +52,7 @@ function Export-EC2UsageReport {
         $reportName = 'EC2UsageReport'
         $date = Get-Date -Format "yyyy-MM"
         if ( $PSBoundParameters.ContainsKey('DestinationPath') ) {
-            $ReportPath = Join-Path -Path $DestinationPath -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
+            $ReportPath = Join-Path -Path $OutputDirectory -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
         }
         else {
             $ReportPath = Join-Path -Path "$HOME\Desktop" -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
