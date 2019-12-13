@@ -37,67 +37,102 @@ function Get-SecurityGroupInfo {
         [string] $VpcId
     )
 
-    $secGrpParams = @{ ProfileName = $ProfileName ; Region = $Region }
-    $secGrpParams.Filter = @{Name = "vpc-id"; Values = $VpcId}
+    Begin {
+        # SET API PARAMS
+        $secGrpParams = @{ ProfileName = $ProfileName ; Region = $Region }
+        $secGrpParams.Filter = @{Name = "vpc-id"; Values = $VpcId }
 
-    # SECURITY GROUP INFO
-    $SecurityGroups = Get-EC2SecurityGroup @secGrpParams
-    $SGList = @()
-
-    # INSTANCES WITH SECURITY GROUPS
-    $EC2 = (Get-EC2Instance @secGrpParams).Instances
-
-    foreach ( $sg in $SecurityGroups ) {
-        $new = @{ GroupName = $sg.GroupName }
-        $new.GroupId = $sg.GroupId
-        $new.VpcId = $sg.VpcId
-        $new.Description = $sg.Description
-
-        # CREATE SECURITY GROUP INGRESS
-        $SecurityGroupIngress = @()
-        foreach ( $IpPermissions in $sg.IpPermissions ) {
-            $SecurityGroup = @{ IpProtocol = $IpPermissions.IpProtocol }
-            if ( $IpPermissions.IpProtocol -ne -1 ) {
-                $SecurityGroup.FromPort = $IpPermissions.FromPort
-                $SecurityGroup.ToPort = $IpPermissions.ToPort
-            }
-            <# if ( !$IpPermissions.Ipv4Ranges.CidrIp -and !$IpPermissions.Ipv6Ranges -and !$IpPermissions.IpvRanges ) {
-                $SecurityGroup.CidrIp = "0.0.0.0/0"
-            } #>
-            if ( $IpPermissions.Ipv4Ranges.CidrIp ) { $SecurityGroup.CidrIp = $IpPermissions.Ipv4Ranges.CidrIp }
-            elseif ( $IpPermissions.Ipv6Ranges.CidrIp ) { $SecurityGroup.CidrIp = $IpPermissions.Ipv6Ranges.CidrIp }
-            else { $SecurityGroup.CidrIp = $IpPermissions.IpRanges }
-            $SecurityGroupIngress += [PSCustomObject] $SecurityGroup
-        }
-        $new.IngressRules = $SecurityGroupIngress
-
-        # CREATE SECURITY GROUP EGRESS
-        $SecurityGroupEgress = @()
-        foreach ( $IpPermissions in $sg.IpPermissionsEgress ) {
-            $SecurityGroup = @{ IpProtocol = $IpPermissions.IpProtocol }
-            if ( $IpPermissions.IpProtocol -ne -1 ) {
-                $SecurityGroup.FromPort = $IpPermissions.FromPort
-                $SecurityGroup.ToPort = $IpPermissions.ToPort
-            }
-            <# if ( !$IpPermissions.Ipv4Ranges.CidrIp -and !$IpPermissions.Ipv6Ranges -and !$IpPermissions.IpvRanges ) {
-                $SecurityGroup.CidrIp = "0.0.0.0/0"
-            } #>
-            if ( $IpPermissions.Ipv4Ranges.CidrIp ) { $SecurityGroup.CidrIp = $IpPermissions.Ipv4Ranges.CidrIp }
-            elseif ( $IpPermissions.Ipv6Ranges.CidrIp ) { $SecurityGroup.CidrIp = $IpPermissions.Ipv6Ranges.CidrIp }
-            else { $SecurityGroup.CidrIp = $IpPermissions.IpRanges }
-            $SecurityGroupEgress += [PSCustomObject] $SecurityGroup
-        }
-        $new.EgressRules = $SecurityGroupEgress
-
-        # ADD EC2 INSTANCES
-        $new.InstanceNames = @()
-        foreach ( $i in $EC2 ) {
-            $InstanceName = ($i.Tags | Where-Object Key -EQ Name).Value
-            if ( $i.SecurityGroups.GroupName -contains $sg.GroupName ) { $new.InstanceNames += $InstanceName }
-        }
-
-        $SGList += [PSCustomObject] $new
+        # MAKE API CALLS
+        $securityGroups = Get-EC2SecurityGroup @secGrpParams
+        $ec2 = (Get-EC2Instance @secGrpParams).Instances
+        $sgRules = [System.Collections.Generic.List[System.Object]]::new()
+        $propOrder = @('GroupId', 'GroupName', 'Description', 'RuleType', 'IpProtocol', 'FromPort', 'ToPort', 'CidrIp', 'Instances')
     }
 
-    $SGList
+    Process {
+        # LOOP THROUGH SECURITY GROUPS
+        foreach ( $sg in $securityGroups ) {
+            # GENERIC LISTS
+            $sgInstances = [System.Collections.Generic.List[System.Object]]::new()
+
+            # ADD EC2 INSTANCES
+            foreach ( $i in $ec2 ) {
+                $nameTag = ($i.Tags | Where-Object Key -CEQ Name).Value
+                if ( $i.SecurityGroups.GroupName -contains $sg.GroupName ) { $sgInstances.Add($nameTag) }
+            }
+
+            # CREATE SECURITY GROUP INGRESS
+            foreach ( $IpPermissions in $sg.IpPermissions ) {
+                $SecurityGroup = @{
+                    #VpcId       = $sg.VpcId
+                    GroupId     = $sg.GroupId
+                    GroupName   = $sg.GroupName
+                    Description = $sg.Description
+                    RuleType    = 'Ingress'
+                    IpProtocol  = $IpPermissions.IpProtocol
+                    Instances   = $sgInstances -join ", "
+                }
+
+                if ( $IpPermissions.IpProtocol -ne -1 ) {
+                    $SecurityGroup.FromPort = $IpPermissions.FromPort
+                    $SecurityGroup.ToPort = $IpPermissions.ToPort
+                }
+                else {
+                    $SecurityGroup.FromPort = "-1"
+                    $SecurityGroup.ToPort = "-1"
+                }
+                <# if ( !$IpPermissions.Ipv4Ranges.CidrIp -and !$IpPermissions.Ipv6Ranges -and !$IpPermissions.IpvRanges ) {
+                $SecurityGroup.CidrIp = "0.0.0.0/0"
+                } #>
+                $cidr = $null
+                if ( $IpPermissions.Ipv4Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv4Ranges.CidrIp }
+                elseif ( $IpPermissions.Ipv6Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv6Ranges.CidrIp }
+                else { $cidr = $IpPermissions.IpRanges }
+
+                if ( $cidr.GetType().BaseType.Name -eq 'Array' ) { $SecurityGroup.CidrIp = $cidr -join ", " }
+                else { $SecurityGroup.CidrIp = $cidr }
+
+                $sgRules.Add([PSCustomObject] $SecurityGroup)
+            }
+
+            # CREATE SECURITY GROUP EGRESS
+            foreach ( $IpPermissions in $sg.IpPermissionsEgress ) {
+                $SecurityGroup = @{
+                    #VpcId       = $sg.VpcId
+                    GroupId     = $sg.GroupId
+                    GroupName   = $sg.GroupName
+                    Description = $sg.Description
+                    RuleType    = 'Egress'
+                    IpProtocol  = $IpPermissions.IpProtocol
+                    Instances   = $sgInstances -join ", "
+                }
+
+                if ( $IpPermissions.IpProtocol -ne -1 ) {
+                    $SecurityGroup.FromPort = $IpPermissions.FromPort
+                    $SecurityGroup.ToPort = $IpPermissions.ToPort
+                }
+                else {
+                    $SecurityGroup.FromPort = "-1"
+                    $SecurityGroup.ToPort = "-1"
+                }
+                <# if ( !$IpPermissions.Ipv4Ranges.CidrIp -and !$IpPermissions.Ipv6Ranges -and !$IpPermissions.IpvRanges ) {
+                $SecurityGroup.CidrIp = "0.0.0.0/0"
+                } #>
+                $cidr = $null
+                if ( $IpPermissions.Ipv4Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv4Ranges.CidrIp }
+                elseif ( $IpPermissions.Ipv6Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv6Ranges.CidrIp }
+                else { $cidr = $IpPermissions.IpRanges }
+
+                if ( $cidr.GetType().BaseType.Name -eq 'Array' ) { $SecurityGroup.CidrIp = $cidr -join ", " }
+                else { $SecurityGroup.CidrIp = $cidr }
+
+                $sgRules.Add([PSCustomObject] $SecurityGroup)
+            }
+        }
+    }
+
+    End {
+        # RETURN DATA
+        $sgRules | Select-Object -Property $propOrder
+    }
 }
