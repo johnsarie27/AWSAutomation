@@ -12,7 +12,7 @@
 RootModule = 'AWSAutomation.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.5.1'
+ModuleVersion = '0.5.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -33,7 +33,7 @@ Copyright = '(c) 2018 Justin Johns. All rights reserved.'
 Description = 'Functions used for reporting on AWS resources and configuration including some to create CloudFormation templates from existing AWS infrastructure'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '5.0'
+PowerShellVersion = '5.1'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -86,7 +86,6 @@ FunctionsToExport = @(
     'Get-EC2'
     'Get-ELB'
     'Get-IAMReport'
-    'Get-InstanceList'
     'Get-NetworkInfo'
     'Get-R53Record'
     'Get-ScanStatus'

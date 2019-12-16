@@ -1,23 +1,9 @@
 # ==============================================================================
-# Updated:      2019-10-24
+# Updated:      2019-12-16
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
 # ==============================================================================
-
-# CHECK FOR THE FOLLOWING MODULES
-$modules = Get-Module -ListAvailable
-$requiredModules = @(
-    'AWS.Tools.CloudFormation', 'AWS.Tools.EC2', 'AWS.Tools.IdentityManagement', 'AWS.Tools.RDS',
-    'AWS.Tools.Route53', 'AWS.Tools.S3', 'ImportExcel'
-)
-
-foreach ( $rm in $requiredModules ) {
-    if ( $rm -notin $modules.Name ) {
-        Write-Warning -Message ("One or more of the following modules was not found:`n{0}" -f ($requiredModules -join ", "))
-        Break
-    }
-}
 
 # CFTEMPLATEBUILDER FUNCTIONS
 . $PSScriptRoot\ConvertTo-SecurityGroupObject.ps1
@@ -44,7 +30,6 @@ foreach ( $rm in $requiredModules ) {
 . $PSScriptRoot\Get-EC2.ps1
 . $PSScriptRoot\Get-AvailableEBS.ps1
 . $PSScriptRoot\Export-EC2UsageReport.ps1
-. $PSScriptRoot\Get-InstanceList.ps1
 . $PSScriptRoot\Export-AWSPriceData.ps1
 . $PSScriptRoot\Remove-LapsedAMI.ps1
 . $PSScriptRoot\Get-R53Record.ps1
@@ -57,6 +42,7 @@ foreach ( $rm in $requiredModules ) {
 . $PSScriptRoot\Deploy-Instance.ps1
 . $PSScriptRoot\Find-NextSubnet.ps1
 . $PSScriptRoot\ConvertTo-CFStackParam.ps1
+. $PSScriptRoot\New-Instance.ps1
 
 # INTERNAL FUNCTIONS
 . $PSScriptRoot\Get-CostInfo.ps1

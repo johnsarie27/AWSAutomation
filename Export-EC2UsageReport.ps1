@@ -77,7 +77,7 @@ function Export-EC2UsageReport {
 
     Process {
         # POPULATE ARRAY AND ADD DATA VALUES FOR STOP AND COST INFO
-        foreach ( $i in (Get-InstanceList -Region $Region -ProfileName $ProfileName) ) { $instanceList.Add($i) }
+        foreach ( $i in (Get-EC2 -Region $Region -ProfileName $ProfileName) ) { $instanceList.Add($i) }
         foreach ( $instance in $instanceList ) { $instance.GetStopInfo() }
         Get-CostInfo -Region $Region -Ec2Instance $instanceList | Out-Null
 
