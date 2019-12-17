@@ -5,6 +5,8 @@
 # Link:         https://github.com/johnsarie27/AWSAutomation
 # ==============================================================================
 
+#Requires -Modules AWS.Tools.EC2
+
 # CFTEMPLATEBUILDER FUNCTIONS
 . $PSScriptRoot\ConvertTo-SecurityGroupObject.ps1
 . $PSScriptRoot\ConvertTo-VpcObject.ps1
@@ -78,16 +80,14 @@ class EC2Instance {
     [string] $SubnetName
     [string[]] $SecurityGroups
 
-    <#
     # DEFAULT CONSTRUCTOR
     EC2Instance() {}
 
     # CUSTOM CONSTRUCTOR
-    EC2Instance([Amazon.EC2.Model.Instance] $EC2) {
-
-        $this.DR_Region = ( $EC2.Tags | Where-Object Key -eq DR_Region ).Value
+    EC2Instance([Amazon.EC2.Model.Instance]$EC2) {
         $this.Id = $EC2.InstanceId
         $this.Name = ( $EC2.Tags | Where-Object Key -ceq Name ).Value
+        $this.Environment = 'unknown'
         $this.Type = $EC2.InstanceType.Value
         $this.Reserved = ( $EC2.Tags | Where-Object Key -eq RI_Candidate ).Value
         $this.AZ = $EC2.Placement.AvailabilityZone
@@ -95,21 +95,29 @@ class EC2Instance {
         $this.PublicIP = $EC2.PublicIpAddress
         $this.AllPrivateIps = $EC2.NetworkInterfaces.PrivateIpAddresses.PrivateIpAddress
         $this.State = $EC2.State.Name.Value
+        $this.DR_Region = ( $EC2.Tags | Where-Object Key -eq DR_Region ).Value
         if ( $EC2.LaunchTime ) { $this.LastStart = $EC2.LaunchTime }
         $this.ProfileName = ""
         $this.Region = ""
         $this.GetDaysRunning()
-        $IllegalChars = '(!|"|#|\$|%|&|''|\*|\+|,|:|;|\<|=|\>|\?|@|\[|\\|\]|\^|`|\{|\||\}|~)'
-        if ( $this.Name -match $IllegalChars ) { $this.IllegalName = $true }
-        $this.NameTags = $EC2.Tags | Where-Object Key -EQ name | Select-Object -EXP Value
+        $illegalChars = '(!|"|#|\$|%|&|''|\*|\+|,|:|;|\<|=|\>|\?|@|\[|\\|\]|\^|`|\{|\||\}|~)'
+        if ( $this.Name -match $illegalChars ) { $this.IllegalName = $true }
+        $this.NameTags = ($EC2.Tags | Where-Object Key -EQ name).Value
         $this.VpcId = $EC2.VpcId
         $this.SubnetId = $EC2.SubnetId
         $this.SecurityGroups = $EC2.SecurityGroups.GroupName
-
     }
-    #>
 
     [string] ToString() { return ( "{0}" -f $this.Id ) }
+
+    [void] GetEnvironment() {
+        switch -Regex ($this.Name) {
+            '^.*PRD.*$' { $this.Environment = 'Production' }
+            '^.*STG.*$' { $this.Environment = 'Staging' }
+            '^.*REF.*$' { $this.Environment = 'Reference' }
+            default { $this.Environment = 'n/a' }
+        }
+    }
 
     [void] GetNetInfo($ProfileName, $Region) {
         $this.VpcName = ((Get-EC2Vpc -VpcId $this.VpcId -Region $Region -ProfileName $ProfileName).Tags | Where-Object Key -EQ Name).Value
@@ -159,7 +167,6 @@ class EC2Instance {
         }
         $this.Savings = ( 1 - ( $this.ReservedPrice / $this.OnDemandPrice ) ).ToString("P")
     }
-
 }
 
 # VARIABLES
@@ -169,8 +176,6 @@ $RegionTable = @{
     'us-west-1' = 'US West (N. California)'
     'us-west-2' = 'US West (Oregon)'
 }
-
-$IllegalChars = '(!|"|#|\$|%|&|''|\*|\+|,|:|;|\<|=|\>|\?|@|\[|\\|\]|\^|`|\{|\||\}|~)'
 
 $AlphabetList = 0..25 | ForEach-Object { [char](65 + $_) }
 

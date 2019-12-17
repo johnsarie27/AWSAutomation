@@ -37,25 +37,26 @@ function New-Instance {
     Process {
         # CREATE NEW OBJECTS
         foreach ( $ec2 in $Instance ) {
-            # GET NAME TAG AND ENVIRONMENT
+            <# # GET NAME TAG AND ENVIRONMENT
             $nameTag = ($ec2.Tags | Where-Object Key -ceq Name).Value
             try {
                 if ( $nameTag.Substring(3, 3) -match '^PRD$' ) { $envName = 'Production' }
                 elseif ( $nameTag.Substring(3, 3) -match '^STG$' ) { $envName = 'Staging' }
-                else { $envName = 'n/a' }
+                else { $envName = 'unknown' }
             }
             catch {
-                $envName = 'n/a'
-            }
+                $envName = 'unknown'
+            } #>
 
             # CREATE OBJECT AND ADD PROPERTIES
+            #[EC2Instance]$new = [EC2Instance]::new()
             $new = New-Object -TypeName EC2Instance
             $new.DR_Region = ( $ec2.Tags | Where-Object Key -eq DR_Region ).Value
             $new.Id = $ec2.InstanceId
             $new.Name = $nameTag
-            $new.Environment = $envName
+            $new.GetEnvironment()
             $new.Type = $ec2.InstanceType.Value
-            $new.Reserved = ( $ec2.Tags | Where-Object Key -eq RI_Candidate ).Value
+            $new.Reserved = ($ec2.Tags | Where-Object Key -eq RI_Candidate).Value
             $new.AZ = $ec2.Placement.AvailabilityZone
             $new.PrivateIP = $ec2.PrivateIpAddress
             $new.PublicIP = $ec2.PublicIpAddress
