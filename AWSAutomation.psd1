@@ -12,7 +12,7 @@
 RootModule = 'AWSAutomation.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.5.2'
+ModuleVersion = '0.5.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -57,7 +57,7 @@ PowerShellVersion = '5.1'
 # RequiredAssemblies = @()
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-# ScriptsToProcess = @()
+ScriptsToProcess = @('EC2Instance.ps1')
 
 # Type files (.ps1xml) to be loaded when importing this module
 # TypesToProcess = @()
@@ -94,6 +94,7 @@ FunctionsToExport = @(
     'Remove-LapsedAMI'
     'Revoke-StaleAccessKey'
     'Unregister-DBSnapshot'
+    'New-Function'
 )
 # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',
 
