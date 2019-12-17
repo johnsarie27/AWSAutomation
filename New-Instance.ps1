@@ -37,23 +37,12 @@ function New-Instance {
     Process {
         # CREATE NEW OBJECTS
         foreach ( $ec2 in $Instance ) {
-            <# # GET NAME TAG AND ENVIRONMENT
-            $nameTag = ($ec2.Tags | Where-Object Key -ceq Name).Value
-            try {
-                if ( $nameTag.Substring(3, 3) -match '^PRD$' ) { $envName = 'Production' }
-                elseif ( $nameTag.Substring(3, 3) -match '^STG$' ) { $envName = 'Staging' }
-                else { $envName = 'unknown' }
-            }
-            catch {
-                $envName = 'unknown'
-            } #>
-
             # CREATE OBJECT AND ADD PROPERTIES
             #[EC2Instance]$new = [EC2Instance]::new()
             $new = New-Object -TypeName EC2Instance
-            $new.DR_Region = ( $ec2.Tags | Where-Object Key -eq DR_Region ).Value
+            $new.DR_Region = ($ec2.Tags | Where-Object Key -eq DR_Region).Value
             $new.Id = $ec2.InstanceId
-            $new.Name = $nameTag
+            $new.Name = ($ec2.Tags | Where-Object Key -ceq Name).Value
             $new.GetEnvironment()
             $new.Type = $ec2.InstanceType.Value
             $new.Reserved = ($ec2.Tags | Where-Object Key -eq RI_Candidate).Value
@@ -67,7 +56,7 @@ function New-Instance {
             $new.Region = $Region
             $new.GetDaysRunning()
             if ( $new.Name -match $illegalChars ) { $new.IllegalName = $true }
-            $new.NameTags = $ec2.Tags | Where-Object Key -EQ name | Select-Object -EXP Value
+            $new.NameTags = ($ec2.Tags | Where-Object Key -EQ name).Value
             $new.VpcId = $ec2.VpcId
             $new.SubnetId = $ec2.SubnetId
             $new.SecurityGroups = $ec2.SecurityGroups.GroupName

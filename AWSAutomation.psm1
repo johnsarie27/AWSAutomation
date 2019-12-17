@@ -5,6 +5,7 @@
 # Link:         https://github.com/johnsarie27/AWSAutomation
 # ==============================================================================
 
+# THIS IS NEEDED TO CREATE THE CONSTRUCTOR FOR EC2INSTANCE CLASS
 #Requires -Modules AWS.Tools.EC2
 
 # CFTEMPLATEBUILDER FUNCTIONS
