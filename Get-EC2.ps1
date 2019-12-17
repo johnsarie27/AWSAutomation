@@ -3,27 +3,26 @@
 function Get-EC2 {
     <# =========================================================================
     .SYNOPSIS
-        Get all EC2 instances for given list of accounts
+        Get all EC2 instances
     .DESCRIPTION
-        This function returns a list of the EC2 instances in production or in
-        all available AWS credential profiles.
+        This function returns a list of the EC2 instances for a given AWS Region
+        using the provided AWS Credential Profile. If no profile is provided, the
+        system "Instance Profile" will be used.
     .PARAMETER ProfileName
         Name property of an AWS credential profile
     .PARAMETER Region
         AWS region
-    .PARAMETER All
-        Use all locally stored AWS credential profiles
     .PARAMETER AWSPowerShell
-        Return objects of type Amazon.EC2.Model.Reservation instead of custom
-        objects
+        Return objects of type Amazon.EC2.Model.Reservation instead of EC2Instance
+        type.
     .INPUTS
         System.String.
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> $All = Get-EC2 -Region us-west-2 -All
-        Return all EC2 instances in all AWS accounts represented by the locally
-        stored AWS credential profiles in the us-west-2 region.
+        PS C:\> $All = Get-EC2 -Region us-west-2
+        Return all EC2 instances using the local system's EC2 Instance Profile
+        in the us-west-2 region.
     ========================================================================= #>
     [CmdletBinding()]
     [OutputType([System.Object[]])]
