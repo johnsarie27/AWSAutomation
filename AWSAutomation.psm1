@@ -58,8 +58,8 @@ class EC2Instance {
     [String] $Type
     [String] $Reserved
     [String] $AZ
-    [String] $PrivateIp = $null
-    [String] $PublicIp = $null
+    [String] $PrivateIp
+    [String] $PublicIp
     [String[]] $AllPrivateIps
     [String] $State
     [String] $DR_Region
@@ -73,7 +73,7 @@ class EC2Instance {
     [string] $Savings
     [string] $ProfileName
     [string] $Region
-    [bool] $IllegalName = $false
+    [bool] $IllegalName
     [string[]] $NameTags
     [string] $VpcId
     [string] $VpcName
