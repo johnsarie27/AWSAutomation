@@ -5,6 +5,7 @@
 # Version:      0.0.1
 # ==============================================================================
 
+# THIS IS NEEDED FOR THE CONSTRUCTOR
 #Requires -Modules AWS.Tools.EC2
 
 class EC2Instance {

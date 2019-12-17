@@ -51,7 +51,7 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-#RequiredModules = @('ImportExcel')
+# RequiredModules = @('ImportExcel')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -94,7 +94,7 @@ FunctionsToExport = @(
     'Remove-LapsedAMI'
     'Revoke-StaleAccessKey'
     'Unregister-DBSnapshot'
-    'New-Function'
+    'New-Instance'
 )
 # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',
 

@@ -1,12 +1,9 @@
 # ==============================================================================
-# Updated:      2019-12-16
+# Updated:      2019-12-17
 # Created by:   Justin Johns
 # Filename:     AWSAutomation.psm1
 # Link:         https://github.com/johnsarie27/AWSAutomation
 # ==============================================================================
-
-# THIS IS NEEDED TO CREATE THE CONSTRUCTOR FOR EC2INSTANCE CLASS
-#Requires -Modules AWS.Tools.EC2
 
 # CFTEMPLATEBUILDER FUNCTIONS
 . $PSScriptRoot\ConvertTo-SecurityGroupObject.ps1
