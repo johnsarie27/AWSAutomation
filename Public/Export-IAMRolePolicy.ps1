@@ -12,6 +12,8 @@ function Export-IAMRolePolicy {
         Name of one or more AWS IAM Roles
     .PARAMETER Path
         Path to new report file
+    .PARAMETER PassThru
+        Return path to report file
     .INPUTS
         System.String.
     .OUTPUTS
@@ -35,7 +37,10 @@ function Export-IAMRolePolicy {
         [Parameter(HelpMessage = 'Path to new report file')]
         [ValidateScript( { Test-Path -Path ([System.IO.Path]::GetDirectoryName($_)) })]
         [ValidateScript( { [System.IO.Path]::GetExtension($_) -eq '.xlsx' })]
-        [string] $Path
+        [string] $Path,
+
+        [Parameter(HelpMessage = 'Return new credential object')]
+        [switch] $PassThru
     )
 
     Begin {
@@ -97,5 +102,10 @@ function Export-IAMRolePolicy {
             # WRITE POLICIES TO EXCEL
             $policies | Export-Excel @excelParams -WorksheetName $pn
         }
+    }
+
+    End {
+        # RETURN NEW PATH
+        if ( $PSBoundParameters.ContainsKey('PassThru') ) { $excelParams['Path'] }
     }
 }
