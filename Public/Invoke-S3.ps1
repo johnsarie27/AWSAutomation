@@ -3,26 +3,42 @@
 function Invoke-S3 {
     <# =========================================================================
     .SYNOPSIS
-        Short description
+        Invoke S3 operation
     .DESCRIPTION
-        Long description
-    .PARAMETER abc
-        Parameter description (if any)
+        Invoke S3 upload or download operation
+    .PARAMETER ProfileName
+        AWS Credential Profile Name
+    .PARAMETER BucketName
+        S3 Bucket Name
+    .PARAMETER Path
+        Local path for download or key prefix for upload
+    .PARAMETER Folder
+        Local folder to upload
+    .PARAMETER File
+        Local file to upload
+    .PARAMETER KeyPrefix
+        Object key prefix to download
+    .PARAMETER Key
+        Object key to download
     .INPUTS
-        Inputs (if any)
+        None.
     .OUTPUTS
-        Output (if any)
+        None.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Invoke-S3 -Profile myProf -BucketName bucket123 -Key /Folder/Files/data.json -Path $HOME
+        Downloads file data.json to the directory $HOME
     .NOTES
         General notes
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = '__uploadFile')]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
+        [Parameter(HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(Mandatory, HelpMessage = 'Bucket name')]
         [ValidateNotNullOrEmpty()]
@@ -32,46 +48,64 @@ function Invoke-S3 {
         [ValidateNotNullOrEmpty()]
         [string] $Path,
 
-        [Parameter(Mandatory, HelpMessage = 'Local folder', ParameterSetName = '__uploadFolder')]
+        [Parameter(Mandatory, HelpMessage = 'Local folder to upload', ParameterSetName = '__uploadFolder')]
         [ValidateScript( { Test-Path -Path $_ -PathType Container })]
         [string] $Folder,
 
-        [Parameter(Mandatory, HelpMessage = 'Local folder', ParameterSetName = '__uploadFile')]
+        [Parameter(Mandatory, HelpMessage = 'Local file to upload', ParameterSetName = '__uploadFile')]
         [ValidateScript( { Test-Path -Path $_ -PathType Leaf })]
         [string] $File,
 
-        [Parameter(Mandatory, HelpMessage = 'Bucket key prefix', ParameterSetName = '__downloadFolder')]
+        [Parameter(Mandatory, HelpMessage = 'S3 object key prefix to download', ParameterSetName = '__downloadFolder')]
         [ValidateNotNullOrEmpty()]
         [string] $KeyPrefix,
 
-        [Parameter(Mandatory, HelpMessage = 'Bucket key prefix', ParameterSetName = '__downloadFile')]
+        [Parameter(Mandatory, HelpMessage = 'S3 object key to download', ParameterSetName = '__downloadFile')]
         [ValidateNotNullOrEmpty()]
         [string] $Key
     )
 
     Begin {
+        # STAGE SPLATTER TABLE
+        $s3Params = @{ BucketName  = $BucketName }
 
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $s3Params['ProfileName'] = $ProfileName }
+        elseif ( $PSBoundParameters.ContainsKey('Credential') ) { $s3Params['Credential'] = $Credential }
+        else { Throw 'User not authorized.' }
+
+        if ( $PSCmdlet.ParameterSetName -in @('__downloadFolder', '__downloadFile') ) {
+            # CHECK FOR VALID DOWNLOAD PATH
+            if ( -not (Test-Path -Path $Path) ) { Throw ('Invalid path: [{0}]' -f $Path) }
+
+            # SET COMMAND TYPE
+            $download = $true
+        }
     }
 
     Process {
-        $path = "$HOME\Downloads"
-        #$path = "Folder\SubFolder" # KEY PREFIX FOR UPLOAD FILE/FOLDER
-
-        # UPLOAD TO S3 RECURSIVELY
-        $s3Params = @{
-            ProfileName = 'esricloud'
-            BucketName  = 's3-virus-scan-test'
-            KeyPrefix   = "Data/NetworkDatasets/CompressedLicensed"
-            #Key         = "Data/NetworkDatasets/CompressedLicensed/data.json"
-            #Folder      = "$HOME\Downloads\Datasets"
-            #File        = "$HOME\Downloads\Datasets\data.json"
+        # DETERMINE DESIRED SCENARIO AND SET SPLATTER TABLE PARAMS
+        if ( $PSBoundParameters.ContainsKey('KeyPrefix') ) {
+            $s3Params['KeyPrefix'] = $KeyPrefix
+            $s3Params['Folder'] = Join-Path $Path -ChildPath $KeyPrefix
         }
-        $s3Params['Folder'] = Join-Path $path -ChildPath $s3Params['KeyPrefix']
-        #$s3Params['File'] = Join-Path $path -ChildPath $s3Params['Key']
-        #$s3Params['KeyPrefix'] = Join-Path -Path $path -ChildPath [System.IO.Path]::GetFileName($s3Params['Folder'])
-        #$s3Params['Key'] = Join-Path -Path $path -ChildPath [System.IO.Path]::GetFileName($s3Params['File'])
+        if ( $PSBoundParameters.ContainsKey('Key') ) {
+            $s3Params['Key'] = $Key
+            $s3Params['File'] = Join-Path $Path -ChildPath $Key
+        }
+        if ( $PSBoundParameters.ContainsKey('Folder') ) {
+            $s3Params['Folder'] = $Folder
+            $s3Params['KeyPrefix'] = Join-Path -Path $Path -ChildPath [System.IO.Path]::GetFileName($Folder)
+        }
+        if ( $PSBoundParameters.ContainsKey('File') ) {
+            $s3Params['File'] = $File
+            $s3Params['Key'] = Join-Path -Path $Path -ChildPath [System.IO.Path]::GetFileName($File)
+        }
 
-        Read-S3Object @s3Params
-        #Write-S3Object @s3Params
+        # VERBOSE
+        Write-Verbose -Message $s3Params.GetEnumerator()
+
+        # PERFORM OPERATIONS
+        if ( $download ) { Read-S3Object @s3Params }
+        else { Write-S3Object @s3Params }
     }
 }
