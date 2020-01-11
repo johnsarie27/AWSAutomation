@@ -26,7 +26,7 @@ function Invoke-S3 {
         None.
     .EXAMPLE
         PS C:\> Invoke-S3 -Profile myProf -BucketName bucket123 -Key /Folder/Files/data.json -Path $HOME
-        Downloads file data.json to the directory $HOME
+        Downloads file data.json to the $HOME directory
     .NOTES
         General notes
     ========================================================================= #>
@@ -69,9 +69,11 @@ function Invoke-S3 {
         # STAGE SPLATTER TABLE
         $s3Params = @{ BucketName  = $BucketName }
 
+        # I'VE OPTED TO CHECK FOR AUTHENTICATION HERE RATHER THAN USING PARAMETER SETS TO MANDATE THE
+        # PROFILENAME OR CREDENTIAL PARAMETER BECAUSE THIS ALLOWS THE USER TO USE AN INSTANCE PROFILE
+        # BY NOT SPECIFYING EITHER PARAMETER
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $s3Params['ProfileName'] = $ProfileName }
-        elseif ( $PSBoundParameters.ContainsKey('Credential') ) { $s3Params['Credential'] = $Credential }
-        else { Throw 'User not authorized.' }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $s3Params['Credential'] = $Credential }
 
         if ( $PSCmdlet.ParameterSetName -in @('__downloadFolder', '__downloadFile') ) {
             # CHECK FOR VALID DOWNLOAD PATH
