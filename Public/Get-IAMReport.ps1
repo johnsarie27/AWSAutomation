@@ -9,6 +9,8 @@ function Get-IAMReport {
         parse the IAM Credential Report. It then returns the account information.
     .PARAMETER ProfileName
         Name property of an AWS credential profile
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Path
         File path to existing AWS Credential Report
     .INPUTS
@@ -19,14 +21,18 @@ function Get-IAMReport {
         PS C:\> Get-IAMReport -ProfileName MyAccount
         Generate IAM report for MyAccount
     ========================================================================= #>
-    [CmdletBinding(DefaultParameterSetName = '__report')]
+    [CmdletBinding()]
     [OutputType([System.Collections.Generic.List`1[System.Object]])]
     Param(
-        [Parameter(Mandatory, ParameterSetName = '__report', HelpMessage = 'AWS Credential profile')]
+        [Parameter(HelpMessage = 'AWS Credential profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(Mandatory, ParameterSetName = '__file', HelpMessage = 'Existing AWS Credential Report')]
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
+
+        [Parameter(HelpMessage = 'Existing AWS Credential Report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Include "*.csv" })]
         [Alias('Data', 'CredentialReport', 'File', 'FilePath', 'Report', 'ReportPath')]
         [string] $Path
@@ -37,24 +43,34 @@ function Get-IAMReport {
         $Date = Get-Date
         $Accounts = [System.Collections.Generic.List[System.Object]]::new()
 
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
+            $params = @{ ProfileName = $ProfileName }
+            #$account = $ProfileName
+        }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) {
+            $params = @{ Credential = $Credential }
+            #$account = 'N/A'
+        }
+
         # IMPORT AWS IAM REPORT
-        if ( $PSCmdlet.ParameterSetName -eq '__report' ) {
+        if ( $PSBoundParameters.ContainsKey('Path') ) {
+            $IAMReport = Import-Csv -Path $Path
+        }
+        else {
             # INITIATE REQUEST FOR IAM REPORT AND CHECK FOR STATUS CHANGE EVERY 10 SECONDS
             do {
-                $State = (Request-IAMCredentialReport -ProfileName $ProfileName).State.Value
+                $State = (Request-IAMCredentialReport @params).State.Value
                 Start-Sleep -Seconds 10
             } while ( $State -eq 'STARTED' )
 
             # IF THE REPORT STATUS CHANGES TO 'COMPLETE' SET THE REPORT DETAILS TO A VARIABLE
             if ( $State -eq 'COMPLETE' ) {
-                $IAMReport = Get-IAMCredentialReport -AsTextArray -ProfileName $ProfileName | ConvertFrom-Csv
+                $IAMReport = Get-IAMCredentialReport -AsTextArray @params | ConvertFrom-Csv
+                Write-Verbose -Message ('Report contains [{0}] records' -f $IAMReport.Count)
             }
             else {
                 Throw 'Failed to retrieve report from AWS. Check report status in AWS console'
             }
-        }
-        else {
-            $IAMReport = Import-Csv -Path $Path
         }
     }
 
@@ -103,10 +119,10 @@ function Get-IAMReport {
                 $new | Add-Member -MemberType NoteProperty -Name 'PrimaryGroup' -Value 'N/A'
             }
             else {
-                $Groups = Get-IAMGroupForUser -UserName $row.user -ProfileName $ProfileName |
+                $Groups = Get-IAMGroupForUser -UserName $row.user @params |
                     Select-Object -ExpandProperty GroupName |
                     Measure-Object | Select-Object -ExpandProperty Count
-                $PrimaryGroup = Get-IAMGroupForUser -UserName $row.user -ProfileName $ProfileName |
+                $PrimaryGroup = Get-IAMGroupForUser -UserName $row.user @params |
                     Select-Object -ExpandProperty GroupName -First 1
                 if ( -not $PrimaryGroup ) { $PrimaryGroup = 'None' }
                 $new | Add-Member -MemberType NoteProperty -Name 'Groups' -Value $Groups

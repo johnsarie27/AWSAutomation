@@ -1,4 +1,4 @@
-#Requires -Modules AWS.Tools.EC2, AWS.Tools.ElasticLoadBalancingV2
+#Requires -Modules AWS.Tools.EC2, AWS.Tools.ElasticLoadBalancing, AWS.Tools.ElasticLoadBalancingV2
 
 function Get-ELB {
     <# =========================================================================
@@ -11,6 +11,8 @@ function Get-ELB {
         added.
     .PARAMETER ProfileName
         Name property of an AWS credential profile
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS region
     .INPUTS
@@ -24,13 +26,15 @@ function Get-ELB {
         Uses [PSCustomObject] rather than $New = New-Object -TypeName psobject
     ========================================================================= #>
     [CmdletBinding()]
-    [Alias('gelb')]
     Param(
         [Parameter(ValueFromPipeline, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [ValidateNotNullOrEmpty()]
-        [Alias('Profile')]
-        [string[]] $ProfileName,
+        [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
@@ -38,84 +42,77 @@ function Get-ELB {
     )
 
     Begin {
-        # IMPORT DNSCLIENT MODULE
+        <# # IMPORT DNSCLIENT MODULE
         if ( $PSVersionTable.PSVersion.Major -ge 6 ) {
             Import-WinModule -Name DnsClient -ErrorAction SilentlyContinue
-        }
+        } #>
 
-        # CHECK FOR PROFILE PARAM AND USE ALL PROFILES IF NOT EXIST
-        if ( -not $PSBoundParameters.ContainsKey('ProfileName') ) {
-            $ProfileName = Get-AWSCredential -ListProfileDetail | Select-Object -EXP ProfileName
-        }
+        $awsParams = @{ Region = $Region }
 
-        #$AllELBs = @()
-        $AllELBs = [System.Collections.Generic.List[System.Object]]::new()
+        # CHECK FOR AUTHENTICATION METHOD
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams['Credential'] = $Credential }
+
+        $allElbs = [System.Collections.Generic.List[System.Object]]::new()
     }
 
     Process {
-        foreach ( $Name in $ProfileName ) {
-            # GET NETWORK ELASTIC LOAD BALANCERS (ELBs)
-            $ELBList = Get-ELBLoadBalancer -ProfileName $Name -Region $Region # | Where-Object Scheme -NE 'internal'
+        # GET ALL NETWORK INTERFACES
+        $networkInterface = Get-EC2NetworkInterface @awsParams
 
-            # GET ALL NETWORK INTERFACES
-            $Net = Get-EC2NetworkInterface -ProfileName $Name -Region $Region
+        # GET NETWORK ELASTIC LOAD BALANCERS (ELBs)
+        foreach ( $elb in (Get-ELBLoadBalancer @awsParams) ) { # | Where-Object Scheme -NE 'internal'
+            # CREATE CUSTOM OBJECT
+            $new = @{ 'LoadBalancerName' = $elb.LoadBalancerName }
+            #$new.AvailabilityZones = $elb.AvailabilityZones
+            #$new.CanonicalHostedZoneName = $elb.CanonicalHostedZoneName
+            $new.CreatedTime = $elb.CreatedTime
+            $new.DNSName = $elb.DNSName
+            #$new.HealthCheck = $elb.HealthCheck
+            $new.Instances = $elb.Instances # | Select-Object -EXP Instances | Select-Object -EXP InstanceId
+            $new.IpAddress = (Resolve-DnsName $elb.DNSName).IPAddress
+            #$new.ListenerDescriptions = $elb.ListenerDescription
+            #$new.Policies = $elb.Policies
+            $new.ProfileName = $ProfileName
+            $new.Scheme = $elb.Scheme
+            $new.SecurityGroups = $elb.SecurityGroups
+            #$new.SourceSecurityGroup = $elb.SourceSecurityGroup
+            #$new.Subnets = $elb.Subnets
+            $new.VPCId = $elb.VPCId
+            $new.Type = 'classic'
+            $new.PrivateIp = @()
 
-            # BUILD CUSTOM OBJECT FOR EACH WITH CUSTOM ATTRIBUTES
-            foreach ( $ELB in $ELBList ) {
-                # CREATE CUSTOM OBJECT
-                $new = @{ 'LoadBalancerName' = $ELB.LoadBalancerName }
-                #$new.AvailabilityZones = $ELB.AvailabilityZones
-                #$new.CanonicalHostedZoneName = $ELB.CanonicalHostedZoneName
-                $new.CreatedTime = $ELB.CreatedTime
-                $new.DNSName = $ELB.DNSName
-                #$new.HealthCheck = $ELB.HealthCheck
-                $new.Instances = $ELB.Instances # | Select-Object -EXP Instances | Select-Object -EXP InstanceId
-                $new.IpAddress = (Resolve-DnsName $ELB.DNSName).IPAddress
-                #$new.ListenerDescriptions = $ELB.ListenerDescription
-                #$new.Policies = $ELB.Policies
-                $new.ProfileName = $Name
-                $new.Scheme = $ELB.Scheme
-                $new.SecurityGroups = $ELB.SecurityGroups
-                #$new.SourceSecurityGroup = $ELB.SourceSecurityGroup
-                #$new.Subnets = $ELB.Subnets
-                $new.VPCId = $ELB.VPCId
-                $new.Type = 'classic'
-                $new.PrivateIp = @()
+            # ADD CUSTOM OBJECT TO LIST
+            $allElbs.Add([PSCustomObject] $new)
+        }
 
-                # ADD CUSTOM OBJECT TO LIST
-                $AllELBs.Add([PSCustomObject] $new)
-            }
+        # GET APPLICATION LOAD BALANCERS (ALBS)
+        foreach ( $ALB in (Get-ELB2LoadBalancer @awsParams) ) {
+            $new = @{ 'LoadBalancerName' = $ALB.LoadBalancerName }
+            #$new.CanonicalHostedZoneId = $ALB.CanonicalHostedZoneId
+            $new.CreatedTime = $ALB.CreatedTime
+            $new.DNSName = $ALB.DNSName
+            #$new.LoadBalancerArn = $ALB.LoadBalancerArn
+            $new.Instances = 'N/A'
+            $new.IpAddress = (Resolve-DnsName $ALB.DNSName).IPAddress
+            $new.ProfileName = $ProfileName
+            $new.Scheme = $ALB.Scheme
+            $new.SecurityGroups = $ALB.SecurityGroups
+            $new.VPCId = $ALB.VPCId
+            $new.Type = $ALB.Type
+            $new.PrivateIp = @()
 
-            # GET APPLICATION LOAD BALANCERS (ALBS)
-            $ALBList = Get-ELB2LoadBalancer -ProfileName $Name -Region $Region
+            # ADD CUSTOM OBJECT TO LIST
+            $allElbs.Add([PSCustomObject] $new)
+        }
 
-            foreach ( $ALB in $ALBList ) {
-                $new = @{ 'LoadBalancerName' = $ALB.LoadBalancerName }
-                #$new.CanonicalHostedZoneId = $ALB.CanonicalHostedZoneId
-                $new.CreatedTime = $ALB.CreatedTime
-                $new.DNSName = $ALB.DNSName
-                #$new.LoadBalancerArn = $ALB.LoadBalancerArn
-                $new.Instances = 'N/A'
-                $new.IpAddress = (Resolve-DnsName $ALB.DNSName).IPAddress
-                $new.ProfileName = $Name
-                $new.Scheme = $ALB.Scheme
-                $new.SecurityGroups = $ALB.SecurityGroups
-                $new.VPCId = $ALB.VPCId
-                $new.Type = $ALB.Type
-                $new.PrivateIp = @()
+        # LOOP ALL ELBS
+        foreach ( $elb in $allElbs ) {
 
-                # ADD CUSTOM OBJECT TO LIST
-                $AllELBs.Add([PSCustomObject] $new)
-            }
-
-            # LOOP ALL ELBS
-            foreach ( $elb in $AllELBs ) {
-
-                # LOOP ALL NETWORK INTERFACES
-                foreach ( $n in $Net ) {
-                    if ( $n.Description -match ('^ELB\s{0}' -f $elb.LoadBalancerName) ) {
-                        $elb.PrivateIp += $n.PrivateIpAddress
-                    }
+            # LOOP ALL NETWORK INTERFACES
+            foreach ( $n in $networkInterface ) {
+                if ( $n.Description -match ('^ELB\s{0}' -f $elb.LoadBalancerName) ) {
+                    $elb.PrivateIp += $n.PrivateIpAddress
                 }
             }
         }
@@ -123,6 +120,6 @@ function Get-ELB {
 
     End {
         # RETURN RESULTS
-        $AllELBs | Sort-Object -Property ProfileName
+        $allElbs | Sort-Object -Property ProfileName
     }
 }
