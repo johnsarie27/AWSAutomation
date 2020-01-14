@@ -96,11 +96,11 @@ function Invoke-S3 {
         }
         if ( $PSBoundParameters.ContainsKey('Folder') ) {
             $s3Params['Folder'] = $Folder
-            $s3Params['KeyPrefix'] = Join-Path -Path $Path -ChildPath [System.IO.Path]::GetFileName($Folder)
+            $s3Params['KeyPrefix'] = Join-Path -Path $Path -ChildPath ([System.IO.Path]::GetFileName($Folder))
         }
         if ( $PSBoundParameters.ContainsKey('File') ) {
             $s3Params['File'] = $File
-            $s3Params['Key'] = Join-Path -Path $Path -ChildPath [System.IO.Path]::GetFileName($File)
+            $s3Params['Key'] = Join-Path -Path $Path -ChildPath ([System.IO.Path]::GetFileName($File))
         }
 
         # VERBOSE
