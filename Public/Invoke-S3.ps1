@@ -8,6 +8,8 @@ function Invoke-S3 {
         Invoke S3 upload or download operation
     .PARAMETER ProfileName
         AWS Credential Profile Name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER BucketName
         S3 Bucket Name
     .PARAMETER Path

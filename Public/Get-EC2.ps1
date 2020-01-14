@@ -10,6 +10,8 @@ function Get-EC2 {
         system "Instance Profile" will be used.
     .PARAMETER ProfileName
         Name property of an AWS credential profile
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS region
     .PARAMETER AWSPowerShell
@@ -32,6 +34,10 @@ function Get-EC2 {
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
 
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials[]] $Credential,
+
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
@@ -50,6 +56,15 @@ function Get-EC2 {
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
             foreach ( $name in $ProfileName ) {
                 $ec2Instances = (Get-EC2Instance -ProfileName $name -Region $Region).Instances
+                Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)
+
+                if ( $PSBoundParameters.ContainsKey('AWSPowerShell') ) { $results += $ec2Instances }
+                else { $results += New-Instance -Instance $ec2Instances }
+            }
+        }
+        elseif ( $PSBoundParameters.ContainsKey('Credential') ) {
+            foreach ( $cred in $Credential ) {
+                $ec2Instances = (Get-EC2Instance -Credential $cred -Region $Region).Instances
                 Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)
 
                 if ( $PSBoundParameters.ContainsKey('AWSPowerShell') ) { $results += $ec2Instances }
