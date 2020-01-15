@@ -12,6 +12,8 @@ function Get-ScanStatus {
         Key prefix to filter bucket resutls
     .PARAMETER ProfileName
         AWS Credential Profile Name
+    .PARAMETER Credential
+        AWS Credential Object
     .INPUTS
         None.
     .OUTPUTS
@@ -34,13 +36,19 @@ function Get-ScanStatus {
 
         [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string] $ProfileName
+        [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential
     )
 
     Begin {
         # CONFIGURE CREDENTIALS AND ADD KEY PREFIX IF SPECIFIED
-        $creds = @{ ProfileName = $ProfileName ; BucketName = $BucketName }
+        $creds = @{ BucketName = $BucketName }
         if ( $PSBoundParameters.ContainsKey('KeyPrefix') ) { $creds.Add('KeyPrefix', $KeyPrefix) }
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $creds['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $creds['Credential'] = $Credential }
 
         $objects = Get-S3Object @creds
 

@@ -11,6 +11,8 @@ function Remove-LapsedAMI {
         actually delete AMIs, supply the parameter: -RunAsTestOnly $false
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS Region
     .PARAMETER BackupSuffix
@@ -60,6 +62,10 @@ function Remove-LapsedAMI {
         [ValidateNotNullOrEmpty()]
         [Alias('Profile')]
         [string[]] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(Mandatory, HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]

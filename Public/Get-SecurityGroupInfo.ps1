@@ -28,6 +28,10 @@ function Get-SecurityGroupInfo {
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [string] $ProfileName,
 
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
+
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [string] $Region = 'us-east-1',
@@ -39,8 +43,12 @@ function Get-SecurityGroupInfo {
 
     Begin {
         # SET API PARAMS
-        $secGrpParams = @{ ProfileName = $ProfileName ; Region = $Region }
-        $secGrpParams.Filter = @{Name = "vpc-id"; Values = $VpcId }
+        $secGrpParams = @{
+            Region = $Region
+            Filter = @{Name = "vpc-id"; Values = $VpcId }
+        }
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $secGrpParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $secGrpParams['Credential'] = $Credential }
 
         # MAKE API CALLS
         $securityGroups = Get-EC2SecurityGroup @secGrpParams

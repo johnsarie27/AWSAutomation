@@ -91,7 +91,7 @@
         'New-CWRecoveryAlarm'
         'Remove-LapsedAMI'
         'Revoke-StaleAccessKey'
-        'Unregister-DBSnapshot'
+        'Unregister-DbSnapshot'
         'New-Instance'
     )
     # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',

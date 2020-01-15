@@ -1,6 +1,6 @@
 #Requires -Modules AWS.Tools.RDS
 
-function Unregister-DBSnapshot {
+function Unregister-DbSnapshot {
     <# =========================================================================
     .SYNOPSIS
         Delete RDS snapshot
@@ -10,6 +10,8 @@ function Unregister-DBSnapshot {
         AWS DBInstance object
     .PARAMETER ProfileName
         AWS Credential Profile Name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         Region of existing RDS DB snapshot
     .PARAMETER Age
@@ -30,9 +32,13 @@ function Unregister-DBSnapshot {
         [ValidateNotNullOrEmpty()]
         [Amazon.RDS.Model.DBInstance[]] $DBInstance,
 
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(HelpMessage = 'Region of existing RDS DB snapshot')]
         [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
@@ -47,14 +53,14 @@ function Unregister-DBSnapshot {
         if ( !$Region ) { Throw 'Region not found.' }
 
         # SET PARAMETERS FOR AWS CALLS BELOW
-        $splat = @{
-            ProfileName = $ProfileName
-            Region      = $Region
-        }
+        $awsParams = @{ Region = $Region }
+
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams['Credential'] = $Credential }
 
         # GET DB INSTANCE
         if ( -not $PSBoundParameters.ContainsKey('DBInstance') ) {
-            $DBInstance = Get-RDSDBInstance @splat
+            $DBInstance = Get-RDSDBInstance @awsParams
         }
     }
 
@@ -66,7 +72,7 @@ function Unregister-DBSnapshot {
                 SnapshotType         = 'manual' # 'automated' , 'awsbackup'
             }
 
-            $snapshot = Get-RDSDBSnapshot @splat @snapshotParams
+            $snapshot = Get-RDSDBSnapshot @awsParams @snapshotParams
 
             # REMOVE "OLD" SNAPSHOTS
             foreach ( $ss in $snapshot ) {
@@ -77,7 +83,7 @@ function Unregister-DBSnapshot {
                         Force                = $true
                     }
 
-                    Remove-RDSDBSnapshot @splat @removeParams
+                    Remove-RDSDBSnapshot @awsParams @removeParams
                     #$ss | Select-Object -Property DBSnapshotIdentifier, SnapshotCreateTime
                 }
             }

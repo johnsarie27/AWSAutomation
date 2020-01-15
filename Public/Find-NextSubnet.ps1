@@ -8,6 +8,8 @@ function Find-NextSubnet {
         Find next unused subnet and return the second octet of the subnet CIDR range
     .PARAMETER ProfileName
         AWS Credential Profile Name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS Region
     .INPUTS
@@ -20,11 +22,15 @@ function Find-NextSubnet {
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
+
+        [Parameter(Mandatory, ParameterSetName = '_creds', HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials[]] $Credential,
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
@@ -43,9 +49,18 @@ function Find-NextSubnet {
     }
 
     Process {
-        foreach ( $p in $ProfileName ) {
-            foreach ( $vpc in (Get-EC2Vpc -ProfileName $p -Region $Region) ) {
-                $vpcs.Add($vpc)
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
+            foreach ( $p in $ProfileName ) {
+                foreach ( $vpc in (Get-EC2Vpc -ProfileName $p -Region $Region) ) {
+                    $vpcs.Add($vpc)
+                }
+            }
+        }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) {
+            foreach ( $c in $Credential ) {
+                foreach ( $vpc in (Get-EC2Vpc -Credential $c -Region $Region) ) {
+                    $vpcs.Add($vpc)
+                }
             }
         }
 

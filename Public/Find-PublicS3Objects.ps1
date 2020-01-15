@@ -8,6 +8,8 @@ function Find-PublicS3Objects {
         Search S3 bucket(s) and return a list of publicly accessible objects
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER BucketName
         S3 bucket name
     .INPUTS
@@ -27,6 +29,10 @@ function Find-PublicS3Objects {
         [Alias('Profile', 'Name')]
         [string] $ProfileName,
 
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
+
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'S3 bucket name')]
         [ValidateScript({ $_ -match '^([a-z0-9]{1})([a-zA-Z0-9]|(.(?!(\.|-)))){4,61}([^-]$)' })]
         [Alias('Bucket')]
@@ -34,48 +40,48 @@ function Find-PublicS3Objects {
     )
 
     Begin {
-        $Splat = @{ ProfileName = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
 
         # VALIDATE BUCKET
         if ($PSBoundParameters.ContainsKey('BucketName') ) {
-            if ( (Get-S3Bucket @Splat).BucketName -contains $BucketName ) {
-                $Buckets = @(Get-S3Bucket @Splat -BucketName $BucketName)
+            if ( (Get-S3Bucket @awsParams).BucketName -contains $BucketName ) {
+                $buckets = @(Get-S3Bucket @awsParams -BucketName $BucketName)
             }
             else {
-                Write-Warning ('Bucket [{0}] not found' -f $BucketName)
-                break
+                Throw ('Bucket [{0}] not found' -f $BucketName)
             }
         } else {
-            $Buckets = @(Get-S3Bucket @Splat)
+            $buckets = @(Get-S3Bucket @awsParams)
         }
 
-        $Results = [System.Collections.Generic.List[PSObject]]::new()
+        $results = [System.Collections.Generic.List[PSObject]]::new()
     }
 
     Process {
         # ITERATE THROUGH ALL BUCKETS IN ACCOUNT
-        foreach ( $b in $Buckets ) {
+        foreach ( $b in $buckets ) {
 
             # $BName = $bucket.BucketName
-            $Splat.BucketName = $b.BucketName
+            $awsParams['BucketName'] = $b.BucketName
 
             # ITERATE THROUGH ALL OBJECTS IN BUCKET
-            foreach ( $i in Get-S3Object @Splat ) {
+            foreach ( $i in Get-S3Object @awsParams ) {
 
                 # GET ACL FOR OBJECTS
-                $ACL = Get-S3ACL @Splat -Key $i.Key
+                $acl = Get-S3ACL @awsParams -Key $i.Key
 
                 # EVALUATE
-                foreach ( $grant in $ACL.Grants ) {
+                foreach ( $grant in $acl.Grants ) {
                     if ( $grant.Grantee.URI -match 'AllUsers' ) {
-                        $New = [PSCustomObject] @{
-                            BucketName = $Splat.BucketName
+                        $new = [PSCustomObject] @{
+                            BucketName = $awsParams.BucketName
                             Key        = $i.Key
                             Permission = $grant.Permission
                             URI        = $grant.Grantee.URI
                         }
-                        #$Results += $New
-                        $Results.Add($New)
+                        #$results += $new
+                        $results.Add($new)
                     }
                 }
             }
@@ -83,6 +89,6 @@ function Find-PublicS3Objects {
     }
 
     End {
-        $Results
+        $results
     }
 }

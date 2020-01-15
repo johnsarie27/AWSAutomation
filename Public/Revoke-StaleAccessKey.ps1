@@ -10,6 +10,8 @@ function Revoke-StaleAccessKey {
         User name
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER ProfileName
+        AWS Credential Profile Name
     .PARAMETER Deactivate
         Deactivate key(s)
     .PARAMETER Remove
@@ -30,11 +32,15 @@ function Revoke-StaleAccessKey {
         [ValidateNotNullOrEmpty()]
         [string] $UserName,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='AWS credential profile name')]
+        [Parameter(ValueFromPipelineByPropertyName, HelpMessage='AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(ParameterSetName='_remove', HelpMessage='Delete key')]
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
+
+        [Parameter(ParameterSetName = '_remove', HelpMessage = 'Delete key')]
         [switch] $Remove,
 
         [Parameter(ParameterSetName='_deactivate', HelpMessage='Disable key')]
@@ -43,50 +49,54 @@ function Revoke-StaleAccessKey {
 
     Begin {
         # CREATE RESULTS ARRAY
-        $Results = [System.Collections.Generic.List[PSObject]]::new()
+        $results = [System.Collections.Generic.List[PSObject]]::new()
+
+        # SET AUTHENTICATION
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
     }
 
     Process {
         # VALIDATE USERNAME
-        if ( $UserName -notin (Get-IAMUserList -ProfileName $ProfileName).UserName ) {
+        if ( $UserName -notin (Get-IAMUserList @awsParams).UserName ) {
             Write-Error ('User [{0}] not found in profile [{1}].' -f $UserName, $ProfileName); Break
         }
 
         # GET ACCESS KEYS
-        $Keys = Get-IAMAccessKey -UserName $UserName -ProfileName $ProfileName
-        if ( !$Keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) }
+        $keys = Get-IAMAccessKey -UserName $UserName @awsParams
+        if ( !$keys ) { Write-Verbose ('No keys found for user: {0}' -f $UserName) }
 
         # LOOP THROUGH KEYS
-        foreach ( $key in $Keys ) {
+        foreach ( $k in $keys ) {
 
             # CREATE TIMESPAN
-            $Span = New-TimeSpan -Start $key.CreateDate -End (Get-Date)
+            $span = New-TimeSpan -Start $k.CreateDate -End (Get-Date)
 
             # IF KEY OLDER THAN 90 DAYS...
-            if ( $Span.Days -gt 90 ) {
+            if ( $span.Days -gt 90 ) {
                 # REMOVE KEY
                 if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                    Remove-IAMAccessKey -UserName $key.UserName -AccessKeyId $key.AccessKeyId -ProfileName $ProfileName
+                    Remove-IAMAccessKey -UserName $k.UserName -AccessKeyId $k.AccessKeyId @awsParams
                 }
 
                 # DEACTIVATE KEY
                 if ( $PSBoundParameters.ContainsKey('Deactivate') ) {
-                    Update-IAMAccessKey -UserName $key.UserName -AccessKeyId $key.AccessKeyId -Status Inactive -ProfileName $ProfileName
+                    Update-IAMAccessKey -UserName $k.UserName -AccessKeyId $k.AccessKeyId -Status Inactive @awsParams
                 }
 
                 # ADD KEY TO LIST
-                $Results.Add($key)
+                $results.Add($k)
             }
         }
     }
 
     End {
-        if ( $PSBoundParameters.ContainsKey('Deactivate') ) { $Status = 'deactivated' }
-        else { $Status = 'removed' }
-        if ( $Results.Count -eq 1 ) { $Num = 'key' } else { $Num = 'keys' }
-        Write-Verbose ('{0} {1} {2}.' -f $Results.Count, $Num, $Status)
+        if ( $PSBoundParameters.ContainsKey('Deactivate') ) { $status = 'deactivated' } else { $status = 'removed' }
+        if ( $results.Count -eq 1 ) { $num = 'key' } else { $num = 'keys' }
+
+        Write-Verbose ('{0} {1} {2}.' -f $results.Count, $num, $status)
 
         # RETURN REVOKED KEYS
-        $Results | Select-Object -ExcludeProperty Status
+        $results | Select-Object -ExcludeProperty Status
     }
 }

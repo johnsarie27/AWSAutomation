@@ -10,6 +10,8 @@ function Get-NetworkInfo {
         Route Tables as a connection point.
     .PARAMETER ProfileName
         Name property of an AWS credential profile
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS region
     .PARAMETER VpcId
@@ -24,7 +26,7 @@ function Get-NetworkInfo {
     .NOTES
         The output is not printable so I used the following code to format it:
             $Output = ""
-            foreach ( $item in $List ) {
+            foreach ( $item in $list ) {
                 $Output += $item | Select-Object Name, Id, VpcId | Out-String
                 $Output += $item | Select-Object -EXP Routes | Out-String
                 $Output += $item | Select-Object -EXP Subnets | Out-String
@@ -33,34 +35,43 @@ function Get-NetworkInfo {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile containing key and secret')]
-        [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
+        [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
+        [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [string] $ProfileName,
 
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
+
         [Parameter(HelpMessage = 'AWS Region')]
-        [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [string] $Region = 'us-east-1',
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'VPC ID')]
-        [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
+        [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]
         [string] $VpcId
     )
 
-    $ParamSplat = @{
-        ProfileName = $ProfileName
-        Region      = $Region
-        Filter      = @{Name = "vpc-id"; Value = $VpcId}
+    $awsParams = @{
+        Region = $Region
+        Filter = @{Name = "vpc-id"; Values = $VpcId}
     }
 
-    $RouteTables = Get-EC2RouteTable @ParamSplat
+    if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams['ProfileName'] = $ProfileName }
+    if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams['Credential'] = $Credential }
+
+    $routeTables = Get-EC2RouteTable @awsParams
 
     # CREATE NEW OBJECTS
-    $List = @()
-    foreach ( $rt in $RouteTables ) {
-        $new = @{ Id = $rt.RouteTableId }
-        $new.Name = ($rt.Tags | Where-Object Key -EQ Name).Value
-        $new.VpcId = $VpcId
-        $new.VpcCidr = Get-EC2Vpc @ParamSplat | Select-Object -EXP CidrBlock
+    $list = [System.Collections.Generic.List[PSObject]]::new()
+    foreach ( $rt in $routeTables ) {
+        $new = @{
+            Id      = $rt.RouteTableId
+            Name    = ($rt.Tags.Where({$_.Key -EQ 'Name'})).Value
+            VpcId   = $VpcId
+            VpcCidr = (Get-EC2Vpc @awsParams).CidrBlock
+        }
+
         # ADD ROUTE INFO
         $new.Routes = @()
         foreach ( $r in $rt.Routes ) {
@@ -71,21 +82,25 @@ function Get-NetworkInfo {
             $new.Routes += [PSCustomObject] $Route
         }
         # ADD SUBNET INFO
-        $new.Subnets = @()
+        $new['Subnets'] = [System.Collections.Generic.List[PSObject]]::new()
         foreach ( $a in $rt.Associations ) {
-            $SN = Get-EC2Subnet @ParamSplat -SubnetId $a.SubnetId
-            $Assoc = @{ SubnetId = $a.SubnetId }
-            $Assoc.SubnetName = ($SN.Tags | Where-Object Key -EQ Name).Value
-            $Assoc.SubnetAZ = $SN.AvailabilityZone
-            $Assoc.SubnetCidr = $SN.CidrBlock
+            $sn = Get-EC2Subnet @awsParams -SubnetId $a.SubnetId
+
+            $assoc = @{
+                SubnetId   = $a.SubnetId
+                SubnetName = ($sn.Tags | Where-Object Key -EQ Name).Value
+                SubnetAZ   = $sn.AvailabilityZone
+                SubnetCidr = $sn.CidrBlock
+            }
+
             # THIS REMOVES THE COLLECTION OF SUBNETS NOT ASSIGNED TO ANY ROUTE TABLE AND THEREFORE
             # ASSIGNED TO THE DEFAULT (MAIN) ROUTE TABLE
-            if ( $SN.AvailabilityZone.Count -eq 1 ) { $new.Subnets += [PSCustomObject] $Assoc }
-            #$new.Subnets += [PSCustomObject] $Assoc
+            if ( $sn.AvailabilityZone.Count -eq 1 ) { $new['Subnets'].Add([PSCustomObject] $assoc) }
+            #$new.Subnets += [PSCustomObject] $assoc
         }
         # ADD IT TO THE LIST OF ROUTE TABLE OBJECTS
-        $List += [PSCustomObject] $new
+        $list.Add([PSCustomObject] $new)
     }
     # RETURN
-    $List
+    $list
 }

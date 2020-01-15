@@ -8,6 +8,8 @@ function Get-R53Record {
         Get R53 Hosted zone DNS data for all "A" and "CNAME" records
     .PARAMETER ProfileName
         AWS Profile name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER ZoneName
         AWS R53 Hosted zone name
     .INPUTS
@@ -23,10 +25,14 @@ function Get-R53Record {
 
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile containing access key and secret')]
+        [Parameter(HelpMessage = 'AWS Profile containing access key and secret')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile')]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(Mandatory, HelpMessage = 'Hosted zone name')]
         [ValidateNotNullOrEmpty()]
@@ -40,21 +46,26 @@ function Get-R53Record {
 
         # SET WHERE CLAUSE TO FILTER
         $Where = { $_.Type -in @('CNAME', 'A') }
+
+        # SET AUTHENTICATION
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
     }
 
     Process {
         # GET HOSTED ZONE WITH GIVEN NAME
-        $Zone = Get-R53HostedZoneList -ProfileName $ProfileName | Where-Object Name -EQ $ZoneName
+        $zone = Get-R53HostedZoneList @awsParams | Where-Object Name -EQ $ZoneName
 
         # GET ZONE -- THIS IS NOT REQUIRED AND MAY BE REMOVED
-        #Get-R53HostedZone -Id $Zone.Id
+        #Get-R53HostedZone -Id $zone.Id
 
         # GET DNS RECORDS FOR PROVIDED HOSTED ZONE
-        $Records = Get-R53ResourceRecordSet -HostedZoneId $Zone.Id | Select-Object -ExpandProperty ResourceRecordSets
+        $awsParams['HostedZoneId'] = $zone.Id
+        $records = (Get-R53ResourceRecordSet @awsParams).ResourceRecordSets
     }
 
     End {
         # RETURN RECORDS
-        $Records | Where-Object $Where | Select-Object -Property $Properties
+        $records | Where-Object $Where | Select-Object -Property $Properties
     }
 }

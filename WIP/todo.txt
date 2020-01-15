@@ -6,7 +6,6 @@
 5. Disable-InactiveAWSUsersAndKeys
 6. Send-EC2UsageReport
 7. Rotate-AWSUserKeys
-    > Revoke-AccessKey
 8. Backup-EC2.ps1
 
 -- FUNCTIONS UPDATED TO USE CREDS --
@@ -18,6 +17,16 @@
 6. Disable-InactiveUserKey
 7. Get-AvailableEBS
 8. Export-EC2UsageReport
+9. Revoke-AccessKey
+10. Find-NextSubnet
+11. Find-PublicS3Object
+12. Get-NetworkInfo
+13. Get-R53Record
+14. Get-ScanStatus
+15. Get-SecurityGroupInfo
+16. Unregister-DbSnapshot
+
+> Remove-LapsedAmi
 
 
 Update
