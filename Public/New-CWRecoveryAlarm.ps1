@@ -10,6 +10,8 @@ function New-CWRecoveryAlarm {
         EC2 Instance Id
     .PARAMETER ProfileName
         Name property of an AWS credential profile
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS region
     .INPUTS
@@ -29,10 +31,14 @@ function New-CWRecoveryAlarm {
         [Alias('Id', 'Instance')]
         [string[]] $InstanceId,
 
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(HelpMessage = 'Name of desired AWS Region.')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
@@ -41,8 +47,7 @@ function New-CWRecoveryAlarm {
 
     Begin {
         # SET ALARM PARAMS
-        $AlarmParams = @{
-            ProfileName        = $ProfileName
+        $alarmParams = @{
             Region             = $Region
             AlarmAction        = ('arn:aws:automate:{0}:ec2:recover' -f $Region)
             ComparisonOperator = 'GreaterThanOrEqualToThreshold'
@@ -54,17 +59,21 @@ function New-CWRecoveryAlarm {
             Threshold          = 1
             PassThru           = $true
         }
+
+        # SET AUTHENTICATION
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $alarmParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $alarmParams['Credential'] = $Credential }
     }
 
     Process {
         # LOOP ALL INSTANCES
         foreach ( $Id in $InstanceId ) {
             # UPDATE INSTANCE ID VALUES
-            $AlarmParams['AlarmName'] = 'awsec2-{0}-High-Status-Check-Failed-System' -f $Id
-            $AlarmParams['Dimension'] = @{ Name = 'InstanceId'; Value = $Id }
+            $alarmParams['AlarmName'] = 'awsec2-{0}-High-Status-Check-Failed-System' -f $Id
+            $alarmParams['Dimension'] = @{ Name = 'InstanceId'; Value = $Id }
 
             # CREATE NEW ALARM
-            Write-CWMetricAlarm @AlarmParams
+            Write-CWMetricAlarm @alarmParams
         }
     }
 }

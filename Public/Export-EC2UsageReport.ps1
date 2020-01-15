@@ -16,6 +16,8 @@ function Export-EC2UsageReport {
     .PARAMETER ProfileName
         This is the name of the AWS Credential profile containing the Access Key and
         Secret Key.
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         This is the AWS region containing the desired resources to be processed
     .INPUTS
@@ -34,10 +36,14 @@ function Export-EC2UsageReport {
         [Alias('DestinationPath')]
         [string] $OutputDirectory,
 
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential Profie with key and secret')]
+        [Parameter(HelpMessage = 'AWS Credential Profie with key and secret')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('PN')]
         [string[]] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials[]] $Credential,
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
@@ -51,7 +57,8 @@ function Export-EC2UsageReport {
         # SET OUTPUT REPORT PATH
         $reportName = 'EC2UsageReport'
         $date = Get-Date -Format "yyyy-MM"
-        if ( $PSBoundParameters.ContainsKey('DestinationPath') ) {
+
+        if ( $PSBoundParameters.ContainsKey('OutputDirectory') ) {
             $ReportPath = Join-Path -Path $OutputDirectory -ChildPath ('{0}_{1}.xlsx' -f $date, $reportName)
         }
         else {
@@ -73,11 +80,17 @@ function Export-EC2UsageReport {
             AutoFilter   = $true
             Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
         }
+
+        $awsParams = @{ Region = $Region }
+
+        # SET AUTHENTICATION
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams['Credential'] = $Credential }
     }
 
     Process {
         # POPULATE ARRAY AND ADD DATA VALUES FOR STOP AND COST INFO
-        foreach ( $i in (Get-EC2 -Region $Region -ProfileName $ProfileName) ) { $instanceList.Add($i) }
+        foreach ( $i in (Get-EC2 @awsParams) ) { $instanceList.Add($i) }
         foreach ( $instance in $instanceList ) { $instance.GetStopInfo() }
         Get-CostInfo -Region $Region -Ec2Instance $instanceList | Out-Null
 
@@ -85,7 +98,7 @@ function Export-EC2UsageReport {
         foreach ( $i in $instanceList ) { if ( $i.State -eq 'running' ) { $60DayList.Add($i) } }
 
         # CREATE ARRAY FOR UNATTACHED VOLUMES
-        $AllVolumes = Get-AvailableEBS -ProfileName $ProfileName | Group-Object -Property Account | Select-Object Name, Count
+        $allVolumes = Get-AvailableEBS @awsParams | Group-Object -Property Account | Select-Object Name, Count
 
         # IF EXISTS EXPORT 60 DAY LIST
         if ( $60DayList.Count -ge 1 ) {
@@ -100,8 +113,8 @@ function Export-EC2UsageReport {
         }
 
         # EXPORT VOLUMES LIST
-        if ( $AllVolumes ) {
-            $AllVolumes | Export-Excel @excelParams -WorksheetName 'Unattached EBS'
+        if ( $allVolumes ) {
+            $allVolumes | Export-Excel @excelParams -WorksheetName 'Unattached EBS'
         }
     }
 

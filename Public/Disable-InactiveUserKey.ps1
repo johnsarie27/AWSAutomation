@@ -8,6 +8,8 @@ function Disable-InactiveUserKey {
         Deactivate IAM User Access Key that has not been used in 90 or more days
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Age
         Age (in days) past which the keys should be disabled
     .PARAMETER All
@@ -38,9 +40,13 @@ function Disable-InactiveUserKey {
     [OutputType([System.Object[]])]
 
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS credential profile name')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(HelpMessage = 'Age to disable keys')]
         [ValidateRange(30,365)]
@@ -62,78 +68,96 @@ function Disable-InactiveUserKey {
 
     Begin {
         # CREATE RESULTS ARRAY
-        $Results = [System.Collections.Generic.List[PSObject]]::new()
+        $results = [System.Collections.Generic.List[PSObject]]::new()
+
+        # SET AUTHENTICATION
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
 
         # GET ALL USERS IN AWS ACCOUNT
-        if ( $PSCmdlet.ParameterSetName -eq 'all' ) { $User = Get-IAMUserList -ProfileName $ProfileName }
+        if ( $PSCmdlet.ParameterSetName -eq 'all' ) { $User = Get-IAMUserList @awsParams }
 
         # SET VARS
-        $Date = Get-Date
-        $BadDate = Get-Date -Date "0001-01-01 00:00"
+        $date = Get-Date
+        $badDate = Get-Date -Date "0001-01-01 00:00"
     }
 
     Process {
-        foreach ( $U in $User ) {
+        foreach ( $u in $User ) {
             # GET ACCESS KEYS
-            $Keys = Get-IAMAccessKey -UserName $U.UserName -ProfileName $ProfileName
+            $keys = Get-IAMAccessKey -UserName $u.UserName @awsParams
 
             # CHECK FOR KEYS
-            if ( !$Keys ) { Write-Verbose ('No keys found for user: [{0}]' -f $U.UserName) }
+            if ( !$keys ) {
+                Write-Verbose ('No keys found for user: [{0}]' -f $u.UserName)
+            }
             else {
-
                 # EVALUATE KEYS
-                $Keys | ForEach-Object -Process {
-
+                foreach ( $k in $keys ) {
                     # CHECK IF ACTIVE
-                    if ( $_.Status -eq 'Active' ) {
+                    if ( $k.Status -eq 'Active' ) {
 
                         # REPORT ACTIVE KEY FOUND
-                        Write-Verbose ('Active key found for user [{0}]' -f $U.UserName)
+                        Write-Verbose ('Active key found for user [{0}]' -f $u.UserName)
 
                         # GET LAST USED TIME
-                        $IAMAccessKeyLastUsed = Get-IAMAccessKeyLastUsed -AccessKeyId $_.AccessKeyId -ProfileName $ProfileName
+                        $iamAccessKeyLastUsed = Get-IAMAccessKeyLastUsed -AccessKeyId $k.AccessKeyId @awsParams
 
                         # VALIDATE LAST USED DATE
-                        if ( $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -eq $BadDate ) {
-                            $Span = New-TimeSpan -Start $_.CreateDate -End $Date
-                        } else {
-                            $Span = New-TimeSpan -Start $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -End $Date
+                        if ( $iamAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -eq $badDate ) {
+                            $span = New-TimeSpan -Start $k.CreateDate -End $date
+                        }
+                        else {
+                            $span = New-TimeSpan -Start $iamAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate -End $date
                         }
 
                         # IF KEY ACTIVE AND NOT USED IN LAST 90 DAYS...
-                        if ( $Span.Days -ge $Age ) {
+                        if ( $span.Days -ge $Age ) {
                             # SET ACTION PARAMS
-                            $Splat = @{ UserName = $_.UserName; AccessKeyId = $_.AccessKeyId; ProfileName = $ProfileName }
+                            $awsParams['UserName'] = $k.UserName
+                            $awsParams['AccessKeyId'] = $k.AccessKeyId
 
                             # CREATE NEW CUSTOM OBJECT
-                            $New = @{
-                                UserName          = $_.UserName
-                                AccessKeyId       = $_.AccessKeyId
-                                CreateDate        = $_.CreateDate
-                                LastUsedDate      = $IAMAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate
-                                DaysSinceLastUsed = $Span.Days
-                                Region            = $IAMAccessKeyLastUsed.AccessKeyLastUsed.Region
-                                ServiceName       = $IAMAccessKeyLastUsed.AccessKeyLastUsed.ServiceName
+                            $new = @{
+                                UserName          = $k.UserName
+                                AccessKeyId       = $k.AccessKeyId
+                                CreateDate        = $k.CreateDate
+                                LastUsedDate      = $iamAccessKeyLastUsed.AccessKeyLastUsed.LastUsedDate
+                                DaysSinceLastUsed = $span.Days
+                                Region            = $iamAccessKeyLastUsed.AccessKeyLastUsed.Region
+                                ServiceName       = $iamAccessKeyLastUsed.AccessKeyLastUsed.ServiceName
                                 Action            = 'none'
                             }
 
                             # CHECK FOR REPORT ONLY
                             if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
                                 # WRITE VERBOSE OUTPUT
-                                $New['Action'] = 'Report key'
-                            } else {
+                                $new['Action'] = 'Report key'
+                            }
+                            else {
                                 # REMOVE KEY IF SPECIFIED. DEACTIVE AS DEFAULT
                                 if ( $PSBoundParameters.ContainsKey('Remove') ) {
-                                    try { Remove-IAMAccessKey @Splat ; $New['Action'] = 'Key deleted' }
-                                    catch { $New['Action'] = $_.Exception.Message }
-                                } else  {
-                                    try { Update-IAMAccessKey @Splat -Status Inactive ; $New['Action'] = 'Key deactivated' }
-                                    catch { $New['Action'] = $_.Exception.Message }
+                                    try {
+                                        Remove-IAMAccessKey @awsParams
+                                        $new['Action'] = 'Key deleted'
+                                    }
+                                    catch {
+                                        $new['Action'] = $k.Exception.Message
+                                    }
+                                }
+                                else  {
+                                    try {
+                                        Update-IAMAccessKey @awsParams -Status Inactive
+                                        $new['Action'] = 'Key deactivated'
+                                    }
+                                    catch {
+                                        $new['Action'] = $k.Exception.Message
+                                    }
                                 }
                             }
 
                             # ADD OBJECT TO LIST
-                            $Results.Add([PSCustomObject]$New)
+                            $results.Add([PSCustomObject] $new)
                         }
                     }
                 }
@@ -142,13 +166,15 @@ function Disable-InactiveUserKey {
     }
 
     End {
-        if ( $PSBoundParameters.ContainsKey('Remove') ) { $Status = 'removed' }
-        elseif ( $PSBoundParameters.ContainsKey('ReportOnly') ) { $Status = 'reported' }
-        else { $Status = 'deactivated' }
-        if ( $Results.Count -eq 1 ) { $Num = 'key' } else { $Num = 'keys' }
-        Write-Verbose ('{0} {1} {2}.' -f $Results.Count, $Num, $Status)
+        if ( $PSBoundParameters.ContainsKey('Remove') ) { $status = 'removed' }
+        elseif ( $PSBoundParameters.ContainsKey('ReportOnly') ) { $status = 'reported' }
+        else { $status = 'deactivated' }
+
+        if ( $results.Count -eq 1 ) { $num = 'key' } else { $num = 'keys' }
+
+        Write-Verbose ('{0} {1} {2}.' -f $results.Count, $num, $status)
 
         # RETURN REVOKED KEYS
-        $Results #| Select-Object -ExcludeProperty Status
+        $results #| Select-Object -ExcludeProperty Status
     }
 }
