@@ -50,6 +50,7 @@ function Deploy-Instance {
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'New EC2 instance name tag')]
         [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL|QRM)\d{2}$')]
+        [ValidateNotNullOrEmpty()]
         [string[]] $Name,
 
         [Parameter(Mandatory, HelpMessage = 'EC2 subnet')]
