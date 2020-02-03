@@ -49,7 +49,7 @@ function Deploy-Instance {
         [string] $AmiId = 'ami-e80e2993',
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'New EC2 instance name tag')]
-        [ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL|QRM)\d{2}$')]
+        #[ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL|QRM)\d{2}$')]
         [ValidateNotNullOrEmpty()]
         [string[]] $Name,
 
