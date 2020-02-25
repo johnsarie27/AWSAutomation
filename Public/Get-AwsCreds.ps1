@@ -27,11 +27,11 @@ function Get-AwsCreds {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
-        [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+        [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Region')]
-        [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [String] $Region = 'us-east-1',
 
         [Parameter(Mandatory, HelpMessage = 'PS Object containing AWS Account Name and ID properties')]
