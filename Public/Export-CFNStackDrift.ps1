@@ -5,7 +5,9 @@ function Export-CFNStackDrift {
     .SYNOPSIS
         Explort CloudFormation drift results
     .DESCRIPTION
-        Explort CloudFormation drift results including difference line numbers
+        Explort CloudFormation drift results including difference line numbers.
+        The function will wait 5 seconds between initiation drift detection and
+        gathering results.
     .PARAMETER Credential
         AWS Credential Object
     .PARAMETER ProfileName
@@ -23,8 +25,8 @@ function Export-CFNStackDrift {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Export-CFNStackDrift -ProfileName myProfile -StackName Stack1 -SheetName Stack1 -Path "$HOME\Desktop\StackDrift.xlsx"
+        Exports an Excel Spreadsheet containing the objects IN_SYNC and DRIFTED in separate tabs
     .NOTES
         General notes
     ========================================================================= #>
@@ -50,9 +52,10 @@ function Export-CFNStackDrift {
         [ValidatePattern('[\w-]{3,30}')]
         [string] $SheetName,
 
-        [Parameter(HelpMessage = 'Path to output directory')]
-        [ValidateScript({ Test-Path -Path $_ -PathType Container })]
-        [string] $Path = "$HOME\Desktop"
+        [Parameter(HelpMessage = 'Path to new or existing Excel spreadsheet file')]
+        [ValidateScript({ Test-Path -Path ([System.IO.Path]::GetDirectoryName($_)) })]
+        [ValidateScript({ [System.IO.Path]::GetExtension($_) -eq '.xlsx' })]
+        [string] $Path
     )
 
     Begin {
@@ -62,19 +65,21 @@ function Export-CFNStackDrift {
             MoveToEnd    = $true
             BoldTopRow   = $true
             Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
-            Path         = Join-Path -Path $Path -ChildPath ('CFNStackDrift_{0}' -f (Get-Date -Format "yyyy-MM-dd"))
         }
 
-        $props = @("PhysicalResourceId", "StackResourceDriftStatus")
-        $creds = @{ Region = $Region }
+        if ( $PSBoundParameters.ContainsKey('Path') ) { $excelParams.Add("Path", $Path) }
+        else { $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('CFNStackDrift_{0}.xlsx' -f (Get-Date -Format "yyyy-MM-dd")) }
 
+        $props = @("PhysicalResourceId", "StackResourceDriftStatus")
+
+        $creds = @{ Region = $Region }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $creds.Add("Credential", $Credential) }
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $creds['ProfileName'] = $ProfileName }
     }
 
     Process {
         # RUN DRIFT AND WAIT 5 SECONDS FOR RESULTS
-        Start-CFNStackDriftDetection @creds -StackName $StackName
+        Start-CFNStackDriftDetection @creds -StackName $StackName | Out-Null
         Start-Sleep -Seconds 5
 
         # GET DRIFT RESULTS
