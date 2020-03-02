@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.5.7'
+    ModuleVersion     = '0.5.8'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -74,6 +74,7 @@
         'Disable-InactiveUserProfile'
         'Edit-AWSProfile'
         'Export-AWSPriceData'
+        'Export-CFNStackDrift'
         'Export-EC2UsageReport'
         'Export-IAMRolePolicy'
         'Find-InsecureS3BucketPolicy'

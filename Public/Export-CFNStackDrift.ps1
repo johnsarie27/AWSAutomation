@@ -1,0 +1,117 @@
+#Requires -Modules AWS.Tools.CloudFormation, ImportExcel
+
+function Export-CFNStackDrift {
+    <# =========================================================================
+    .SYNOPSIS
+        Explort CloudFormation drift results
+    .DESCRIPTION
+        Explort CloudFormation drift results including difference line numbers
+    .PARAMETER Credential
+        AWS Credential Object
+    .PARAMETER ProfileName
+        AWS Credential Profile name
+    .PARAMETER Region
+        AWS Region
+    .PARAMETER StackName
+        CloudFormation Stack Name
+    .PARAMETER SheetName
+        Excel Workbook Sheet name
+    .PARAMETER Path
+        Output path for report
+    .INPUTS
+        None.
+    .OUTPUTS
+        None.
+    .EXAMPLE
+        PS C:\> <example usage>
+        Explanation of what the example does
+    .NOTES
+        General notes
+    ========================================================================= #>
+    [CmdletBinding()]
+    Param(
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
+
+        [Parameter(HelpMessage = 'AWS Profile')]
+        [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+        [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Region')]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
+        [String] $Region = 'us-east-1',
+
+        [Parameter(Mandatory, HelpMessage = 'CloudFormation Stack Name')]
+        [ValidateNotNullOrEmpty()]
+        [string] $StackName,
+
+        [Parameter(Mandatory, HelpMessage = 'Excel Workbook Sheet name')]
+        [ValidatePattern('[\w-]{3,30}')]
+        [string] $SheetName,
+
+        [Parameter(HelpMessage = 'Path to output directory')]
+        [ValidateScript({ Test-Path -Path $_ -PathType Container })]
+        [string] $Path = "$HOME\Desktop"
+    )
+
+    Begin {
+        # SET EXCEL PARAMS AND DESIRED PROPERTIES
+        $excelParams = @{
+            FreezeTopRow = $true
+            MoveToEnd    = $true
+            BoldTopRow   = $true
+            Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
+            Path         = Join-Path -Path $Path -ChildPath ('CFNStackDrift_{0}' -f (Get-Date -Format "yyyy-MM-dd"))
+        }
+
+        $props = @("PhysicalResourceId", "StackResourceDriftStatus")
+        $creds = @{ Region = $Region }
+
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $creds.Add("Credential", $Credential) }
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $creds['ProfileName'] = $ProfileName }
+    }
+
+    Process {
+        # RUN DRIFT AND WAIT 5 SECONDS FOR RESULTS
+        Start-CFNStackDriftDetection @creds -StackName $StackName
+        Start-Sleep -Seconds 5
+
+        # GET DRIFT RESULTS
+        $driftResults = Get-CFNDetectedStackResourceDrift @creds -StackName $StackName
+        $syncd = [System.Collections.Generic.List[System.Object]]::new()
+
+        foreach ( $drift in $driftResults ) {
+            # FIND ANY DRIFTS
+            if ( $drift.StackResourceDriftStatus -ne 'IN_SYNC' ) {
+                # CONVERT RESULTS TO ARRAY OF STRING
+                $actual = ($drift.ActualProperties | ConvertFrom-Json | ConvertTo-Json -Depth 10).Split([Environment]::NewLine)
+                $expect = ($drift.ExpectedProperties | ConvertFrom-Json | ConvertTo-Json -Depth 10).Split([Environment]::NewLine)
+
+                # CREATE LIST
+                $results = [System.Collections.Generic.List[System.Object]]::new()
+
+                # OUTPUT RESULTS
+                for ($i = 0; $i -le $actual.Count; $i++) {
+                    if ( $actual[$i] -ne $expect[$i] ) {
+                        $results.Add([PSCustomObject] @{
+                                RESOURCE = $drift.LogicalResourceId
+                                LINE     = $i + 1
+                                ACTUAL   = $actual[$i]
+                                EXPECTED = $expect[$i]
+                            }
+                        )
+                    }
+                }
+
+                # WRITE TO EXCEL
+                $results | Export-Excel @excelParams -WorksheetName ('{0}-DIFFS' -f $SheetName)
+            }
+            else {
+                $syncd.Add(($drift | Select-Object -Property $props))
+            }
+        }
+
+        $syncd | Export-Excel @excelParams -WorksheetName $SheetName -AutoSize
+    }
+}
