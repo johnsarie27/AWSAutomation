@@ -80,7 +80,7 @@ function Export-CFNStackDrift {
     Process {
         # RUN DRIFT AND WAIT 5 SECONDS FOR RESULTS
         Start-CFNStackDriftDetection @creds -StackName $StackName | Out-Null
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds 10
 
         # GET DRIFT RESULTS
         $driftResults = Get-CFNDetectedStackResourceDrift @creds -StackName $StackName
