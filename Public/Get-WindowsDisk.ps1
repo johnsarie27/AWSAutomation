@@ -61,9 +61,6 @@ function Get-WindowsDisk {
             $DriveLetter = $null
             $VolumeName = $null
 
-            $DiskDrive = $d
-            $Disk = $d.Number
-            $Partitions = $d.NumberOfPartitions
             $EbsVolumeID = $d.SerialNumber -replace "_[^ ]*$" -replace "vol", "vol-"
             Get-Partition -DiskId $d.Path | ForEach-Object {
                 if ($d.DriveLetter -ne "") {
@@ -72,19 +69,19 @@ function Get-WindowsDisk {
                 }
             }
 
-            if ($DiskDrive.path -like "*PROD_PVDISK*") {
-                $BlockDeviceName = Convert-SCSITargetIdToDeviceName((Get-WmiObject -Class Win32_Diskdrive | Where-Object { $_.DeviceID -eq ("\\.\PHYSICALDRIVE" + $DiskDrive.Number) }).SCSITargetId)
+            if ($d.path -like "*PROD_PVDISK*") {
+                $BlockDeviceName = Convert-SCSITargetIdToDeviceName((Get-WmiObject -Class Win32_Diskdrive | Where-Object { $_.DeviceID -eq ("\\.\PHYSICALDRIVE" + $d.Number) }).SCSITargetId)
                 $BlockDeviceName = "/dev/" + $BlockDeviceName
                 $BlockDevice = $BlockDeviceMappings | Where-Object { $BlockDeviceName -like "*" + $_.DeviceName + "*" }
                 $EbsVolumeID = $BlockDevice.Ebs.VolumeId
                 $VirtualDevice = if ($VirtualDeviceMap.ContainsKey($BlockDeviceName)) { $VirtualDeviceMap[$BlockDeviceName] } else { $null }
             }
-            elseif ($DiskDrive.path -like "*PROD_AMAZON_EC2_NVME*") {
-                $BlockDeviceName = Get-EC2InstanceMetadata "meta-data/block-device-mapping/ephemeral$((Get-WmiObject -Class Win32_Diskdrive | Where-Object {$_.DeviceID -eq ("\\.\PHYSICALDRIVE"+$DiskDrive.Number) }).SCSIPort - 2)"
+            elseif ($d.path -like "*PROD_AMAZON_EC2_NVME*") {
+                $BlockDeviceName = Get-EC2InstanceMetadata "meta-data/block-device-mapping/ephemeral$((Get-WmiObject -Class Win32_Diskdrive | Where-Object {$_.DeviceID -eq ("\\.\PHYSICALDRIVE"+$d.Number) }).SCSIPort - 2)"
                 $BlockDevice = $null
                 $VirtualDevice = if ($VirtualDeviceMap.ContainsKey($BlockDeviceName)) { $VirtualDeviceMap[$BlockDeviceName] } else { $null }
             }
-            elseif ($DiskDrive.path -like "*PROD_AMAZON*") {
+            elseif ($d.path -like "*PROD_AMAZON*") {
                 $BlockDevice = ""
                 $BlockDeviceName = ($BlockDeviceMappings | Where-Object { $_.ebs.VolumeId -eq $EbsVolumeID }).DeviceName
                 $VirtualDevice = $null
@@ -94,15 +91,16 @@ function Get-WindowsDisk {
                 $BlockDevice = $null
                 $VirtualDevice = $null
             }
-            New-Object PSObject -Property  = @{
-                Disk          = $Disk
-                Partitions    = $Partitions
+
+            New-Object PSObject -Property @{
+                Disk          = $d.Number
+                Partitions    = $d.NumberOfPartitions
                 DriveLetter   = if ($null -eq $DriveLetter) { "N/A" } else { $DriveLetter }
                 EbsVolumeId   = if ($null -eq $EbsVolumeID) { "N/A" } else { $EbsVolumeID }
                 Device        = if ($null -eq $BlockDeviceName) { "N/A" } else { $BlockDeviceName }
                 VirtualDevice = if ($null -eq $VirtualDevice) { "N/A" } else { $VirtualDevice }
                 VolumeName    = if ($null -eq $VolumeName) { "N/A" } else { $VolumeName }
             }
-        } # | Sort-Object Disk | Format-Table -AutoSize -Property Disk, Partitions, DriveLetter, EbsVolumeId, Device, VirtualDevice, VolumeName
+        }
     }
 }
