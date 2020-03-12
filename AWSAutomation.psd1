@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.5.8'
+    ModuleVersion     = '0.5.9'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -90,6 +90,7 @@
         'Get-R53Record'
         'Get-ScanStatus'
         'Get-SecurityGroupInfo'
+        'Get-WindowsDisk'
         'Invoke-S3'
         'New-CWRecoveryAlarm'
         'Remove-LapsedAMI'
