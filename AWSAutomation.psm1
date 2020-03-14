@@ -55,7 +55,7 @@ class EC2Instance {
         $this.DR_Region = ( $EC2.Tags | Where-Object Key -eq DR_Region ).Value
         if ( $EC2.LaunchTime ) { $this.LastStart = $EC2.LaunchTime }
         $this.ProfileName = ""
-        $this.Region = ""
+        $this.Region = $EC2.Placement.AvailabilityZone.Remove($EC2.Placement.AvailabilityZone.Length - 1)
         $this.GetDaysRunning()
         $illegalChars = '(!|"|#|\$|%|&|''|\*|\+|,|:|;|\<|=|\>|\?|@|\[|\\|\]|\^|`|\{|\||\}|~)'
         if ( $this.Name -match $illegalChars ) { $this.IllegalName = $true }
@@ -76,9 +76,12 @@ class EC2Instance {
         }
     }
 
-    [void] GetNetInfo($ProfileName, $Region) {
-        $this.VpcName = ((Get-EC2Vpc -VpcId $this.VpcId -Region $Region -ProfileName $ProfileName).Tags | Where-Object Key -EQ Name).Value
-        $this.SubnetName = ((Get-EC2Subnet -SubnetId $this.SubnetId -Region $Region -ProfileName $ProfileName).Tags | Where-Object Key -eq Name).Value
+    [void] GetNetInfo($ProfileName, $Credential) {
+        $creds = @{ Region = $this.Region }
+        if ( $ProfileName ) { $creds['ProfileName'] = $ProfileName }
+        if ( $Credential ) { $creds.Add('Credential', $Credential) }
+        $this.VpcName = ((Get-EC2Vpc -VpcId $this.VpcId @creds).Tags | Where-Object Key -EQ Name).Value
+        $this.SubnetName = ((Get-EC2Subnet -SubnetId $this.SubnetId @creds).Tags | Where-Object Key -eq Name).Value
     }
 
     [void] GetDaysRunning() {
@@ -88,9 +91,12 @@ class EC2Instance {
         else { $this.DaysRunning = 0 }
     }
 
-    [void] GetStopInfo() {
+    [void] GetStopInfo($ProfileName, $Credential) {
+        $creds = @{ Region = $this.Region }
+        if ( $ProfileName ) { $creds['ProfileName'] = $ProfileName }
+        if ( $Credential ) { $creds.Add('Credential', $Credential) }
         if ( $this.State -eq 'stopped' ) {
-            $event = Find-CTEvent -Region $this.Region -ProfileName $this.ProfileName -LookupAttribute @{
+            $event = Find-CTEvent @creds -LookupAttribute @{
                 AttributeKey = "ResourceName"; AttributeValue = $this.Id
             } | Where-Object EventName -eq 'StopInstances' | Select-Object -First 1
             if ( $event ) {
@@ -102,7 +108,9 @@ class EC2Instance {
                 $this.DaysStopped = 99 ; $this.Stopper = 'unknown'
             }
         }
-        else { $this.Stopper = '(running)' }
+        else {
+            $this.Stopper = 'N/A'
+        }
     }
 
     [void] GetCostInfo() {
