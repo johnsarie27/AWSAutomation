@@ -52,7 +52,7 @@ function Get-AwsCreds {
         foreach ( $a in $Account ) {
             $stsParams = @{
                 RoleArn         = "arn:aws:iam::{0}:role/{1}" -f $a.Id, $RoleName
-                #RoleSessionName = 'SwitchToChild'
+                RoleSessionName = 'SwitchToChild'
             }
 
             $credential.Add($a.Name, (New-AWSCredential -Credential (Use-STSRole @keys @stsParams).Credentials))
