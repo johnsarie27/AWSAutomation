@@ -1,4 +1,4 @@
-#Requires -Modules @{ ModuleName = 'AWS.Tools.EC2'; ModuleVersion = '4.0.1.1' }
+#Requires -Modules AWS.Tools.EC2
 
 function Deploy-Instance {
     <# =========================================================================
@@ -8,6 +8,8 @@ function Deploy-Instance {
         Deploy new EC2 instance with program-compliant values and settings
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS Region
     .PARAMETER AmiId
@@ -36,9 +38,13 @@ function Deploy-Instance {
     [CmdletBinding()]
     [OutputType([Amazon.EC2.Model.Reservation[]])]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
+        [Parameter(HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials] $Credential,
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
@@ -80,7 +86,6 @@ function Deploy-Instance {
 
         # SET INSTANCE PARAMS
         $instanceParams = @{
-            ProfileName          = $ProfileName
             Region               = $Region
             ImageId              = $AmiId
             MinCount             = 1
@@ -90,6 +95,10 @@ function Deploy-Instance {
             SubnetId             = $SubnetId
             InstanceProfile_Name = 'roleMemberServer'
         }
+
+        # CHECK FOR AUTHENTICATION METHOD
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $instanceParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $instanceParams['Credential'] = $Credential }
 
         # ENCODE USER DATA AND ADD TO PARAMETERS
         if ( $PSBoundParameters.ContainsKey('UserData') ) {
@@ -106,12 +115,12 @@ function Deploy-Instance {
 
             # SET TAG DATA
             $role = switch -Regex ( $n ) {
-                '^\w{6}AGS\d{2}$' { 'ArcGIS Server' }
-                '^\w{6}HST\d{2}$' { 'ArcGIS Server (Hosted)' }
-                '^\w{6}PTL\d{2}$' { 'Portal for ArcGIS' }
-                '^\w{6}SQL\d{2}$' { 'SQL Server' }
-                '^\w{6}DS\d{2}$'  { 'DataStore for ArcGIS' }
-                default           { 'Unknown role' }
+                '^\w+AGS\d{2}$' { 'ArcGIS Server' }
+                '^\w+HST\d{2}$' { 'ArcGIS Server (Hosted)' }
+                '^\w+PTL\d{2}$' { 'Portal for ArcGIS' }
+                '^\w+SQL\d{2}$' { 'SQL Server' }
+                '^\w+DS\d{2}$'  { 'DataStore for ArcGIS' }
+                default         { 'Unknown role' }
             }
 
             # ADD TAGS

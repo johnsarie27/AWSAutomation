@@ -10,6 +10,8 @@ function Get-SecurityGroupInfo {
         instances, in a format easy to use
     .PARAMETER ProfileName
         Name property of an AWS credential profile
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER Region
         AWS region
     .PARAMETER VpcId

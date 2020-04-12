@@ -10,8 +10,8 @@ function Revoke-StaleAccessKey {
         User name
     .PARAMETER ProfileName
         AWS Credential Profile name
-    .PARAMETER ProfileName
-        AWS Credential Profile Name
+    .PARAMETER Credential
+        AWS Credential object
     .PARAMETER Deactivate
         Deactivate key(s)
     .PARAMETER Remove
