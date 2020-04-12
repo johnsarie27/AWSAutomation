@@ -79,14 +79,19 @@ function Deploy-Instance {
     )
 
     Begin {
+        $instanceParams = @{ Region = $Region }
+
+        # CHECK FOR AUTHENTICATION METHOD
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $instanceParams['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $instanceParams['Credential'] = $Credential }
+
         # VALIDATE INSTANCE TYPE
-        if ( $Type -notin (Get-EC2InstanceType -ProfileName $ProfileName -Region $Region).InstanceType ) {
+        if ( $Type -notin (Get-EC2InstanceType @instanceParams).InstanceType ) {
             Throw 'Invalid instance type provided.'
         }
 
         # SET INSTANCE PARAMS
-        $instanceParams = @{
-            Region               = $Region
+        $instanceParams += @{
             ImageId              = $AmiId
             MinCount             = 1
             MaxCount             = 1
@@ -95,10 +100,6 @@ function Deploy-Instance {
             SubnetId             = $SubnetId
             InstanceProfile_Name = 'roleMemberServer'
         }
-
-        # CHECK FOR AUTHENTICATION METHOD
-        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $instanceParams['ProfileName'] = $ProfileName }
-        if ( $PSBoundParameters.ContainsKey('Credential') ) { $instanceParams['Credential'] = $Credential }
 
         # ENCODE USER DATA AND ADD TO PARAMETERS
         if ( $PSBoundParameters.ContainsKey('UserData') ) {
