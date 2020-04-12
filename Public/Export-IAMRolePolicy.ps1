@@ -8,6 +8,8 @@ function Export-IAMRolePolicy {
         Export a spreadsheet of each Role with accompanying Policies and details
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Credential
+        AWS Credential Object
     .PARAMETER RoleName
         Name of one or more AWS IAM Roles
     .PARAMETER Path
@@ -29,6 +31,10 @@ function Export-IAMRolePolicy {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
+
+        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [ValidateNotNullOrEmpty()]
+        [Amazon.Runtime.AWSCredentials[]] $Credential,
 
         [Parameter(ValueFromPipeline, HelpMessage = 'One or more Role names')]
         [ValidateNotNullOrEmpty()]
@@ -64,43 +70,85 @@ function Export-IAMRolePolicy {
     }
 
     Process {
-        # LOOP EACH ACCOUNT PROFILE
-        foreach ( $pn in $ProfileName ) {
-            # GET ROLES
-            if ( !$PSBoundParameters.ContainsKey('RoleName') ) { $RoleName = (Get-IAMRoleList -ProfileName $pn).RoleName }
+        # CHECK FOR CREDENTIALS
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
+            foreach ( $pn in $ProfileName ) {
+                # GET ROLES
+                if ( !$PSBoundParameters.ContainsKey('RoleName') ) { $RoleName = (Get-IAMRoleList -ProfileName $pn).RoleName }
 
-            # THIS GETS ALL THE POLICIES FOR EACH ROLE AND CREATES A COLLECTION OF CUSTOM OBJECTS
-            $policies = [System.Collections.Generic.List[System.Object]]::new()
+                # THIS GETS ALL THE POLICIES FOR EACH ROLE AND CREATES A COLLECTION OF CUSTOM OBJECTS
+                $policies = [System.Collections.Generic.List[System.Object]]::new()
 
-            # LOOP ALL PROVIDED ROLES
-            foreach ( $rn in $RoleName ) {
-                # LOOP ALL MANAGED POLICIES IN ROLE AND ADD TO LIST
-                foreach ( $policy in (Get-IAMAttachedRolePolicyList -RoleName $rn -ProfileName $pn) ) {
-                    $new = [PSCustomObject] @{
-                        Profile    = $pn
-                        RoleType   = 'Managed'
-                        RoleName   = $rn
-                        PolicyName = $policy.PolicyName
-                        PolicyArn  = $policy.PolicyArn
+                # LOOP ALL PROVIDED ROLES
+                foreach ( $rn in $RoleName ) {
+                    # LOOP ALL MANAGED POLICIES IN ROLE AND ADD TO LIST
+                    foreach ( $policy in (Get-IAMAttachedRolePolicyList -RoleName $rn -ProfileName $pn) ) {
+                        $new = [PSCustomObject] @{
+                            Profile    = $pn
+                            RoleType   = 'Managed'
+                            RoleName   = $rn
+                            PolicyName = $policy.PolicyName
+                            PolicyArn  = $policy.PolicyArn
+                        }
+                        $policies.Add($new)
                     }
-                    $policies.Add($new)
+
+                    # LOOP ALL IN-LINE POLICIES IN ROLE AND ADD TO LIST
+                    foreach ( $policy in (Get-IAMRolePolicyList -RoleName $rn -ProfileName $pn) ) {
+                        $new = [PSCustomObject] @{
+                            Profile    = $pn
+                            RoleType   = 'In-line'
+                            RoleName   = $rn
+                            PolicyName = $policy.PolicyName
+                            PolicyArn  = $policy.PolicyArn
+                        }
+                        $policies.Add($new)
+                    }
                 }
 
-                # LOOP ALL IN-LINE POLICIES IN ROLE AND ADD TO LIST
-                foreach ( $policy in (Get-IAMRolePolicyList -RoleName $rn -ProfileName $pn) ) {
-                    $new = [PSCustomObject] @{
-                        Profile    = $pn
-                        RoleType   = 'In-line'
-                        RoleName   = $rn
-                        PolicyName = $policy.PolicyName
-                        PolicyArn  = $policy.PolicyArn
-                    }
-                    $policies.Add($new)
-                }
+                # WRITE POLICIES TO EXCEL
+                $policies | Export-Excel @excelParams -WorksheetName $pn
             }
+        }
 
-            # WRITE POLICIES TO EXCEL
-            $policies | Export-Excel @excelParams -WorksheetName $pn
+        if ( $PSBoundParameters.ContainsKey('Credential') ) {
+            foreach ( $c in $Credential ) {
+                # GET ROLES
+                if ( !$PSBoundParameters.ContainsKey('RoleName') ) { $RoleName = (Get-IAMRoleList -Credential $c).RoleName }
+
+                # THIS GETS ALL THE POLICIES FOR EACH ROLE AND CREATES A COLLECTION OF CUSTOM OBJECTS
+                $policies = [System.Collections.Generic.List[System.Object]]::new()
+
+                # LOOP ALL PROVIDED ROLES
+                foreach ( $rn in $RoleName ) {
+                    # LOOP ALL MANAGED POLICIES IN ROLE AND ADD TO LIST
+                    foreach ( $policy in (Get-IAMAttachedRolePolicyList -RoleName $rn -Credential $c) ) {
+                        $new = [PSCustomObject] @{
+                            Profile    = $c.AccessKey
+                            RoleType   = 'Managed'
+                            RoleName   = $rn
+                            PolicyName = $policy.PolicyName
+                            PolicyArn  = $policy.PolicyArn
+                        }
+                        $policies.Add($new)
+                    }
+
+                    # LOOP ALL IN-LINE POLICIES IN ROLE AND ADD TO LIST
+                    foreach ( $policy in (Get-IAMRolePolicyList -RoleName $rn -Credential $c) ) {
+                        $new = [PSCustomObject] @{
+                            Profile    = $c.AccessKey
+                            RoleType   = 'In-line'
+                            RoleName   = $rn
+                            PolicyName = $policy.PolicyName
+                            PolicyArn  = $policy.PolicyArn
+                        }
+                        $policies.Add($new)
+                    }
+                }
+
+                # WRITE POLICIES TO EXCEL
+                $policies | Export-Excel @excelParams -WorksheetName $c.AccessKey
+            }
         }
     }
 
