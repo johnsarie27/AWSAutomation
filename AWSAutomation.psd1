@@ -82,7 +82,7 @@
         'Find-PublicS3Objects'
         'Get-AccountFromRole'
         'Get-AvailableEBS'
-        'Get-AwsCreds'
+        'Get-AccountCredential'
         'Get-EC2'
         'Get-ELB'
         'Get-IAMReport'
@@ -104,10 +104,17 @@
     CmdletsToExport   = @()
 
     # Variables to export from this module
-    VariablesToExport = @('RegionTable', 'IllegalChars', 'AlphabetList', 'VolumeLookupTable')
+    VariablesToExport = @(
+        'RegionTable'
+        'IllegalChars'
+        'AlphabetList'
+        'VolumeLookupTable'
+    )
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = @()
+    AliasesToExport   = @(
+        'Get-AwsCreds'
+    )
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()

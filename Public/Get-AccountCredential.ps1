@@ -1,6 +1,6 @@
-#Requires -Modules AWS.Tools.EC2
+#Requires -Modules AWS.Tools.SecurityToken
 
-function Get-AwsCreds {
+function Get-AccountCredential {
     <# =========================================================================
     .SYNOPSIS
         Get IAM credential object
@@ -19,12 +19,13 @@ function Get-AwsCreds {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Get-AwsCreds -ProfileName myProfile -Region us-east-1 -AcountId 012345678901 -RoleName mySuperRole
+        PS C:\> Get-AccountCredential -ProfileName myProfile -Region us-east-1 -AcountId 012345678901 -RoleName mySuperRole
         Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
     .NOTES
         General notes
     ========================================================================= #>
     [CmdletBinding()]
+    [Alias('Get-AwsCreds')]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
