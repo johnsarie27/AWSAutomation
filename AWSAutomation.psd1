@@ -82,7 +82,7 @@
         'Find-PublicS3Objects'
         'Get-AccountFromRole'
         'Get-AvailableEBS'
-        'Get-AccountCredential'
+        'Get-RoleCredential'
         'Get-EC2'
         'Get-ELB'
         'Get-IAMReport'

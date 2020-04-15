@@ -1,6 +1,6 @@
 #Requires -Modules AWS.Tools.SecurityToken
 
-function Get-AccountCredential {
+function Get-RoleCredential {
     <# =========================================================================
     .SYNOPSIS
         Get IAM credential object
@@ -19,7 +19,7 @@ function Get-AccountCredential {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Get-AccountCredential -ProfileName myProfile -Region us-east-1 -AcountId 012345678901 -RoleName mySuperRole
+        PS C:\> Get-RoleCredential -ProfileName myProfile -Region us-east-1 -AcountId 012345678901 -RoleName mySuperRole
         Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
     .NOTES
         General notes
