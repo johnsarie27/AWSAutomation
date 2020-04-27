@@ -28,7 +28,7 @@ function Export-IAMRolePolicy {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
 
@@ -147,7 +147,7 @@ function Export-IAMRolePolicy {
                 }
 
                 # WRITE POLICIES TO EXCEL
-                $policies | Export-Excel @excelParams -WorksheetName $c.AccessKey
+                $policies | Export-Excel @excelParams -WorksheetName $c.AccessKeyId
             }
         }
     }
