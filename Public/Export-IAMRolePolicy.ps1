@@ -147,7 +147,7 @@ function Export-IAMRolePolicy {
                 }
 
                 # WRITE POLICIES TO EXCEL
-                $policies | Export-Excel @excelParams -WorksheetName $c.AccessKeyId
+                $policies | Export-Excel @excelParams -WorksheetName (Get-STSCallerIdentity -Credential $c).Account
             }
         }
     }

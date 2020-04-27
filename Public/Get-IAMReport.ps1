@@ -45,11 +45,11 @@ function Get-IAMReport {
 
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
             $params = @{ ProfileName = $ProfileName }
-            #$account = $ProfileName
+            $account = $ProfileName
         }
         if ( $PSBoundParameters.ContainsKey('Credential') ) {
             $params = @{ Credential = $Credential }
-            #$account = 'N/A'
+            $account = (Get-STSCallerIdentity -Credential $Credential).Account
         }
 
         # IMPORT AWS IAM REPORT
@@ -82,7 +82,7 @@ function Get-IAMReport {
             $new | Add-Member -MemberType NoteProperty -Name 'AccessKeyActive' -Value $row.access_key_1_active
             $new | Add-Member -MemberType NoteProperty -Name 'MFAEnabled' -Value $row.mfa_active
             #$new | Add-Member -MemberType NoteProperty -Name 'ARN' -Value $row.arn.Substring(0, 25) #THIS 13, ($row.arn.length-13)
-            $new | Add-Member -MemberType NoteProperty -Name 'Account' -Value $ProfileName
+            $new | Add-Member -MemberType NoteProperty -Name 'Account' -Value $account
             $new | Add-Member -MemberType NoteProperty -Name 'PasswordEnabled' -Value $row.password_enabled
 
             # CONVERT DATE FOR PASSWORD LAST CHANGED
