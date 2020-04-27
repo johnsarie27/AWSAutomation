@@ -76,9 +76,10 @@ function Get-AvailableEBS {
         }
         if ( $PSCmdlet.ParameterSetName -eq '_credential' ) {
             foreach ( $cred in $Credential ) {
+                $account = (Get-STSCallerIdentity -Credential $cred).Account
                 foreach ( $volume in (Get-EC2Volume -Credential $cred @awsParams) ) {
                     # CREATE NEW OBJECT AND ADD TO RESULTS
-                    $results.Add((New-EbsVolume $volume 'UNKNOWN'))
+                    $results.Add((New-EbsVolume $volume $account))
                 }
             }
         }
