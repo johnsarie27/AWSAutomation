@@ -26,7 +26,7 @@ function Get-SecurityGroupInfo {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile containing key and secret')]
+        [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [string] $ProfileName,
 
