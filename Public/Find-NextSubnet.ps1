@@ -42,7 +42,7 @@ function Find-NextSubnet {
         $subVal = [System.Collections.Generic.List[System.Int32]]::new()
 
         # GET NAME TAG
-        $name = @{Name = 'Name'; Expression = { ($_.Tags | Where-Object Key -EQ Name).Value } }
+        $name = @{ Name = 'Name'; Expression = { ($_.Tags.Where({$_.Key -EQ 'Name'}).Value) } }
 
         # EXCLUDE ALL DEFAULT VPC'S (172.31.0.0/16) AND SERVICES VPC
         $where = { $_.CidrBlock -notmatch '^172\.' }
