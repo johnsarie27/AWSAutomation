@@ -64,9 +64,6 @@ $params = @{
 Update-TypeData @params
 
 <# -- SKIPPED
-OnDemandPrice
-ReservedPrice
-Savings
 ProfileName
 NameTags
 #>

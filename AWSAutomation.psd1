@@ -84,7 +84,6 @@
         'Find-PublicS3Objects'
         'Get-AccountFromRole'
         'Get-AvailableEBS'
-        'Get-EC2'
         'Get-ELB'
         'Get-IAMReport'
         'Get-NetworkInfo'
@@ -98,7 +97,6 @@
         'Remove-LapsedAMI'
         'Revoke-StaleAccessKey'
         'Unregister-DbSnapshot'
-        'New-Instance'
     )
     # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',
 

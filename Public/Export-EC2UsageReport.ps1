@@ -66,7 +66,7 @@ function Export-EC2UsageReport {
         }
 
         # SET VAR FOR INSTANCES
-        $instanceList = [System.Collections.Generic.List[System.Object]]::new()
+        $ec2 = [System.Collections.Generic.List[System.Object]]::new()
         $90DayList = [System.Collections.Generic.List[System.Object]]::new()
         $60DayList = [System.Collections.Generic.List[System.Object]]::new()
 
@@ -81,33 +81,39 @@ function Export-EC2UsageReport {
             Style        = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
         }
 
-        $awsParams = @{ Region = $Region }
-
         # SET AUTHENTICATION
-        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams['ProfileName'] = $ProfileName }
-        if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams['Credential'] = $Credential }
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
+            $ec2 = foreach ( $p in $ProfileName ) { (Get-EC2Instance -ProfileName $p -Region $Region).Instances }
+            $allVolumes = Get-AvailableEBS -ProfileName $ProfileName -Region $Region | Group-Object -Property Account | Select-Object Name, Count
+        }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) {
+            $ec2 = foreach ( $c in $Credential ) { (Get-EC2Instance -Credential $c -Region $Region).Instances }
+            $allVolumes = Get-AvailableEBS -Credential $Credential -Region $Region | Group-Object -Property Account | Select-Object Name, Count
+        }
+        Write-Verbose -Message ('EC2 instances: {0}' -f $ec2.Count)
+        Write-Verbose -Message ('EBS volumes: {0}' -f $allVolumes.Count)
     }
 
     Process {
-        # POPULATE ARRAY AND ADD DATA VALUES FOR STOP AND COST INFO
-        foreach ( $i in (Get-EC2 @awsParams) ) { $instanceList.Add($i) }
-        Get-CostInfo -Region $Region -Ec2Instance $instanceList | Out-Null
+        # ADD DATA VALUES FOR COST INFO
+        Get-CostInfo -Region $Region -Instance $ec2 | Out-Null
 
-        foreach ( $i in $instanceList ) { if ( $i.State -eq 'stopped' ) { $90DayList.Add($i) } }
-        foreach ( $i in $instanceList ) { if ( $i.State -eq 'running' ) { $60DayList.Add($i) } }
-
-        # CREATE ARRAY FOR UNATTACHED VOLUMES
-        $allVolumes = Get-AvailableEBS @awsParams | Group-Object -Property Account | Select-Object Name, Count
+        foreach ( $i in $ec2 ) {
+            if ( $i.Status -eq 'stopped' ) { $90DayList.Add($i) }
+            if ( $i.Status -eq 'running' ) { $60DayList.Add($i) }
+        }
+        Write-Verbose -Message ('Stopped instances: {0}' -f $90DayList.Count)
+        Write-Verbose -Message ('Running volumes: {0}' -f $60DayList.Count)
 
         # IF EXISTS EXPORT 60 DAY LIST
         if ( $60DayList.Count -ge 1 ) {
-            $props = @('ProfileName', 'Environment', 'Name', 'Type', 'Reserved', 'LastStart', 'DaysRunning', 'OnDemandPrice', 'ReservedPrice', 'Savings')
+            $props = @('Environment', 'Name', 'Type', 'Reserved', 'LastStart', 'DaysRunning', 'OnDemandPrice', 'ReservedPrice', 'Savings')
             $60DayList | Select-Object -Property $props | Sort-Object LastStart | Export-Excel @excelParams -WorksheetName '60-Day Report'
         }
 
         # IF EXISTS EXPORT 90 DAY LIST
         if ( $90DayList.Count -gt 0 ) {
-            $props = @('ProfileName', 'Environment', 'Id', 'Name', 'LastStart', 'StoppedDate', 'DaysStopped')
+            $props = @('Environment', 'Id', 'Name', 'LastStart', 'StoppedDate', 'DaysStopped')
             $90DayList | Select-Object -Property $props | Sort-Object DaysStopped | Export-Excel @excelParams -WorksheetName '90-Day Report'
         }
 

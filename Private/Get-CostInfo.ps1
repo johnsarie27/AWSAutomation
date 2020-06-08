@@ -1,3 +1,5 @@
+#Requires -Modules AWS.Tools.EC2
+
 function Get-CostInfo {
     <# =========================================================================
     .SYNOPSIS
@@ -21,7 +23,7 @@ function Get-CostInfo {
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'EC2Instance object')]
-        [System.Object[]] $Ec2Instance, # [EC2Instance[]]
+        [Amazon.EC2.Model.Instance[]] $Instance,
 
         [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
@@ -43,20 +45,31 @@ function Get-CostInfo {
     }
 
     Process {
-        foreach ( $instance in $Ec2Instance ) {
+        foreach ( $i in $Instance ) {
             foreach ( $price in $priceInfo ) {
-                if ( $price.'Instance Type' -eq $instance.Type -and $price.TermType -eq 'OnDemand' -and $price.CapacityStatus -eq 'Used' ) {
-                    [double]$ODP = [math]::Round($price.PricePerUnit, 3)
-                    $instance.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
+                if ( $price.'Instance Type' -eq $i.Type -and $price.TermType -eq 'OnDemand' -and $price.CapacityStatus -eq 'Used' ) {
+                    [double] $ODP = [math]::Round($price.PricePerUnit, 3)
+                    #$i.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
+                    $price = [math]::Round( $ODP * 24 * 365 )
+                    $i | Add-Member -MemberType NoteProperty -Name OnDemandPrice -Value $price
                 }
 
-                if ( ( $instance.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
-                    $instance.ReservedPrice = $price.PricePerUnit
+                if ( ( $i.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
+                    #$i.ReservedPrice = $price.PricePerUnit
+                    $i | Add-Member -MemberType NoteProperty -Name ReservedPrice -Value $price.PricePerUnit
                 }
             }
-            $instance.Savings = ( 1 - ( $instance.ReservedPrice / $instance.OnDemandPrice ) ).ToString("P")
+
+            try {
+                $savings = ( 1 - ( $i.ReservedPrice / $i.OnDemandPrice ) ).ToString("P")
+                $i | Add-Member -MemberType NoteProperty -Name Savings -Value $savings
+            }
+            catch {
+                if ( $i ) { $i | Add-Member -MemberType NoteProperty -Name Savings -Value 0 }
+            }
+
         }
 
-        $Ec2Instance
+        $Instance
     }
 }
