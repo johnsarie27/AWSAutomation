@@ -52,15 +52,27 @@ $prophash.GetEnumerator() | ForEach-Object {
 
 Update-TypeData -AppendPath "$PSScriptRoot\Ec2.types.ps1xml"
 
+# NEW CUSTOM METHOD
+$params = @{
+    TypeName   = "Amazon.EC2.Model.Instance"
+    MemberType = "ScriptMethod"
+    MemberName = "Randomize"
+    Value      = { ($this.ToCharArray() | Get-Random -Count $this.Length) -join "" }
+    Force      = $true
+}
+
+Update-TypeData @params
+
 <# -- SKIPPED
-DaysStopped
-Stopper
-LastStopped
 OnDemandPrice
 ReservedPrice
 Savings
 ProfileName
 NameTags
+#>
+
+<# -- UNNECESSARY
+Stopper
 VpcName
 SubnetName
 #>

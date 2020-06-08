@@ -91,7 +91,6 @@ function Export-EC2UsageReport {
     Process {
         # POPULATE ARRAY AND ADD DATA VALUES FOR STOP AND COST INFO
         foreach ( $i in (Get-EC2 @awsParams) ) { $instanceList.Add($i) }
-        foreach ( $instance in $instanceList ) { $instance.GetStopInfo() }
         Get-CostInfo -Region $Region -Ec2Instance $instanceList | Out-Null
 
         foreach ( $i in $instanceList ) { if ( $i.State -eq 'stopped' ) { $90DayList.Add($i) } }
@@ -108,7 +107,7 @@ function Export-EC2UsageReport {
 
         # IF EXISTS EXPORT 90 DAY LIST
         if ( $90DayList.Count -gt 0 ) {
-            $props = @('ProfileName', 'Environment', 'Id', 'Name', 'LastStart', 'LastStopped', 'DaysStopped', 'Stopper')
+            $props = @('ProfileName', 'Environment', 'Id', 'Name', 'LastStart', 'StoppedDate', 'DaysStopped')
             $90DayList | Select-Object -Property $props | Sort-Object DaysStopped | Export-Excel @excelParams -WorksheetName '90-Day Report'
         }
 
