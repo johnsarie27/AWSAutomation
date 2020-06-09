@@ -86,7 +86,6 @@
         'Find-NextSubnet'
         'Find-PublicS3Objects'
         'Get-AccountFromRole'
-        'Get-AvailableEBS'
         'Get-IAMReport'
         'Get-Instance'
         'Get-NetworkInfo'
