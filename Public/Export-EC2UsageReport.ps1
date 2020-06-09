@@ -1,4 +1,4 @@
-#Requires -Modules ImportExcel
+#Requires -Modules AWS.Tools.EC2, ImportExcel
 
 function Export-EC2UsageReport {
     <# =========================================================================
@@ -54,6 +54,48 @@ function Export-EC2UsageReport {
     )
 
     Begin {
+        function Get-AvailableEBS {
+            [CmdletBinding(DefaultParameterSetName = '_profile')]
+            [OutputType([System.Object[]])]
+            Param(
+                [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Credential Profile name')]
+                [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+                [string[]] $ProfileName,
+
+                [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS Credential Object')]
+                [ValidateNotNullOrEmpty()]
+                [Amazon.Runtime.AWSCredentials[]] $Credential,
+
+                [Parameter(HelpMessage = 'Name of desired AWS Region.')]
+                [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
+                [String] $Region = 'us-east-1'
+            )
+
+            $results = [System.Collections.Generic.List[System.Object]]::new()
+            $awsParams = @{ Region = $Region; Filter = @{Name = "status"; Values = "available" } }
+
+            if ( $PSCmdlet.ParameterSetName -eq '_profile' ) {
+                foreach ( $name in $ProfileName ) {
+                    foreach ( $volume in (Get-EC2Volume -ProfileName $name @awsParams) ) {
+                        $volume | Add-Member -MemberType NoteProperty -Name Account -Value $name
+                        $results.Add($volume)
+                    }
+                }
+            }
+            if ( $PSCmdlet.ParameterSetName -eq '_credential' ) {
+                foreach ( $cred in $Credential ) {
+                    $account = (Get-STSCallerIdentity -Credential $cred -Region $Region).Account
+                    foreach ( $volume in (Get-EC2Volume -Credential $cred @awsParams) ) {
+                        $volume | Add-Member -MemberType NoteProperty -Name Account -Value $account
+                        $results.Add($volume)
+                    }
+                }
+            }
+
+            Write-Verbose -Message ('Number of volumes: [{0}]' -f $results.Count)
+            $results
+        }
+
         # SET OUTPUT REPORT PATH
         $reportName = 'EC2UsageReport'
         $date = Get-Date -Format "yyyy-MM"

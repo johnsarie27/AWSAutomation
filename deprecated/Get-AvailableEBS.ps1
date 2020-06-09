@@ -39,29 +39,7 @@ function Get-AvailableEBS {
     )
 
     Begin {
-        function New-EbsVolume ([System.Object] $volume, [string] $account) {
-            $new = New-Object -TypeName psobject
-            $new | Add-Member -MemberType NoteProperty -Name Id -Value $volume.VolumeId
-            $new | Add-Member -MemberType NoteProperty -Name Account -Value $account
-            $new | Add-Member -MemberType NoteProperty -Name CreateTime -Value $volume.CreateTime
-            $new | Add-Member -MemberType NoteProperty -Name Status -Value $volume.Status
-            $new | Add-Member -MemberType NoteProperty -Name Encrypted -Value $volume.Encrypted
-            $new | Add-Member -MemberType NoteProperty -Name AvailabilityZone -Value $volume.AvailabilityZone
-            $new | Add-Member -MemberType NoteProperty -Name Iops -Value $volume.Iops
-            if ( $volume.KmsKeyId ) { $Key = $volume.KmsKeyId } else { $Key = $null }
-            $new | Add-Member -MemberType NoteProperty -Name KmsKeyId -Value $Key
-            $new | Add-Member -MemberType NoteProperty -Name Size -Value $volume.Size
-            $new | Add-Member -MemberType NoteProperty -Name SnapshotId -Value $volume.SnapshotId
-            $new | Add-Member -MemberType NoteProperty -Name Tags -Value $volume.Tags
-            $new | Add-Member -MemberType NoteProperty -Name VolumeType -Value $volume.VolumeType
-            $new | Add-Member -MemberType NoteProperty -Name AgeInDays -Value (New-TimeSpan -Start $volume.CreateTime -End $date).Days
-
-            $new
-        }
-
-        $date = Get-Date
         $results = [System.Collections.Generic.List[System.Object]]::new()
-
         $awsParams = @{ Region = $Region; Filter = @{Name = "status";Values = "available"} }
     }
 
@@ -69,8 +47,8 @@ function Get-AvailableEBS {
         if ( $PSCmdlet.ParameterSetName -eq '_profile' ) {
             foreach ( $name in $ProfileName ) {
                 foreach ( $volume in (Get-EC2Volume -ProfileName $name @awsParams) ) {
-                    # CREATE NEW OBJECT AND ADD TO RESULTS
-                    $results.Add((New-EbsVolume $volume $name))
+                    $volume | Add-Member -MemberType NoteProperty -Name Account -Value $name
+                    $results.Add($volume)
                 }
             }
         }
@@ -78,8 +56,8 @@ function Get-AvailableEBS {
             foreach ( $cred in $Credential ) {
                 $account = (Get-STSCallerIdentity -Credential $cred -Region $Region).Account
                 foreach ( $volume in (Get-EC2Volume -Credential $cred @awsParams) ) {
-                    # CREATE NEW OBJECT AND ADD TO RESULTS
-                    $results.Add((New-EbsVolume $volume $account))
+                    $volume | Add-Member -MemberType NoteProperty -Name Account -Value $account
+                    $results.Add($volume)
                 }
             }
         }
