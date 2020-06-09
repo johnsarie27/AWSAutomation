@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.2'
+    ModuleVersion     = '0.6.3'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -60,6 +60,8 @@
     TypesToProcess = @(
         'EC2.types.ps1xml'
         'EBS.types.ps1xml'
+        'ELB.types.ps1xml'
+        'ELB2.types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module
@@ -85,7 +87,6 @@
         'Find-PublicS3Objects'
         'Get-AccountFromRole'
         'Get-AvailableEBS'
-        'Get-ELB'
         'Get-IAMReport'
         'Get-Instance'
         'Get-NetworkInfo'
