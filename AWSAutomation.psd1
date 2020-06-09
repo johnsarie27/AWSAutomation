@@ -87,6 +87,7 @@
         'Get-AvailableEBS'
         'Get-ELB'
         'Get-IAMReport'
+        'Get-Instance'
         'Get-NetworkInfo'
         'Get-RoleCredential'
         'Get-R53Record'
