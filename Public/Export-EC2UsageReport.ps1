@@ -149,14 +149,14 @@ function Export-EC2UsageReport {
 
         # IF EXISTS EXPORT 60 DAY LIST
         if ( $60DayList.Count -ge 1 ) {
-            $props = @('Environment', 'Name', 'Type', 'Reserved', 'LastStart', 'DaysRunning', 'OnDemandPrice', 'ReservedPrice', 'Savings')
-            $60DayList | Select-Object -Property $props | Sort-Object LastStart | Export-Excel @excelParams -WorksheetName '60-Day Report'
+            # PROPERTIES ARE DEFINED IN EC2.types.ps1xml
+            $60DayList | Select-Object -Property Running | Sort-Object LastStart | Export-Excel @excelParams -WorksheetName '60-Day Report'
         }
 
         # IF EXISTS EXPORT 90 DAY LIST
         if ( $90DayList.Count -gt 0 ) {
-            $props = @('Environment', 'Id', 'Name', 'LastStart', 'StoppedDate', 'DaysStopped')
-            $90DayList | Select-Object -Property $props | Sort-Object DaysStopped | Export-Excel @excelParams -WorksheetName '90-Day Report'
+            # PROPERTIES ARE DEFINED IN EC2.types.ps1xml
+            $90DayList | Select-Object -Property Stopped | Sort-Object DaysStopped | Export-Excel @excelParams -WorksheetName '90-Day Report'
         }
 
         # EXPORT VOLUMES LIST
