@@ -19,7 +19,8 @@ function Get-RoleCredential {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Get-RoleCredential -ProfileName myProfile -Region us-east-1 -AcountId 012345678901 -RoleName mySuperRole
+        PS C:\> $acc = [PSCustomObject] @{ Name = 'myAccount'; Id = '012345678901' }
+        PS C:\> Get-RoleCredential -ProfileName myProfile -Region us-east-1 -Acount $acc -RoleName mySuperRole
         Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
     .NOTES
         General notes
