@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.3'
+    ModuleVersion     = '0.6.4'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -86,6 +86,7 @@
         'Find-NextSubnet'
         'Find-PublicS3Objects'
         'Get-AccountFromRole'
+        'Get-CostInfo'
         'Get-IAMReport'
         'Get-Instance'
         'Get-NetworkInfo'
