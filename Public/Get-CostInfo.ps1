@@ -10,6 +10,10 @@ function Get-CostInfo {
         EC2Instance object
     .PARAMETER Region
         AWS region
+    .PARAMETER PassThru
+        Returns EC2 instance with cost info
+    .PARAMETER Force
+        Overwrite any existing cost info
     .INPUTS
         None.
     .OUTPUTS
@@ -27,7 +31,13 @@ function Get-CostInfo {
 
         [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region
+        [string] $Region,
+
+        [Parameter(HelpMessage = 'Return EC2 Instance with cost info')]
+        [switch] $PassThru,
+
+        [Parameter(HelpMessage = 'Overwrite existing cost info')]
+        [switch] $Force
     )
 
     Begin {
@@ -42,6 +52,9 @@ function Get-CostInfo {
         }
 
         $priceInfo = Import-Csv -Path $dataFile | Where-Object Location -eq $regionTable[$Region]
+
+        $params = @{ MemberType = 'NoteProperty' }
+        if ( $PSBoundParameters.ContainsKey('Force') ) { $params.Add('Force', $true) }
     }
 
     Process {
@@ -51,25 +64,25 @@ function Get-CostInfo {
                     [double] $ODP = [math]::Round($price.PricePerUnit, 3)
                     #$i.OnDemandPrice = [math]::Round( $ODP * 24 * 365 )
                     $price = [math]::Round( $ODP * 24 * 365 )
-                    $i | Add-Member -MemberType NoteProperty -Name OnDemandPrice -Value $price
+                    $i | Add-Member @params -Name OnDemandPrice -Value $price
                 }
 
                 if ( ( $i.Type -eq $price.'Instance Type' ) -and ( $price.TermType -eq 'Reserved' ) ) {
                     #$i.ReservedPrice = $price.PricePerUnit
-                    $i | Add-Member -MemberType NoteProperty -Name ReservedPrice -Value $price.PricePerUnit
+                    $i | Add-Member @params -Name ReservedPrice -Value $price.PricePerUnit
                 }
             }
 
             try {
                 $savings = ( 1 - ( $i.ReservedPrice / $i.OnDemandPrice ) ).ToString("P")
-                $i | Add-Member -MemberType NoteProperty -Name Savings -Value $savings
+                $i | Add-Member @params -Name Savings -Value $savings
             }
             catch {
-                if ( $i ) { $i | Add-Member -MemberType NoteProperty -Name Savings -Value 0 }
+                if ( $i ) { $i | Add-Member @params -Name Savings -Value 0 }
             }
 
         }
 
-        $Instance
+        if ( $PSBoundParameters.ContainsKey('PassThru') ) { $Instance }
     }
 }
