@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.5'
+    ModuleVersion     = '0.6.6'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -58,11 +58,12 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
-        'EC2.types.ps1xml'
         'EBS.types.ps1xml'
+        'EC2.types.ps1xml'
         'ELB.types.ps1xml'
         'ELB2.types.ps1xml'
         'Snapshot.types.ps1xml'
+        'Volume.types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module
