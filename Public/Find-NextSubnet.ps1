@@ -34,7 +34,7 @@ function Find-NextSubnet {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region = 'us-east-1'
+        [string] $Region
     )
 
     Begin {

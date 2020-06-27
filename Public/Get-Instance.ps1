@@ -38,7 +38,7 @@ function Get-Instance {
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
-        [string] $Region = 'us-east-1'
+        [string] $Region
     )
 
     Process {

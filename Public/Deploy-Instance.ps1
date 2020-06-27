@@ -48,7 +48,7 @@ function Deploy-Instance {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [String] $Region = 'us-east-1',
+        [String] $Region,
 
         [Parameter(HelpMessage = 'EC2 AMI ID')]
         [ValidatePattern('^ami-\w{8,17}$')]

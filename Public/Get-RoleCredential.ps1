@@ -34,7 +34,7 @@ function Get-RoleCredential {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [String] $Region = 'us-east-1',
+        [String] $Region,
 
         [Parameter(Mandatory, HelpMessage = 'PS Object containing AWS Account Name and ID properties')]
         [ValidateNotNullOrEmpty()]

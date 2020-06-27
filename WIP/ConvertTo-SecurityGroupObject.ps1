@@ -32,7 +32,7 @@ function ConvertTo-SecurityGroupObject {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region = 'us-east-1',
+        [string] $Region,
 
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'VPC ID')]
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]

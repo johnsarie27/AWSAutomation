@@ -47,7 +47,7 @@ function Export-EC2UsageReport {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region = 'us-east-1',
+        [string] $Region,
 
         [Parameter(HelpMessage = 'Return path to report file')]
         [switch] $PassThru
@@ -68,7 +68,7 @@ function Export-EC2UsageReport {
 
                 [Parameter(HelpMessage = 'Name of desired AWS Region.')]
                 [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-                [String] $Region = 'us-east-1'
+                [String] $Region
             )
 
             $results = [System.Collections.Generic.List[System.Object]]::new()

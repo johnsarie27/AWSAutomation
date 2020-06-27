@@ -42,7 +42,7 @@ function New-CWRecoveryAlarm {
 
         [Parameter(HelpMessage = 'Name of desired AWS Region.')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [String] $Region = 'us-east-1'
+        [String] $Region
     )
 
     Begin {

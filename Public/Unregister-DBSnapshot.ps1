@@ -42,7 +42,7 @@ function Unregister-DbSnapshot {
 
         [Parameter(HelpMessage = 'Region of existing RDS DB snapshot')]
         [ValidateSet({ (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region = 'us-west-1',
+        [string] $Region,
 
         [Parameter(HelpMessage = 'Age (in days) past which the snapshot will be deleted')]
         [int] $Age = 90

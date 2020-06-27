@@ -36,7 +36,7 @@ function Get-SecurityGroupInfo {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region = 'us-east-1',
+        [string] $Region,
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'VPC ID')]
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
