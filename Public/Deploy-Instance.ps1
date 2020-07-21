@@ -52,7 +52,7 @@ function Deploy-Instance {
 
         [Parameter(HelpMessage = 'EC2 AMI ID')]
         [ValidatePattern('^ami-\w{8,17}$')]
-        [string] $AmiId = 'ami-e80e2993',
+        [string] $AmiId = 'ami-0b8e807da7e3f9b16',
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'New EC2 instance name tag')]
         #[ValidatePattern('^\w{3}(PRD|STG)(AGS|PTL|HST|DS|SQL|QRM)\d{2}$')]
@@ -116,6 +116,7 @@ function Deploy-Instance {
 
             # SET TAG DATA
             $role = switch -Regex ( $n ) {
+                '^\w+WEB\d{2}$' { 'Web Server' }
                 '^\w+AGS\d{2}$' { 'ArcGIS Server' }
                 '^\w+HST\d{2}$' { 'ArcGIS Server (Hosted)' }
                 '^\w+PTL\d{2}$' { 'Portal for ArcGIS' }
