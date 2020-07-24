@@ -79,19 +79,19 @@ function Deploy-Instance {
     )
 
     Begin {
-        $instanceParams = @{ Region = $Region }
+        $creds = @{ Region = $Region }
 
         # CHECK FOR AUTHENTICATION METHOD
-        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $instanceParams['ProfileName'] = $ProfileName }
-        if ( $PSBoundParameters.ContainsKey('Credential') ) { $instanceParams['Credential'] = $Credential }
+        if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $creds['ProfileName'] = $ProfileName }
+        if ( $PSBoundParameters.ContainsKey('Credential') ) { $creds['Credential'] = $Credential }
 
         # VALIDATE INSTANCE TYPE
-        if ( $Type -notin (Get-EC2InstanceType @instanceParams).InstanceType ) {
+        if ( $Type -notin (Get-EC2InstanceType @creds).InstanceType ) {
             Throw 'Invalid instance type provided.'
         }
 
         # SET INSTANCE PARAMS
-        $instanceParams += @{
+        $instanceParams = @{
             ImageId              = $AmiId
             MinCount             = 1
             MaxCount             = 1
@@ -99,6 +99,7 @@ function Deploy-Instance {
             SecurityGroupId      = $SecurityGroupId
             SubnetId             = $SubnetId
             InstanceProfile_Name = 'roleMemberServer'
+            #Select               = '^ImageId'
         }
 
         # ENCODE USER DATA AND ADD TO PARAMETERS
@@ -112,7 +113,8 @@ function Deploy-Instance {
     Process {
         foreach ( $n in $Name ) {
             # LAUNCH NEW INSTANCE
-            $instance = New-EC2Instance @instanceParams
+            $instance = New-EC2Instance @instanceParams @creds
+            Start-Sleep -Seconds 2
 
             # SET TAG DATA
             $role = switch -Regex ( $n ) {
@@ -127,9 +129,11 @@ function Deploy-Instance {
 
             # ADD TAGS
             $tagScheme = @{
-                Agency = $n.Substring(0, 3)
-                Role   = $role
-                Name   = $n
+                Project        = $n.Substring(0, 3)
+                Agency         = $n.Substring(0, 3)
+                Role           = $role
+                Name           = $n
+                SnapshotPolicy = "true"
             }
 
             foreach ( $i in $tagScheme.GetEnumerator() ) {
@@ -137,7 +141,7 @@ function Deploy-Instance {
                 $tag.Key = $i.Name
                 $tag.Value = $i.Value #>
                 $tag = [Amazon.EC2.Model.Tag] @{ Key = $i.Name; Value = $i.Value }
-                New-EC2Tag -Resource $instance.Instances.InstanceId -Tag $tag @splat
+                New-EC2Tag -Resource $instance.Instances.InstanceId -Tag $tag @creds
             }
 
             # RETURN INSTANCE OBJECT
