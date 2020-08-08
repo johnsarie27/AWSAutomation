@@ -118,28 +118,24 @@ function Deploy-Instance {
 
             # SET TAG DATA
             $role = switch -Regex ( $n ) {
-                '^\w+WEB\d{2}$' { 'Web Server' }
-                '^\w+AGS\d{2}$' { 'ArcGIS Server' }
-                '^\w+HST\d{2}$' { 'ArcGIS Server (Hosted)' }
-                '^\w+PTL\d{2}$' { 'Portal for ArcGIS' }
-                '^\w+SQL\d{2}$' { 'SQL Server' }
-                '^\w+DS\d{2}$'  { 'DataStore for ArcGIS' }
-                default         { 'Unknown role' }
+                '^\w+WEB\d{2}$'  { 'Web Server' }
+                '^\w+AGS\d{2}$'  { 'ArcGIS Server' }
+                '^\w+HST\d{2}$'  { 'ArcGIS Server (Hosted)' }
+                '^\w+PTL\d{2}$'  { 'Portal for ArcGIS' }
+                '^\w+SQL\d{2}$'  { 'SQL Server' }
+                '^\w+DST?\d{2}$' { 'DataStore for ArcGIS' }
+                default          { 'Unknown role' }
             }
 
             # ADD TAGS
             $tagScheme = @{
                 Project        = $n.Substring(0, 3)
-                Agency         = $n.Substring(0, 3)
                 Role           = $role
                 Name           = $n
                 SnapshotPolicy = "true"
             }
 
             foreach ( $i in $tagScheme.GetEnumerator() ) {
-                <# $tag = New-Object -TypeName Amazon.EC2.Model.Tag
-                $tag.Key = $i.Name
-                $tag.Value = $i.Value #>
                 $tag = [Amazon.EC2.Model.Tag] @{ Key = $i.Name; Value = $i.Value }
                 New-EC2Tag -Resource $instance.Instances.InstanceId -Tag $tag @creds
             }
