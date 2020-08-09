@@ -65,7 +65,7 @@ function Export-IAMRolePolicy {
             $excelParams['Path'] = $Path
         }
         else {
-            $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('IAMRolePolicies_{0}.xlsx' -f (Get-Date -Format "yyyy-MM"))
+            $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('IAMRolePolicies_{0:yyyy-MM}.xlsx' -f (Get-Date))
         }
     }
 
