@@ -71,6 +71,10 @@ function Deploy-Instance {
         [ValidateNotNullOrEmpty()]
         [string] $Type = 'm4.xlarge',
 
+        [Parameter(HelpMessage = '')]
+        [ValidateNotNullOrEmpty()]
+        [string] $InstanceProfile = 'roleMemberServer',
+
         [Parameter(HelpMessage = 'User data string')]
         [string] $UserData,
 
@@ -98,7 +102,7 @@ function Deploy-Instance {
             InstanceType         = $Type
             SecurityGroupId      = $SecurityGroupId
             SubnetId             = $SubnetId
-            InstanceProfile_Name = 'roleMemberServer'
+            InstanceProfile_Name = $InstanceProfile
             #Select               = '^ImageId'
         }
 
