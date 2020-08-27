@@ -71,7 +71,7 @@ function Deploy-Instance {
         [ValidateNotNullOrEmpty()]
         [string] $Type = 'm4.xlarge',
 
-        [Parameter(HelpMessage = '')]
+        [Parameter(HelpMessage = 'IAM Role or Instance Profile')]
         [ValidateNotNullOrEmpty()]
         [string] $InstanceProfile = 'roleMemberServer',
 
