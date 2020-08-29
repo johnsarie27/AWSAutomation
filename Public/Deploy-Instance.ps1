@@ -22,6 +22,8 @@ function Deploy-Instance {
         Security Group ID for new EC2 instance
     .PARAMETER Type
         AWS EC2 Instance Type
+    .PARAMETER InstanceProfile
+        EC2 Instance Profile / IAM Role
     .PARAMETER UserData
         UserData as string (not encoded)
     .PARAMETER PassThru
