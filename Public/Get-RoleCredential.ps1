@@ -14,6 +14,8 @@ function Get-RoleCredential {
         Custom object containing AWS Account Name and Id properties
     .PARAMETER RoleName
         Name of AWS IAM Role to utilize and obtain credentials
+    .PARAMETER DurationInSeconds
+        Duration of temporary credential in seconds
     .INPUTS
         None.
     .OUTPUTS
@@ -42,7 +44,11 @@ function Get-RoleCredential {
 
         [Parameter(Mandatory, HelpMessage = 'AWS Role name')]
         [ValidateNotNullOrEmpty()]
-        [string] $RoleName
+        [string] $RoleName,
+
+        [Parameter(HelpMessage = 'Duration of temporary credential in seconds')]
+        [ValidateNotNullOrEmpty()]
+        [int] $DurationInSeconds = 3600
     )
 
     Begin {
@@ -55,7 +61,7 @@ function Get-RoleCredential {
             $stsParams = @{
                 RoleArn           = "arn:aws:iam::{0}:role/{1}" -f $a.Id, $RoleName
                 RoleSessionName   = 'SwitchToChild'
-                DurationInSeconds = # DEFAULT 3600 = 1hr.
+                DurationInSeconds = $DurationInSeconds # AWS DEFAULT IS 3600 (1 HOUR)
             }
 
             $credential.Add($a.Name, (New-AWSCredential -Credential (Use-STSRole @keys @stsParams).Credentials))
