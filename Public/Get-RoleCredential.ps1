@@ -53,8 +53,9 @@ function Get-RoleCredential {
     Process {
         foreach ( $a in $Account ) {
             $stsParams = @{
-                RoleArn         = "arn:aws:iam::{0}:role/{1}" -f $a.Id, $RoleName
-                RoleSessionName = 'SwitchToChild'
+                RoleArn           = "arn:aws:iam::{0}:role/{1}" -f $a.Id, $RoleName
+                RoleSessionName   = 'SwitchToChild'
+                DurationInSeconds = # DEFAULT 3600 = 1hr.
             }
 
             $credential.Add($a.Name, (New-AWSCredential -Credential (Use-STSRole @keys @stsParams).Credentials))
