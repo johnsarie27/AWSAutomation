@@ -34,7 +34,7 @@ function Get-RoleCredential {
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [String] $Region,
 
@@ -52,19 +52,22 @@ function Get-RoleCredential {
     )
 
     Begin {
-        $keys = @{ ProfileName = $ProfileName; Region = $Region }
+        $keys = @{
+            ProfileName = $ProfileName
+            Region      = $Region
+        }
         $credential = @{ }
     }
 
     Process {
-        foreach ( $a in $Account ) {
+        foreach ( $acc in $Account ) {
             $stsParams = @{
-                RoleArn           = "arn:aws:iam::{0}:role/{1}" -f $a.Id, $RoleName
+                RoleArn           = "arn:aws:iam::{0}:role/{1}" -f $acc.Id, $RoleName
                 RoleSessionName   = 'SwitchToChild'
                 DurationInSeconds = $DurationInSeconds # AWS DEFAULT IS 3600 (1 HOUR)
             }
 
-            $credential.Add($a.Name, (New-AWSCredential -Credential (Use-STSRole @keys @stsParams).Credentials))
+            $credential.Add($acc.Name, (New-AWSCredential -Credential (Use-STSRole @keys @stsParams).Credentials))
         }
     }
 
