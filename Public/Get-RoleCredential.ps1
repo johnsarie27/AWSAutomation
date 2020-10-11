@@ -8,6 +8,8 @@ function Get-RoleCredential {
         Get IAM Credential from IAM Role
     .PARAMETER ProfileName
         AWS Credential Profile name
+    .PARAMETER Keys
+        AWS access key and secret keys in a PSCredential object
     .PARAMETER Region
         AWS Region
     .PARAMETER Account
@@ -27,12 +29,16 @@ function Get-RoleCredential {
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [Alias('Get-AwsCreds')]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, HelpMessage = 'AWS Profile', ParameterSetName = '_profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string] $ProfileName,
+        [String] $ProfileName,
+
+        [Parameter(Mandatory, HelpMessage = 'Access key and Secret key', ParameterSetName = '_keys')]
+        [ValidateNotNullOrEmpty()]
+        [PSCredentail] $Keys,
 
         [Parameter(Mandatory, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
@@ -44,18 +50,24 @@ function Get-RoleCredential {
 
         [Parameter(Mandatory, HelpMessage = 'AWS Role name')]
         [ValidateNotNullOrEmpty()]
-        [string] $RoleName,
+        [String] $RoleName,
 
         [Parameter(HelpMessage = 'Duration of temporary credential in seconds')]
         [ValidateNotNullOrEmpty()]
-        [int] $DurationInSeconds = 3600
+        [Int] $DurationInSeconds = 3600
     )
 
     Begin {
-        $keys = @{
-            ProfileName = $ProfileName
-            Region      = $Region
+        $creds = @{ Region = $Region }
+
+        if ( $PSCmdlet.ParameterSetName -eq '_keys' ) {
+            $creds.Add('AccessKey', $Keys.UserName)
+            $creds.Add('SecretKey', $Keys.GetNetworkCredential().Password )
         }
+        else {
+            $creds.Add('ProfileName', $ProfileName)
+        }
+
         $credential = @{ }
     }
 
@@ -67,7 +79,7 @@ function Get-RoleCredential {
                 DurationInSeconds = $DurationInSeconds # AWS DEFAULT IS 3600 (1 HOUR)
             }
 
-            $credential.Add($acc.Name, (New-AWSCredential -Credential (Use-STSRole @keys @stsParams).Credentials))
+            $credential.Add($acc.Name, (New-AWSCredential -Credential (Use-STSRole @creds @stsParams).Credentials))
         }
     }
 
