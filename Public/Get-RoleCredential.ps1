@@ -34,15 +34,15 @@ function Get-RoleCredential {
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile', ParameterSetName = '_profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [String] $ProfileName,
+        [string] $ProfileName,
 
         [Parameter(Mandatory, HelpMessage = 'Access key and Secret key', ParameterSetName = '_keys')]
         [ValidateNotNullOrEmpty()]
-        [PSCredentail] $Keys,
+        [pscredential] $Keys,
 
         [Parameter(Mandatory, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [String] $Region,
+        [string] $Region,
 
         [Parameter(Mandatory, HelpMessage = 'PS Object containing AWS Account Name and ID properties')]
         [ValidateNotNullOrEmpty()]
@@ -50,11 +50,11 @@ function Get-RoleCredential {
 
         [Parameter(Mandatory, HelpMessage = 'AWS Role name')]
         [ValidateNotNullOrEmpty()]
-        [String] $RoleName,
+        [string] $RoleName,
 
         [Parameter(HelpMessage = 'Duration of temporary credential in seconds')]
         [ValidateNotNullOrEmpty()]
-        [Int] $DurationInSeconds = 3600
+        [int] $DurationInSeconds = 3600
     )
 
     Begin {
