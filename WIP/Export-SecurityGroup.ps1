@@ -1,5 +1,3 @@
-#Requires -Modules ImportExcel
-
 function Export-SecurityGroup {
     <# =========================================================================
     .SYNOPSIS
