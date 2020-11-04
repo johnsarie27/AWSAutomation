@@ -1,6 +1,3 @@
-#Requires -Version 4.0
-#Requires -Modules AWS.Tools.EC2
-
 function Get-WindowsDisk {
     <# =========================================================================
     .SYNOPSIS

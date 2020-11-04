@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.EC2, ImportExcel
-
 function Export-EC2UsageReport {
     <# =========================================================================
     .SYNOPSIS

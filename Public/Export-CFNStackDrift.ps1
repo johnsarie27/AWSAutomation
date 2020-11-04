@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.CloudFormation, ImportExcel
-
 function Export-CFNStackDrift {
     <# =========================================================================
     .SYNOPSIS

@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.S3
-
 function Invoke-S3 {
     <# =========================================================================
     .SYNOPSIS

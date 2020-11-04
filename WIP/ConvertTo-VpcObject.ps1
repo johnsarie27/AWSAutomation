@@ -1,5 +1,3 @@
-#Requires -Modules 'AWS.Tools.EC2'
-
 function ConvertTo-VpcObject {
     <# =========================================================================
     .SYNOPSIS

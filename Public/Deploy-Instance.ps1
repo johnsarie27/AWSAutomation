@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.EC2
-
 function Deploy-Instance {
     <# =========================================================================
     .SYNOPSIS

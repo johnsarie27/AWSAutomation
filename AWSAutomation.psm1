@@ -1,5 +1,5 @@
 # REQUIRED FOR THE CONSTRUCTOR OF EC2INSTANCE
-#Requires -Modules AWS.Tools.EC2
+# Requires -Modules AWS.Tools.EC2
 
 # IMPORT ALL FUNCTIONS
 foreach ( $directory in @('Public', 'Private') ) {

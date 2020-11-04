@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.IdentityManagement
-
 function Get-AccountFromRole {
     <# =========================================================================
     .SYNOPSIS

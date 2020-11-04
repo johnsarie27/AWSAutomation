@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.RDS
-
 function Unregister-DbSnapshot {
     <# =========================================================================
     .SYNOPSIS

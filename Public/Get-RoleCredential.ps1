@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.SecurityToken
-
 function Get-RoleCredential {
     <# =========================================================================
     .SYNOPSIS

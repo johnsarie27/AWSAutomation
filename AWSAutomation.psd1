@@ -48,7 +48,21 @@
     # ProcessorArchitecture = ''
 
     # Modules that must be imported into the global environment prior to importing this module
-    # RequiredModules = @('ImportExcel')
+    RequiredModules   = @(
+        'ImportExcel'
+        'AWS.Tools.Common'
+        'AWS.Tools.CloudFormation'
+        'AWS.Tools.CloudWatch'
+        'AWS.Tools.EC2'
+        'AWS.Tools.ElasticLoadBalancing'
+        'AWS.Tools.ElasticLoadBalancingV2'
+        'AWS.Tools.IdentityManagement'
+        'AWS.Tools.KeyManagementService'
+        'AWS.Tools.RDS'
+        'AWS.Tools.Route53'
+        'AWS.Tools.S3'
+        'AWS.Tools.SecurityToken'
+    )
 
     # Assemblies that must be loaded prior to importing this module
     # RequiredAssemblies = @()

@@ -1,5 +1,3 @@
-#Requires -Modules AWS.Tools.EC2
-
 function New-Instance {
     <# =========================================================================
     .SYNOPSIS
