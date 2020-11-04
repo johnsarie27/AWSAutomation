@@ -62,6 +62,7 @@
         'AWS.Tools.Route53'
         'AWS.Tools.S3'
         'AWS.Tools.SecurityToken'
+        #'AWSPowerShell'
     )
 
     # Assemblies that must be loaded prior to importing this module
