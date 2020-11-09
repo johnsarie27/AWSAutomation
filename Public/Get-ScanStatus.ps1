@@ -22,7 +22,7 @@ function Get-ScanStatus {
     .NOTES
         General notes
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '_creds')]
     Param(
         [Parameter(Mandatory, HelpMessage = 'Bucket name')]
         [ValidateNotNullOrEmpty()]
@@ -32,11 +32,11 @@ function Get-ScanStatus {
         [ValidateNotNullOrEmpty()]
         [string] $KeyPrefix,
 
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile')]
-        [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
+        [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_creds', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential
     )
