@@ -50,6 +50,7 @@
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules   = @(
         'ImportExcel'
+        #'AWSPowerShell'
         'AWS.Tools.Common'
         'AWS.Tools.CloudFormation'
         'AWS.Tools.CloudWatch'
@@ -62,7 +63,6 @@
         'AWS.Tools.Route53'
         'AWS.Tools.S3'
         'AWS.Tools.SecurityToken'
-        #'AWSPowerShell'
     )
 
     # Assemblies that must be loaded prior to importing this module
@@ -149,7 +149,6 @@
     PrivateData       = @{
 
         PSData = @{
-
             # Tags applied to this module. These help with module discovery in online galleries.
             # Tags = @()
 
