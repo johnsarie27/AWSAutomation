@@ -36,7 +36,6 @@ function Disable-InactiveUserKey {
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
     [OutputType([System.Object[]])]
-
     Param(
         [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -79,7 +78,6 @@ function Disable-InactiveUserKey {
         $date = Get-Date
         $badDate = Get-Date -Date "0001-01-01 00:00"
     }
-
     Process {
         foreach ( $u in $User ) {
             # GET ACCESS KEYS
@@ -162,7 +160,6 @@ function Disable-InactiveUserKey {
             }
         }
     }
-
     End {
         if ( $PSBoundParameters.ContainsKey('Remove') ) { $status = 'removed' }
         elseif ( $PSBoundParameters.ContainsKey('ReportOnly') ) { $status = 'reported' }

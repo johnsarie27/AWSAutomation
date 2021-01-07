@@ -69,7 +69,6 @@ function Disable-InactiveUserProfile {
         $date = Get-Date
         $badDate = Get-Date -Date "0001-01-01 00:00"
     }
-
     Process {
         foreach ( $u in $User ) {
             # SET COMMON VARS
@@ -135,7 +134,6 @@ function Disable-InactiveUserProfile {
             }
         }
     }
-
     End {
         # WRITE VERBOSE OUTPUT
         if ( $PSBoundParameters.ContainsKey('ReportOnly') ) {
