@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.7'
+    ModuleVersion     = '0.6.8'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -62,6 +62,7 @@
         'AWS.Tools.RDS'
         'AWS.Tools.Route53'
         'AWS.Tools.S3'
+        'AWS.Tools.SimpleSystemsManagement'
         'AWS.Tools.SecurityToken'
     )
 
@@ -112,6 +113,7 @@
         'Get-R53Record'
         'Get-ScanStatus'
         'Get-SecurityGroupInfo'
+        'Get-SSMNonCompliance'
         'Get-WindowsDisk'
         'Invoke-S3'
         'New-CWRecoveryAlarm'
