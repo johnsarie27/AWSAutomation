@@ -13,40 +13,40 @@ function Get-Instance {
     .PARAMETER Region
         AWS region
     .INPUTS
-        System.String.
+        Amazon.Runtime.AWSCredentials.
     .OUTPUTS
-        System.Object.
+        Amazon.EC2.Model.Instance.
     .EXAMPLE
         PS C:\> $All = Get-Instance -Region us-west-2
         Return all EC2 instances using the local system's EC2 Instance Profile
         in the us-west-2 region.
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.EC2.Model.Instance[]])]
 
     Param(
-        [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Profile containing access key and secret')]
-        [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+        [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
-        [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [string] $Region
     )
 
     Process {
-        if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
+        if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
             foreach ( $name in $ProfileName ) {
                 (Get-EC2Instance -ProfileName $name -Region $Region).Instances
                 #Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)
             }
         }
-        elseif ( $PSBoundParameters.ContainsKey('Credential') ) {
+        elseif ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
             foreach ( $cred in $Credential ) {
                 (Get-EC2Instance -Credential $cred -Region $Region).Instances
                 #Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)

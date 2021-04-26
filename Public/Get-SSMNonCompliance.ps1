@@ -22,15 +22,15 @@ function Get-SSMNonCompliance {
     ========================================================================= #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     Param(
-        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile containing access key and secret')]
+        [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile containing access key and secret')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [string[]] $ProfileName,
 
-        [Parameter(ValueFromPipeline, Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory, Position = 1, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [string] $Region
