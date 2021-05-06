@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.8'
+    ModuleVersion     = '0.6.9'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -79,6 +79,7 @@
         'ELB.types.ps1xml'
         'ELB2.types.ps1xml'
         'Snapshot.types.ps1xml'
+        'SSM.types.ps1xml'
         'Volume.types.ps1xml'
     )
 
