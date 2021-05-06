@@ -114,6 +114,7 @@
         'Get-R53Record'
         'Get-ScanStatus'
         'Get-SecurityGroupInfo'
+        'Get-SSMInstance'
         'Get-SSMNonCompliance'
         'Get-WindowsDisk'
         'Invoke-S3'
