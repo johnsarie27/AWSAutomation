@@ -1,9 +1,9 @@
 function Get-AssociationStatus {
     <# =========================================================================
     .SYNOPSIS
-        Short description
+        Get system status for association
     .DESCRIPTION
-        Long description
+        Get system status for the last execution of a given association
     .PARAMETER Name
         Systems Manager Association name
     .PARAMETER ProfileName
@@ -52,6 +52,7 @@ function Get-AssociationStatus {
 
                 # GET ALL ASSOCIATIONS
                 $assocList = Get-SSMAssociationList @awsCreds
+                Write-Verbose -Message ('Total Associations: {0}' -f $assocList.Count)
 
                 # GET TARGET ASSOCIATION
                 $assoc = $assocList | Where-Object AssociationName -Like $Name
@@ -60,9 +61,11 @@ function Get-AssociationStatus {
                 #$assoc.Overview.AssociationStatusAggregatedCount
 
                 # GET ALL EXECUTIONS FOR GIVEN ASSOCIATION
+                Write-Verbose -Message ('Association ID: {0}' -f $assoc.AssociationId)
                 $assocExec = Get-SSMAssociationExecution -AssociationId $assoc.AssociationId @awsCreds
 
                 # GET ALL TARGET RESULTS FROM LAST EXECUTION OF GIVEN ASSOCIATION
+                Write-Verbose -Message ('Execution ID: {0}' -f $assocExec[0].ExecutionId)
                 Get-SSMAssociationExecutionTarget -AssociationId $assoc.AssociationId -ExecutionId $assocExec[0].ExecutionId @awsCreds
             }
         }
@@ -75,6 +78,7 @@ function Get-AssociationStatus {
 
                 # GET ALL ASSOCIATIONS
                 $assocList = Get-SSMAssociationList @awsCreds
+                Write-Verbose -Message ('Total Associations: {0}' -f $assocList.Count)
 
                 # GET TARGET ASSOCIATION
                 $assoc = $assocList | Where-Object AssociationName -Like $Name
@@ -83,9 +87,11 @@ function Get-AssociationStatus {
                 #$assoc.Overview.AssociationStatusAggregatedCount
 
                 # GET ALL EXECUTIONS FOR GIVEN ASSOCIATION
+                Write-Verbose -Message ('Association ID: {0}' -f $assoc.AssociationId)
                 $assocExec = Get-SSMAssociationExecution -AssociationId $assoc.AssociationId @awsCreds
 
                 # GET ALL TARGET RESULTS FROM LAST EXECUTION OF GIVEN ASSOCIATION
+                Write-Verbose -Message ('Execution ID: {0}' -f $assocExec[0].ExecutionId)
                 Get-SSMAssociationExecutionTarget -AssociationId $assoc.AssociationId -ExecutionId $assocExec[0].ExecutionId @awsCreds
             }
         }
