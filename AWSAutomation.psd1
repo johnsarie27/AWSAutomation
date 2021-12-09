@@ -102,7 +102,6 @@
         'Find-InsecureS3BucketPolicy'
         'Find-NextSubnet'
         'Find-PublicS3Objects'
-        'Get-AccountFromRole'
         'Get-AssociationStatus'
         'Get-CostInfo'
         'Get-IAMReport'
@@ -118,10 +117,7 @@
         'Get-SSMInstance'
         'Get-SSMNonCompliance'
         'Get-WindowsDisk'
-        'Invoke-S3'
         'New-CWRecoveryAlarm'
-        'Remove-LapsedAMI'
-        'Revoke-StaleAccessKey'
         'Unregister-DbSnapshot'
     )
     # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',
