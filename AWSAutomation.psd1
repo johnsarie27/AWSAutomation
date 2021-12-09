@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.13'
+    ModuleVersion     = '0.6.14'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -92,10 +92,7 @@
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
         'ConvertTo-CFStackParam'
-        'Copy-DBSnapshotToRegion'
         'Deploy-Instance'
-        'Disable-InactiveUserKey'
-        'Disable-InactiveUserProfile'
         'Edit-AWSProfile'
         'Export-AWSPriceData'
         'Export-CFNStackDrift'
