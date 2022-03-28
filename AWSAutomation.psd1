@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.6.15'
+    ModuleVersion     = '0.7.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -92,17 +92,15 @@
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
         'ConvertTo-CFStackParam'
+        'Copy-EC2Instance'
         'Edit-AWSProfile'
-        'Export-AWSPriceData'
         'Export-CFNStackDrift'
-        'Export-EC2ResourceUsage'
         'Export-EC2UsageReport'
         'Export-IAMRolePolicy'
         'Find-InsecureS3BucketPolicy'
         'Find-NextSubnet'
         'Find-PublicS3Objects'
         'Get-AssociationStatus'
-        'Get-CostInfo'
         'Get-IAMReport'
         'Get-Instance'
         'Get-LatestAMI'
@@ -117,9 +115,7 @@
         'Get-SSMNonCompliance'
         'Get-WindowsDisk'
         'New-CWRecoveryAlarm'
-        'Unregister-DbSnapshot'
     )
-    # 'ConvertTo-SecurityGroupObject', 'ConvertTo-VpcObject', 'ConvertTo-SubnetObject', 'ConvertTo-RouteTableObject', 'Export-SecurityGroup', 'New-ResourceObject',
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport   = @()
