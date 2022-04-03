@@ -122,8 +122,8 @@
 
     # Variables to export from this module
     VariablesToExport = @(
-        'RegionTable'
-        'IllegalChars'
+        #'RegionTable'
+        #'IllegalChars'
         'AlphabetList'
         'VolumeLookupTable'
     )
