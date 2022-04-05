@@ -106,7 +106,7 @@ function Copy-EC2Instance {
             TagSpecification          = [Amazon.EC2.Model.TagSpecification] @{
                 ResourceType = 'Instance'
                 Tags         = @(
-                    @{ Key = 'Name'; Value = $ec2.NewName }
+                    @{ Key = 'Name'; Value = $Name }
                     @{ Key = 'Patch Group'; Value = $EC2Instance.Tags.Where({ $_.Key -EQ 'Patch Group' }).Value }
                     @{ Key = 'Environment'; Value = $EC2Instance.Tags.Where({ $_.Key -EQ 'Environment' }).Value }
                     @{ Key = 'Project'; Value = $EC2Instance.Tags.Where({ $_.Key -EQ 'Project' }).Value }
