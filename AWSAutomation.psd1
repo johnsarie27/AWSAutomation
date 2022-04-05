@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.7.0'
+    ModuleVersion     = '0.7.1'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -97,6 +97,7 @@
         'Export-CFNStackDrift'
         'Export-EC2UsageReport'
         'Export-IAMRolePolicy'
+        'Export-SECSecret'
         'Find-InsecureS3BucketPolicy'
         'Find-NextSubnet'
         'Find-PublicS3Objects'
