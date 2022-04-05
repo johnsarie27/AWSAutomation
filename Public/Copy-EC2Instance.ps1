@@ -19,17 +19,18 @@ function Copy-EC2Instance {
     .PARAMETER Region
         AWS region
     .INPUTS
-        Inputs (if any)
+        None.
     .OUTPUTS
-        Output (if any)
+        System.Object.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Copy-EC2Instance -EC2Instance $ec2 -Name MyNewEC2 -Type m6i.large -AMIID $aid
+        Makes a copy of EC2 Instance $ec2 with new name MyNewEC2 and type m61.large
     .NOTES
-        Name: Copy-EC2Instance
-        Author: Justin Johns
-        Version: 0.1.2 | Last Edit: 2022-03-27
-        - Removed "Get-Encoded" function call
+        Name:    Copy-EC2Instance
+        Author:  Justin Johns
+        Version: 0.1.3 | Last Edit: 2022-04-05
+        - Code clean
+        - Update comments
         Comments: <Comment(s)>
         General notes
     ========================================================================= #>
@@ -53,13 +54,13 @@ function Copy-EC2Instance {
         [ValidatePattern('ami-[0-9a-z]{17}')]
         [System.String] $AMIID,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
+        [Parameter(Mandatory, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region
+        [System.String] $Region
     )
     Begin {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
