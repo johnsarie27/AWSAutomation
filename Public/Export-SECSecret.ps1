@@ -46,11 +46,11 @@ function Export-SECSecret {
 
         [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(Mandatory, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region
+        [System.String] $Region
     )
     Begin {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
