@@ -67,6 +67,13 @@ function Export-SECSecret {
         # SET DESTINATION FULL PATH
         $fileName = '{0}.txt' -f $SecretId.Replace('/', '_')
         $exportPath = Join-Path -Path $DestinationPath -ChildPath $fileName
+
+        # CHECK FOR EXISTING FILE
+        if (Test-Path -Path $exportPath -PathType Leaf) {
+            $ran = [System.IO.Path]::GetRandomFileName()
+            $fileName = '{0}_{1}.txt' -f $SecretId.Replace('/', '_'), $ran.Split('.')[0]
+            $exportPath = Join-Path -Path $DestinationPath -ChildPath $fileName
+        }
     }
     Process {
         # GET SECRET FROM SECRETS MANAGER
