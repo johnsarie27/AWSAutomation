@@ -24,8 +24,8 @@ function Export-SECSecret {
     .NOTES
         Name:      Export-SECSecret
         Author:    Justin Johns
-        Version:   0.1.0 | Last Edit: 2022-04-05
-        - <VersionNotes> (or remove this line if no version notes)
+        Version:   0.1.1 | Last Edit: 2022-04-06
+        - Updated action for existing file
         Comments: <Comment(s)>
         General notes
     ========================================================================= #>
@@ -70,9 +70,7 @@ function Export-SECSecret {
 
         # CHECK FOR EXISTING FILE
         if (Test-Path -Path $exportPath -PathType Leaf) {
-            $ran = [System.IO.Path]::GetRandomFileName()
-            $fileName = '{0}_{1}.txt' -f $SecretId.Replace('/', '_'), $ran.Split('.')[0]
-            $exportPath = Join-Path -Path $DestinationPath -ChildPath $fileName
+            Throw ('File already exists: {0}' -f $exportPath)
         }
     }
     Process {
