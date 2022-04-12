@@ -46,7 +46,7 @@ function Export-SECSecret {
 
         [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [System.String[]] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(Mandatory, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
