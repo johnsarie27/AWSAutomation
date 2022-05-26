@@ -94,9 +94,10 @@ function New-HealthCheck {
             HealthCheckConfig_FailureThreshold         = 3
             HealthCheckConfig_FullyQualifiedDomainName = $DNS
             HealthCheckConfig_Port                     = 443
-            HealthCheckConfig_RequestInterval          = 30
+            HealthCheckConfig_RequestInterval          = 30 # ONLY 10 OR 30 VALID
             HealthCheckConfig_ResourcePath             = $ResourcePath
             HealthCheckConfig_Type                     = $Type
+            HealthCheckConfig_Region                   = @('us-east-1', 'us-west-1', 'us-west-2')
             Select                                     = '*'
             ErrorAction                                = 1 # Stop
             #AlarmIdentifier_Name                       = ''
