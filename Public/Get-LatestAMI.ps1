@@ -45,8 +45,10 @@ function Get-LatestAMI {
     Process {
 
         $descHash = @{
-            Server2012R2 = 'Microsoft Windows Server 2012 R2 RTM 64-bit Locale English AMI provided by Amazon'
-            Server2016   = 'Microsoft Windows Server 2016 with Desktop Experience Locale English AMI provided by Amazon'
+            #Server2012R2 = 'Microsoft Windows Server 2012 R2 RTM 64-bit Locale English AMI provided by Amazon'
+            Server2016 = 'Microsoft Windows Server 2016 with Desktop Experience Locale English AMI provided by Amazon'
+            Server2019 = 'Microsoft Windows Server 2019 with Desktop Experience Locale English AMI provided by Amazon'
+            Server2022 = 'Microsoft Windows Server 2022 Full Locale English AMI provided by Amazon'
         }
         $imageParams = @{
             Region     = $Region
