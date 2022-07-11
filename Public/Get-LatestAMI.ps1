@@ -26,7 +26,7 @@ function Get-LatestAMI {
     [OutputType([Amazon.EC2.Model.Image])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Windows OS version')]
-        [ValidateSet('Server2016', 'Server2012R2')]
+        [ValidateSet('Server2016', 'Server2019', 'Server2022')]
         [string] $OSVersion,
 
         [Parameter(Mandatory, Position = 1, HelpMessage = 'AWS Region')]
