@@ -58,7 +58,7 @@ function Get-LatestAMI {
             )
         }
         switch ($PSCmdlet.ParameterSetName) {
-            '__pro' { $imageParams['Profile'] = $ProfileName }
+            '__pro' { $imageParams['ProfileName'] = $ProfileName }
             '__crd' { $imageParams['Credential'] = $Credential }
         }
 
