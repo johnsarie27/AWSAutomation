@@ -1,9 +1,10 @@
 function Update-CFNStackAMI {
     <# =========================================================================
     .SYNOPSIS
-        Short description
+        Update CloudFormation stack with latest AMI ID
     .DESCRIPTION
-        Long description
+        Update CloudFormation stack Mappings >> RegionMap with latest AMI ID for
+        specified region
     .PARAMETER Path
         Path to CloudFormation template file
     .PARAMETER OSVersion
@@ -13,19 +14,19 @@ function Update-CFNStackAMI {
     .PARAMETER Credential
         AWS Credential Object
     .PARAMETER ProfileName
-        Name property of an AWS credential profile
+        AWS credential profile name
     .INPUTS
         None.
     .OUTPUTS
-        Output (if any)
+        None.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Update-CFNStackAMI -Path C:\cfnStack.template -OSVersion Server2019
+        Get the latest Windows Server 2019 AMI from AWS and update the RegionMap with the Image ID
     .NOTES
-        Name:     <Function Name>
+        Name:     Update-CFNStackAMI
         Author:   Justin Johns
         Version:  0.1.0 | Last Edit: 2022-07-11
-        - <VersionNotes> (or remove this line if no version notes)
+        - Initial version
         Comments: <Comment(s)>
         General notes
     ========================================================================= #>
