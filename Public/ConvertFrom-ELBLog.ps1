@@ -1,13 +1,13 @@
 function ConvertFrom-ELBLog {
     <# =========================================================================
     .SYNOPSIS
-        Convert from ELB log file
+        Convert from Application Load Balancer log file to objects
     .DESCRIPTION
-        Convert from ELB log file to objects
+        Convert from Application Load Balancer log file to objects
     .PARAMETER Path
         Path to raw log file
     .INPUTS
-        None.
+        System.String.
     .OUTPUTS
         System.Management.Automation.PSCustomObject.
     .EXAMPLE
@@ -16,9 +16,11 @@ function ConvertFrom-ELBLog {
     .NOTES
         Name:     ConvertFrom-ELBLog
         Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2022-07-15
+        Version:  0.1.0 | Last Edit: 2022-07-17
         - 0.1.0 - Initial version
+        - 0.1.1 - Added support for pipeline input and ordered properties
         Comments: <Comment(s)>
+        https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html
         Testing:
         $line = Get-Content -Path <log_path>.log | Select-Object -Skip 1 -First 1
 
@@ -34,7 +36,7 @@ function ConvertFrom-ELBLog {
     ========================================================================= #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $true, Position = 0, HelpMessage = 'Path to raw log file')]
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline, HelpMessage = 'Path to raw log file')]
         [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Filter "*.log" })]
         [System.String] $Path
     )
@@ -50,7 +52,7 @@ function ConvertFrom-ELBLog {
             $spcSplit = $line.Split(' ')
 
             # CREATE AND OUTPUT CUSTOM OBJECT
-            [PSCustomObject] @{
+            [PSCustomObject] [Ordered] @{
                 type                     = $spcSplit[0]
                 time                     = $spcSplit[1]
                 elb                      = $spcSplit[2]
