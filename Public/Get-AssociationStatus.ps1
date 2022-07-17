@@ -26,11 +26,11 @@ function Get-AssociationStatus {
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Systems Manager Association name')]
         [ValidateNotNullOrEmpty()]
-        [string] $Name,
+        [System.String] $Name,
 
         [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -39,7 +39,7 @@ function Get-AssociationStatus {
         [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
-        [string] $Region
+        [System.String] $Region
     )
     Process {
 

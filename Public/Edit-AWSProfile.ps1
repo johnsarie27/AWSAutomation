@@ -41,34 +41,34 @@ function Edit-AWSProfile {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_list', HelpMessage = 'List profiles')]
-        [switch] $List,
+        [System.Management.Automation.SwitchParameter] $List,
 
         [Parameter(Mandatory, ParameterSetName = '_create', HelpMessage = 'Create new profile')]
         [Parameter(Mandatory, ParameterSetName = '_create_default', HelpMessage = 'Create new profile')]
-        [switch] $Create,
+        [System.Management.Automation.SwitchParameter] $Create,
 
         [Parameter(Mandatory, ParameterSetName = '_update', HelpMessage = 'Update existing profile')]
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Update existing profile')]
-        [switch] $Update,
+        [System.Management.Automation.SwitchParameter] $Update,
 
         [Parameter(Mandatory, ParameterSetName = '_delete', HelpMessage = 'Remove existing profile')]
-        [switch] $Delete,
+        [System.Management.Automation.SwitchParameter] $Delete,
 
         [Parameter(Mandatory, ParameterSetName = '_create_default', HelpMessage = 'Set profile as default')]
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Set profile as default')]
-        [switch] $Default,
+        [System.Management.Automation.SwitchParameter] $Default,
 
         [Parameter(Mandatory, ParameterSetName = '_create_default', HelpMessage = 'Set AWS Region')]
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Set AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region,
+        [System.String] $Region,
 
         [Parameter(ParameterSetName = '_create', HelpMessage = 'New profile name')]
         [Parameter(ParameterSetName = '_create_default', HelpMessage = 'New profile name')]
         [Parameter(Mandatory, ParameterSetName = '_delete', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_update', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Profile name')]
-        [string] $ProfileName
+        [System.String] $ProfileName
     )
 
     Begin {

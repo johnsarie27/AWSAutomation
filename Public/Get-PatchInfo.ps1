@@ -27,11 +27,11 @@ function Get-PatchInfo {
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Patch Group')]
         [ValidateNotNullOrEmpty()]
-        [string] $PatchGroup,
+        [System.String] $PatchGroup,
 
         [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -40,7 +40,7 @@ function Get-PatchInfo {
         [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
-        [string] $Region
+        [System.String] $Region
     )
     Process {
 

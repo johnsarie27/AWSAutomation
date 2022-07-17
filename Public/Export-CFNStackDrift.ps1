@@ -36,24 +36,24 @@ function Export-CFNStackDrift {
 
         [Parameter(HelpMessage = 'AWS Profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [String] $Region,
+        [System.String] $Region,
 
         [Parameter(Mandatory, HelpMessage = 'CloudFormation Stack Name')]
         [ValidateNotNullOrEmpty()]
-        [string] $StackName,
+        [System.String] $StackName,
 
         [Parameter(Mandatory, HelpMessage = 'Excel Workbook Sheet name')]
         [ValidatePattern('[\w-]{3,30}')]
-        [string] $SheetName,
+        [System.String] $SheetName,
 
         [Parameter(HelpMessage = 'Path to new or existing Excel spreadsheet file')]
         [ValidateScript({ Test-Path -Path ([System.IO.Path]::GetDirectoryName($_)) })]
         [ValidateScript({ [System.IO.Path]::GetExtension($_) -eq '.xlsx' })]
-        [string] $Path
+        [System.String] $Path
     )
 
     Begin {

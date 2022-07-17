@@ -19,7 +19,7 @@ function ConvertTo-CFStackParam {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Hashtable with CloudFormation Stack Parameter(s)')]
-        [hashtable] $Parameter
+        [System.Collections.Hashtable] $Parameter
     )
 
     Process {

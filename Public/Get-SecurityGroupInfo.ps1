@@ -26,7 +26,7 @@ function Get-SecurityGroupInfo {
     Param(
         [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -34,11 +34,11 @@ function Get-SecurityGroupInfo {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region,
+        [System.String] $Region,
 
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'VPC ID')]
         [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
-        [string] $VpcId
+        [System.String] $VpcId
     )
 
     Begin {

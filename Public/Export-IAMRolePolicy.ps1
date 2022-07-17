@@ -28,7 +28,7 @@ function Export-IAMRolePolicy {
     Param(
         [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -36,15 +36,15 @@ function Export-IAMRolePolicy {
 
         [Parameter(ValueFromPipeline, HelpMessage = 'One or more Role names')]
         [ValidateNotNullOrEmpty()]
-        [string[]] $RoleName,
+        [System.String[]] $RoleName,
 
         [Parameter(HelpMessage = 'Path to new report file')]
         [ValidateScript( { Test-Path -Path ([System.IO.Path]::GetDirectoryName($_)) })]
         [ValidateScript( { [System.IO.Path]::GetExtension($_) -eq '.xlsx' })]
-        [string] $Path,
+        [System.String] $Path,
 
         [Parameter(HelpMessage = 'Return new credential object')]
-        [switch] $PassThru
+        [System.Management.Automation.SwitchParameter] $PassThru
     )
 
     Begin {

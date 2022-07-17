@@ -27,7 +27,7 @@ function Find-InsecureS3BucketPolicy {
         [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -36,7 +36,7 @@ function Find-InsecureS3BucketPolicy {
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'S3 bucket name')]
         [ValidateScript({ $_ -match '^([a-z0-9]{1})([a-z0-9]|(.(?!(\.|-)))){4,61}([^-]$)' })]
         [Alias('Bucket')]
-        [string] $BucketName
+        [System.String] $BucketName
     )
 
     Begin {

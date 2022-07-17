@@ -24,7 +24,7 @@ function Get-SSMNonCompliance {
     Param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile containing access key and secret')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -33,7 +33,7 @@ function Get-SSMNonCompliance {
         [Parameter(Mandatory, Position = 1, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
-        [string] $Region
+        [System.String] $Region
     )
     Begin {
         $filter = @(

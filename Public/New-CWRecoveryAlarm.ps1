@@ -27,12 +27,12 @@ function New-CWRecoveryAlarm {
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'EC2 Instance Id')]
         [ValidatePattern('i-[\w\d]{8,17}')]
         [Alias('Id', 'Instance')]
-        [string[]] $InstanceId,
+        [System.String[]] $InstanceId,
 
         [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -40,7 +40,7 @@ function New-CWRecoveryAlarm {
 
         [Parameter(HelpMessage = 'Name of desired AWS Region.')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [String] $Region
+        [System.String] $Region
     )
 
     Begin {

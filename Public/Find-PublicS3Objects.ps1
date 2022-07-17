@@ -25,7 +25,7 @@ function Find-PublicS3Objects {
         [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -34,7 +34,7 @@ function Find-PublicS3Objects {
         [Parameter(ValueFromPipelineByPropertyName, HelpMessage = 'S3 bucket name')]
         [ValidateScript({ $_ -match '^([a-z0-9]{1})([a-zA-Z0-9]|(.(?!(\.|-)))){4,61}([^-]$)' })]
         [Alias('Bucket')]
-        [string] $BucketName
+        [System.String] $BucketName
     )
 
     Begin {

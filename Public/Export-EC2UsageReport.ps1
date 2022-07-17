@@ -32,12 +32,12 @@ function Export-EC2UsageReport {
         [Parameter(HelpMessage = 'Path to existing folder for report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Container })]
         [Alias('DestinationPath')]
-        [string] $OutputDirectory,
+        [System.String] $OutputDirectory,
 
         [Parameter(HelpMessage = 'AWS Credential Profie with key and secret')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('PN')]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -45,10 +45,10 @@ function Export-EC2UsageReport {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region,
+        [System.String] $Region,
 
         [Parameter(HelpMessage = 'Return path to report file')]
-        [switch] $PassThru
+        [System.Management.Automation.SwitchParameter] $PassThru
     )
 
     Begin {

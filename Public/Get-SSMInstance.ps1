@@ -27,7 +27,7 @@ function Get-SSMInstance {
     Param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -36,7 +36,7 @@ function Get-SSMInstance {
         [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
         [ValidateScript({ $_ -in (Get-AWSRegion).Region })]
         [ValidateNotNullOrEmpty()]
-        [string] $Region
+        [System.String] $Region
     )
 
     Process {

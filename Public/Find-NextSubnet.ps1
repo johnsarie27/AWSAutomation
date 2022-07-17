@@ -24,7 +24,7 @@ function Find-NextSubnet {
     Param(
         [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string[]] $ProfileName,
+        [System.String[]] $ProfileName,
 
         [Parameter(Mandatory, ParameterSetName = '_creds', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -32,7 +32,7 @@ function Find-NextSubnet {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-        [string] $Region
+        [System.String] $Region
     )
 
     Begin {

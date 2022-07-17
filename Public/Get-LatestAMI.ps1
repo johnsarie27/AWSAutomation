@@ -27,16 +27,16 @@ function Get-LatestAMI {
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Windows OS version')]
         [ValidateSet('Server2016', 'Server2019', 'Server2022')]
-        [string] $OSVersion,
+        [System.String] $OSVersion,
 
         [Parameter(Mandatory, Position = 1, HelpMessage = 'AWS Region')]
         [ValidateScript({ $_ -in (Get-AWSRegion).Region })]
         [ValidateNotNullOrEmpty()]
-        [string] $Region,
+        [System.String] $Region,
 
         [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]

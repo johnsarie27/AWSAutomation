@@ -24,7 +24,7 @@ function Get-IAMReport {
     Param(
         [Parameter(HelpMessage = 'AWS Credential profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-        [string] $ProfileName,
+        [System.String] $ProfileName,
 
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
@@ -33,7 +33,7 @@ function Get-IAMReport {
         [Parameter(HelpMessage = 'Existing AWS Credential Report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Include "*.csv" })]
         [Alias('Data', 'CredentialReport', 'File', 'FilePath', 'Report', 'ReportPath')]
-        [string] $Path
+        [System.String] $Path
     )
 
     Begin {
