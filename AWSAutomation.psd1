@@ -52,6 +52,7 @@
         'ImportExcel'
         #'AWSPowerShell'
         'AWS.Tools.Common'
+        'AWS.Tools.CertificateManager'
         'AWS.Tools.CloudFormation'
         'AWS.Tools.CloudWatch'
         'AWS.Tools.EC2'
