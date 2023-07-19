@@ -32,6 +32,7 @@ function Set-AwsSsoCredential {
         - 0.1.0 - Initial version
         Comments: <Comment(s)>
         General notes
+        https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/update-aws-cli-credentials-from-aws-iam-identity-center-by-using-powershell.html
     ========================================================================= #>
     [CmdletBinding()]
     Param(
@@ -130,7 +131,7 @@ function Set-AwsSsoCredential {
         }
         catch {
             Write-Error "Ran into an issue: Line $($_.InvocationInfo.ScriptLineNumber) returned '$($_.Exception.Message)'"
-            throw PSItem
+            throw $PSItem
         }
     }
 }
