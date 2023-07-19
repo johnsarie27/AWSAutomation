@@ -128,7 +128,7 @@ function Copy-EC2Instance {
 
         # ADD CREDENTIALS
         if ($PSCmdlet.ParameterSetName -eq '__pro') { $instanceParams['ProfileName'] = $ProfileName }
-        elseif ($PSCmdlet.ParameterSetName -eq '__pro') { $instanceParams['Credential'] = $Credential }
+        elseif ($PSCmdlet.ParameterSetName -eq '__crd') { $instanceParams['Credential'] = $Credential }
 
         # LAUNCH NEW EC2 INSTANCE
         New-EC2Instance @instanceParams
