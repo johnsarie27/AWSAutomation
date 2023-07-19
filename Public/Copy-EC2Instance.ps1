@@ -14,6 +14,8 @@ function Copy-EC2Instance {
         Instance type for new EC2 Instance
     .PARAMETER AMIID
         AMI ID for new EC2 Instance
+    .PARAMETER ProfileName
+        AWS Profile Name
     .PARAMETER Credential
         AWS Credential Object
     .PARAMETER Region
@@ -28,13 +30,15 @@ function Copy-EC2Instance {
     .NOTES
         Name:    Copy-EC2Instance
         Author:  Justin Johns
-        Version: 0.1.3 | Last Edit: 2022-04-05
-        - Code clean
-        - Update comments
+        Version: 0.1.4 | Last Edit: 2023-07-19
+        - 0.1.4 - Added support for AWS Credential Profile
+        - 0.1.3 - Code clean
+        - 0.1.2 - Update comments
+        - 0.1.0 - Initial version
         Comments: <Comment(s)>
         General notes
     ========================================================================= #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '__pro')]
     Param(
         [Parameter(Mandatory, HelpMessage = 'EC2 Instance object to copy')]
         [ValidateNotNullOrEmpty()]
@@ -54,7 +58,11 @@ function Copy-EC2Instance {
         [ValidatePattern('ami-[0-9a-z]{17}')]
         [System.String] $AMIID,
 
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+        [System.String] $ProfileName,
+
+        [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
@@ -69,6 +77,7 @@ function Copy-EC2Instance {
         # SET PARAMETERS FOR NEW SYSTEM
         #MetadataOptions_InstanceMetadataTag = [Amazon.EC2.InstanceMetadataTagsState]::new('Disabled')
         $instanceParams = @{
+            Region                    = $Region
             ImageId                   = $AMIID
             MinCount                  = 1
             MaxCount                  = 1
@@ -115,9 +124,11 @@ function Copy-EC2Instance {
                     @{ Key = 'Product'; Value = $EC2Instance.Tags.Where({ $_.Key -EQ 'Product' }).Value }
                 )
             }
-            Credential                = $Credential
-            Region                    = $Region
         }
+
+        # ADD CREDENTIALS
+        if ($PSCmdlet.ParameterSetName -eq '__pro') { $instanceParams['ProfileName'] = $ProfileName }
+        elseif ($PSCmdlet.ParameterSetName -eq '__pro') { $instanceParams['Credential'] = $Credential }
 
         # LAUNCH NEW EC2 INSTANCE
         New-EC2Instance @instanceParams
