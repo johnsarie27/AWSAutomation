@@ -63,7 +63,7 @@ function Set-AwsSsoCredential {
 
             # CREATE EMPTY AWS CREDENTIALS FILE IF IT DOES NOT ALREADY EXIST
             if (-not (Test-Path ~/.aws/credentials)) { New-Item -Path ~/.aws/credentials -ItemType 'File' -Force }
-            $CredentialFile = Resolve-Path ~/.aws/credentials
+            $credentialFile = Resolve-Path ~/.aws/credentials
 
             # LOOK FOR SESSION VARIABLES THAT INDICATE EXISTING IDENTITY CENTER SESSION. IF NOT FOUND, INITIALIZE THEM TO $FALSE
             try { $IdentityCenterTokenExpiration = (Get-Variable -Scope Global -Name "$($IdentityCenterName)_identity_center_token_expiration" -ErrorAction 'SilentlyContinue').Value } catch { $IdentityCenterTokenExpiration = $False }
@@ -111,8 +111,14 @@ function Set-AwsSsoCredential {
                     $TempCreds = $IdentityCenterToken | Get-SSORoleCredential -AccountId $IdentityCenterAccounts[$i].AccountId -RoleName $IdentityCenterAccounts[$i].RoleName -Region $Region @PsuedoCreds
 
                     # STORE SHORT LIVED ACCESS/SECRET KEY IN CREDENTIAL FILE
-                    [PSCustomObject]@{AccessKey = $TempCreds.AccessKeyId; SecretKey = $TempCreds.SecretAccessKey; SessionToken = $TempCreds.SessionToken
-                    } | Set-AWSCredential -StoreAs $IdentityCenterAccounts[$i].Profile -ProfileLocation $CredentialFile
+                    $awsCredParams = @{
+                        AccessKey    = $TempCreds.AccessKeyId
+                        SecretKey    = $TempCreds.SecretAccessKey
+                        SessionToken = $TempCreds.SessionToken
+                        StoreAs      = $IdentityCenterAccounts[$i].Profile
+                    }
+                    if (-Not $IsWindows) { $awsCredParams['ProfileLocation'] = $credentialFile }
+                    Set-AWSCredential @awsCredParams
                     $IdentityCenterAccounts[$i].CredsExpiration = $TempCreds.Expiration
                 }
             }
