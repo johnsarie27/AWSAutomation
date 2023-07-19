@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.7.8'
+    ModuleVersion     = '0.7.9'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -64,6 +64,8 @@
         'AWS.Tools.S3'
         'AWS.Tools.SimpleSystemsManagement'
         'AWS.Tools.SecurityToken'
+        'AWS.Tools.SSO'
+        'AWS.Tools.SSOOIDC'
     )
 
     # Assemblies that must be loaded prior to importing this module
@@ -120,6 +122,7 @@
         'New-CWRecoveryAlarm'
         'New-HealthCheck'
         'New-HealthCheckAlarm'
+        'Set-AwsSsoCredential'
         'Update-CFNStackAMI'
     )
 
