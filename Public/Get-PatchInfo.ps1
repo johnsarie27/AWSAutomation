@@ -42,11 +42,14 @@ function Get-PatchInfo {
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
-
         if ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
 
-            foreach ( $c in $Credential ) {
+            # LOOP THROUGH EACH CREDENTIAL OBJECT
+            foreach ($c in $Credential) {
 
                 # SET AUTHENTICATION
                 $creds = @{ Credential = $c; Region = $Region }
@@ -54,7 +57,7 @@ function Get-PatchInfo {
                 # GET PATCH GROUPS
                 $pgList = Get-SSMPatchGroup @creds | Where-Object PatchGroup -Like $PatchGroup
 
-                foreach ( $pg in $pgList ) {
+                foreach ($pg in $pgList) {
 
                     <# # GET SUMMARY INFO BUT NO INSTANCE DETAILS
                     # GET PATCH GROUP STATE FOR GIVEN PATCH GROUP
@@ -72,10 +75,10 @@ function Get-PatchInfo {
                 }
             }
         }
-
         if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
 
-            foreach ( $p in $Credential ) {
+            # LOOP THROUGH EACH PROFILE NAME
+            foreach ($p in $ProfileName) {
 
                 # SET AUTHENTICATION
                 $creds = @{ ProfileName = $p; Region = $Region }
@@ -83,7 +86,7 @@ function Get-PatchInfo {
                 # GET PATCH GROUPS
                 $pgList = Get-SSMPatchGroup @creds | Where-Object PatchGroup -Like $PatchGroup
 
-                foreach ( $pg in $pgList ) {
+                foreach ($pg in $pgList) {
 
                     <# # GET SUMMARY INFO BUT NO INSTANCE DETAILS
                     # GET PATCH GROUP STATE FOR GIVEN PATCH GROUP
@@ -97,7 +100,7 @@ function Get-PatchInfo {
 
                     # GET DETAILS FOR EACH INSTANCE
                     # GET PATCH STATE FOR ALL INSTANCES IN GIVEN PATCH GROUP
-                    Get-SSMInstancePatchStatesForPatchGroup @creds -Region $Region
+                    Get-SSMInstancePatchStatesForPatchGroup @creds -PatchGroup $pg.PatchGroup
                 }
             }
         }
