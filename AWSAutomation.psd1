@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.7.10'
+    ModuleVersion     = '0.7.11'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
