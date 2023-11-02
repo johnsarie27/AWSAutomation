@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.7.12'
+    ModuleVersion     = '0.7.13'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -114,6 +114,7 @@
         'Get-PatchInfo'
         'Get-RoleCredential'
         'Get-R53Record'
+        'Get-S3Url'
         'Get-ScanStatus'
         'Get-SecurityGroupInfo'
         'Get-SSMInstance'
