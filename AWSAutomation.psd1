@@ -77,13 +77,13 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
-        'EBS.types.ps1xml'
-        'EC2.types.ps1xml'
-        'ELB.types.ps1xml'
-        'ELB2.types.ps1xml'
-        'Snapshot.types.ps1xml'
-        'SSM.types.ps1xml'
-        'Volume.types.ps1xml'
+        './Private/EBS.types.ps1xml'
+        './Private/EC2.types.ps1xml'
+        './Private/ELB.types.ps1xml'
+        './Private/ELB2.types.ps1xml'
+        './Private/Snapshot.types.ps1xml'
+        './Private/SSM.types.ps1xml'
+        './Private/Volume.types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module
