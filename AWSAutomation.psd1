@@ -100,6 +100,7 @@
         'ConvertTo-CFStackParam'
         'Copy-EC2Instance'
         'Edit-AWSProfile'
+        'Export-CertificateReport'
         'Export-CFNStackDrift'
         'Export-EC2UsageReport'
         'Export-IAMRolePolicy'
