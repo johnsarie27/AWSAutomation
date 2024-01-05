@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.8.0'
+    ModuleVersion     = '0.8.1'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -100,6 +100,7 @@
         'ConvertTo-CFStackParam'
         'Copy-EC2Instance'
         'Edit-AWSProfile'
+        'Export-CertificateReport'
         'Export-CFNStackDrift'
         'Export-EC2UsageReport'
         'Export-IAMRolePolicy'
