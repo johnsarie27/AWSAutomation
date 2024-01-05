@@ -6,6 +6,8 @@ function Export-CertificateReport {
         Export report for certificates in Amazon Certificate Manager (similar to UI)
     .PARAMETER Path
         Path to export report
+    .PARAMETER SecurityReport
+        Export report properties relevant to security status
     .PARAMETER ProfileName
         Name property of an AWS credential profile
     .PARAMETER Credential
@@ -34,15 +36,18 @@ function Export-CertificateReport {
         [ValidatePattern('^[\w:\\/-]+\.xlsx$')]
         [System.String] $Path = "$HOME\Desktop\CertificateReport_{0}.xlsx" -f (Get-Date -Format FileDateTime),
 
-        [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
+        [Parameter(Position = 1, HelpMessage = 'Export report properties relevant to security status')]
+        [System.Management.Automation.SwitchParameter] $SecurityReport,
+
+        [Parameter(Mandatory, Position = 2, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory, Position = 1, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 2, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Position = 2, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 3, HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region = 'us-east-1'
     )
@@ -72,7 +77,14 @@ function Export-CertificateReport {
         # CREATE ARRAY WITH CERT DETAILS
         $certs = foreach ($cert in $certsList) { Get-ACMCertificateDetail @awsCreds -CertificateArn $cert.CertificateArn }
 
-        # EXPORT REPORT
-        $certs | Select-Object Report | Export-Excel @excelParams
+        # VALIDATE REPORT TYPE
+        if ($SecurityReport) {
+            # EXPORT SECURITY REPORT
+            $certs | Select-Object Info | Export-Excel @excelParams
+        }
+        else {
+            # EXPORT REPORT
+            $certs | Select-Object Report | Export-Excel @excelParams
+        }
     }
 }
