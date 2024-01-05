@@ -1,5 +1,5 @@
 function Get-AccountFromRole {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get AWS Account ID
     .DESCRIPTION
@@ -17,7 +17,7 @@ function Get-AccountFromRole {
         Extracts the AWS account ID's from the policy
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'AWS Policy ARN')]

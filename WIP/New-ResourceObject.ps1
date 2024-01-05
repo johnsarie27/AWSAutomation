@@ -1,5 +1,5 @@
 function New-ResourceObject {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Short description
     .DESCRIPTION
@@ -15,7 +15,7 @@ function New-ResourceObject {
         Explanation of what the example does
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = 'EIP')]
     Param(
         [Parameter(Mandatory, ParameterSetName = 'EIP', HelpMessage = 'Elastic IP')]

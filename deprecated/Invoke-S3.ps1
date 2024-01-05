@@ -1,5 +1,5 @@
 function Invoke-S3 {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Invoke S3 operation
     .DESCRIPTION
@@ -29,7 +29,7 @@ function Invoke-S3 {
         Downloads file data.json to the $HOME directory
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__uploadFile')]
     Param(
         [Parameter(HelpMessage = 'AWS Profile')]

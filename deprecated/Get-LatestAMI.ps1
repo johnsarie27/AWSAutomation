@@ -1,5 +1,5 @@
 function Get-LatestAMI {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get latest Windows AMI from Amazon AWS
     .DESCRIPTION
@@ -21,7 +21,7 @@ function Get-LatestAMI {
         Returns the latest Windows Server 2016 AMI produced by Amazon AWS
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.EC2.Model.Image])]
     Param(

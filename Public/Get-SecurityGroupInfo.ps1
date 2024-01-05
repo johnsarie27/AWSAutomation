@@ -1,5 +1,5 @@
 function Get-SecurityGroupInfo {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Retrieve security group information from an AWS VPC
     .DESCRIPTION
@@ -21,7 +21,7 @@ function Get-SecurityGroupInfo {
     .EXAMPLE
         PS C:\> $a = Get-SecurityGroupInfo -ProfileName $P -VpcId $V
         Store all security groups from Profile $P and VPC $V in varibale $a
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'AWS Profile containing key and secret')]

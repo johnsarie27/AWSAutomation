@@ -1,5 +1,5 @@
 function Edit-AWSProfile {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Manage AWS Credential Profiles
     .DESCRIPTION
@@ -37,7 +37,7 @@ function Edit-AWSProfile {
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
     .NOTES
         Using "-AsSecureString" prevents from copy and past when running the script
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_list', HelpMessage = 'List profiles')]

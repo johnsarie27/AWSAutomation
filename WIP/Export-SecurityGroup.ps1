@@ -1,5 +1,5 @@
 function Export-SecurityGroup {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Export Security Groups from a CloudFormation template
     .DESCRIPTION
@@ -18,7 +18,7 @@ function Export-SecurityGroup {
         1. Create parameter input as a "Resource" object from a CF Template
         2. Export spreadsheet with multiple tabs?
         3. Clean up codes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, HelpMessage = 'CloudFormation template file')]
@@ -29,7 +29,7 @@ function Export-SecurityGroup {
 
     Begin {
         function ConvertTo-SGObject {
-            <# =========================================================================
+            <#
             .SYNOPSIS
                 Convert CloudFormation template to Security Group objects
             .DESCRIPTION
@@ -47,7 +47,7 @@ function Export-SecurityGroup {
                 custom objects.
             .NOTES
                 General notes
-            ========================================================================= #>
+            #>
             [CmdletBinding()]
             Param(
                 [Parameter(Mandatory, HelpMessage = 'CloudFormation template file')]

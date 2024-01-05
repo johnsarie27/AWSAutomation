@@ -1,5 +1,5 @@
 function ConvertFrom-ELBLog {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Convert from Application Load Balancer log file to objects
     .DESCRIPTION
@@ -33,7 +33,7 @@ function ConvertFrom-ELBLog {
         for ($i = 0; $i -le $spcSplit.Count; $i++) {
             [PSCustomObject] @{ Index = $i; Item = $spcSplit[$i] }
         }
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, Position = 0, ValueFromPipeline, HelpMessage = 'Path to raw log file')]

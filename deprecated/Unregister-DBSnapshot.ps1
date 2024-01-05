@@ -1,5 +1,5 @@
 function Unregister-DbSnapshot {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Delete RDS snapshot
     .DESCRIPTION
@@ -23,7 +23,7 @@ function Unregister-DbSnapshot {
         Deletes all RDS DB Snapshots in MyProfile account from us-east-1
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(ValueFromPipeline, HelpMessage = 'RDS DB Instance to copy')]

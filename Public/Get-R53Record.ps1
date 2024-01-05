@@ -1,5 +1,5 @@
 function Get-R53Record {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get R53 DNS records
     .DESCRIPTION
@@ -19,7 +19,7 @@ function Get-R53Record {
         Get all "A" and "CNAME" records for the zone 'myDomain.com.'
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
 
     [CmdletBinding()]
     Param(

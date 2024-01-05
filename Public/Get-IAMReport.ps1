@@ -1,5 +1,5 @@
 function Get-IAMReport {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Generate and parse AWS IAM report
     .DESCRIPTION
@@ -18,7 +18,7 @@ function Get-IAMReport {
     .EXAMPLE
         PS C:\> Get-IAMReport -ProfileName MyAccount
         Generate IAM report for MyAccount
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     [OutputType([System.Collections.Generic.List`1[System.Object]])]
     Param(

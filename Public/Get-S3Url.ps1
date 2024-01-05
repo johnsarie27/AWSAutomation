@@ -1,5 +1,5 @@
 function Get-S3Url {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get S3 object URL
     .DESCRIPTION
@@ -24,7 +24,7 @@ function Get-S3Url {
         - 0.1.0 - Initial version
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, Position = 0)]

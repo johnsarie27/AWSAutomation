@@ -1,5 +1,5 @@
 function Get-CostInfo {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get cost data for EC2 Instance
     .DESCRIPTION
@@ -21,7 +21,7 @@ function Get-CostInfo {
         Explanation of what the example does
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'EC2Instance object')]

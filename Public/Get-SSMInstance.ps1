@@ -1,5 +1,5 @@
 function Get-SSMInstance {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get SSM Fleet
     .DESCRIPTION
@@ -20,7 +20,7 @@ function Get-SSMInstance {
         in the us-west-2 region.
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.SimpleSystemsManagement.Model.InstanceInformation[]])]
 

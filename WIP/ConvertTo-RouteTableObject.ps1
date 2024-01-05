@@ -1,5 +1,5 @@
 function ConvertTo-RouteTableObject {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Converts Route Tables to an object that can be used to populate a
         CloudFormation template.
@@ -19,7 +19,7 @@ function ConvertTo-RouteTableObject {
     .NOTES
         An object containing route table and route object(s) that can easitly
         be converted into JSON for a CloudFormation template.
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile containing key and secret')]

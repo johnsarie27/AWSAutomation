@@ -1,5 +1,5 @@
 function New-HealthCheckAlarm {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Create new CloudWatch Alarm for Route53 Health Check
     .DESCRIPTION
@@ -30,7 +30,7 @@ function New-HealthCheckAlarm {
         - <VersionNotes> (or remove this line if no version notes)
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Alarm Name')]

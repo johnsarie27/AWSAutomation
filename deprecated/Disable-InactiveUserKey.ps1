@@ -1,5 +1,5 @@
 function Disable-InactiveUserKey {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Deactivate unused IAM User Access Key
     .DESCRIPTION
@@ -33,7 +33,7 @@ function Disable-InactiveUserKey {
         - iam:GetAccessKeyLastUsed
         - iam:DeleteAccessKey
         - iam:UpdateAccessKey
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
     [OutputType([System.Object[]])]
     Param(

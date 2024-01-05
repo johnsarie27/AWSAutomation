@@ -1,5 +1,5 @@
 function ConvertTo-SecurityGroupObject {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Converts Security Groups to an object that can be used to populate a
         CloudFormation template.
@@ -21,7 +21,7 @@ function ConvertTo-SecurityGroupObject {
         converted into JSON for a CloudFormation template.
         SecurityGroupEgress can be removed if desired. This will allow an
         egress object to be created allowing egress to any/all IPs.
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile containing key and secret')]

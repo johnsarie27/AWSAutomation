@@ -1,5 +1,5 @@
 function Get-AssociationStatus {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get system status for association
     .DESCRIPTION
@@ -21,7 +21,7 @@ function Get-AssociationStatus {
         Explanation of what the example does
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Systems Manager Association name')]

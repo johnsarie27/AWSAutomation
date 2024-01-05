@@ -1,5 +1,5 @@
 function Export-IAMRolePolicy {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Export a spreadsheet of each Role with accompanying Policies
     .DESCRIPTION
@@ -23,7 +23,7 @@ function Export-IAMRolePolicy {
         Generates an Excel Spreadsheet of all matching Roles with a list of their Policies
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'AWS Credential Profile name')]

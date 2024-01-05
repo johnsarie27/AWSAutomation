@@ -1,5 +1,5 @@
 function Get-NetworkInfo {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get AWS network infrastructure
     .DESCRIPTION
@@ -30,7 +30,7 @@ function Get-NetworkInfo {
                 $Output += $item | Select-Object -EXP Subnets | Out-String
             }
             $Output
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'AWS Profile containing key and secret')]

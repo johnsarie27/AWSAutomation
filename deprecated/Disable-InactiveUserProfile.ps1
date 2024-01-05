@@ -1,5 +1,5 @@
 function Disable-InactiveUserProfile {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Disable unused IAM User Profile
     .DESCRIPTION
@@ -28,7 +28,7 @@ function Disable-InactiveUserProfile {
         - iam:ListUsers
         - iam:GetLoginProfile
         - iam:DeleteLoginProfile
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = 'all')]
     Param(
         [Parameter(HelpMessage='AWS credential profile name')]

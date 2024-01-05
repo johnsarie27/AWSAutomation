@@ -3,7 +3,7 @@
 #Requires -Modules @{ ModuleName = "AWS.Tools.Common"; ModuleVersion = "4.1.269" }
 
 function Set-AwsSsoCredential {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Set or update AWS Credential Profiles
     .DESCRIPTION
@@ -33,7 +33,7 @@ function Set-AwsSsoCredential {
         Comments: <Comment(s)>
         General notes
         https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/update-aws-cli-credentials-from-aws-iam-identity-center-by-using-powershell.html
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $false, HelpMessage = 'Identity Center region')]

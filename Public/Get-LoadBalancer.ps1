@@ -1,5 +1,5 @@
 function Get-LoadBalancer {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get Elastic Load Balancer v2
     .DESCRIPTION
@@ -19,7 +19,7 @@ function Get-LoadBalancer {
         Explanation of what the example does
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.ElasticLoadBalancingV2.Model.LoadBalancer[]])]
     Param(

@@ -1,5 +1,5 @@
 function Export-CFNStackDrift {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Explort CloudFormation drift results
     .DESCRIPTION
@@ -27,7 +27,7 @@ function Export-CFNStackDrift {
         Exports an Excel Spreadsheet containing the objects IN_SYNC and DRIFTED in separate tabs
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'AWS Credential Object')]

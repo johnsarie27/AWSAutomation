@@ -1,5 +1,5 @@
 function Get-SSMNonCompliance {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get non-compliant items
     .DESCRIPTION
@@ -19,7 +19,7 @@ function Get-SSMNonCompliance {
         Get any non-compliant items for all accounts in us-east-2 contained in $socCreds
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     Param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile containing access key and secret')]

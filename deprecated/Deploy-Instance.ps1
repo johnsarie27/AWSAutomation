@@ -1,5 +1,5 @@
 function Deploy-Instance {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Deploy new EC2 instance
     .DESCRIPTION
@@ -34,7 +34,7 @@ function Deploy-Instance {
         PS C:\> Deploy-Instance -PN MyAcc -Name MyInstance -SN sn-12u98732 -SG sg-19823894
         Launch new EC2 instance in us-east-1 with name tag MyInstance
     .NOTES
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     [OutputType([Amazon.EC2.Model.Reservation[]])]
     Param(
