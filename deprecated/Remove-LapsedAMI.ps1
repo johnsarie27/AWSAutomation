@@ -1,5 +1,5 @@
 function Remove-LapsedAMI {
-    <# =============================================================================
+    <#====
     .SYNOPSIS
         Delete AMIs based on backup policy
     .DESCRIPTION
@@ -53,7 +53,7 @@ function Remove-LapsedAMI {
         -WeeklyBackupDay 'Thursday'         #What day of the week do you want to define as your weekly backup?
         -MonthlyBackupRetentionPeriod 180   #How far back do you want to keep monthly backups?
         -MonthyBackupDay 1                  #What day of the month do you want to define as your monthly backups?
-    ============================================================================= #>
+    ====#>
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'AWS Profile containing access keys')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]

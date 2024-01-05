@@ -1,5 +1,5 @@
 function Copy-DBSnapshotToRegion {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Copy RDS snapshot to another Region
     .DESCRIPTION
@@ -27,7 +27,7 @@ function Copy-DBSnapshotToRegion {
         Copies $dbs to us-west-1 using myCreds
     .NOTES
         The "RDSDBCluster" cmdlets like "Get-RDSDBCluster" appear to be for other DBMS
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'RDS DB Instance to copy')]

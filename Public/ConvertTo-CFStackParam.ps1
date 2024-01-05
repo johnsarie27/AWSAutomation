@@ -1,5 +1,5 @@
 function ConvertTo-CFStackParam {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Convert hashtable to CloudFormation Parameter object
     .DESCRIPTION
@@ -15,7 +15,7 @@ function ConvertTo-CFStackParam {
         Output new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Hashtable with CloudFormation Stack Parameter(s)')]

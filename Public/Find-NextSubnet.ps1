@@ -1,5 +1,5 @@
 function Find-NextSubnet {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Find next unused subnet
     .DESCRIPTION
@@ -19,7 +19,7 @@ function Find-NextSubnet {
         Returns the second octet of the next available subnet CIDR range
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]

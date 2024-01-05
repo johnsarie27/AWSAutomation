@@ -1,5 +1,5 @@
 function New-HealthCheck {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Create new Route53 Health Check
     .DESCRIPTION
@@ -34,7 +34,7 @@ function New-HealthCheck {
         - <VersionNotes> (or remove this line if no version notes)
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Health Check name (tag)')]

@@ -1,5 +1,5 @@
 function Export-SECSecret {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Export secret from Secrets Manager
     .DESCRIPTION
@@ -28,7 +28,7 @@ function Export-SECSecret {
         - Updated action for existing file
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'ID of secret in Secrets Manager')]

@@ -1,5 +1,5 @@
 function Find-PublicS3Objects {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Find publicly accessible S3 objects
     .DESCRIPTION
@@ -17,7 +17,7 @@ function Find-PublicS3Objects {
     .EXAMPLE
         PS C:\> Find-PublicS3Objects -ProfileName MyAccount
         Search all objects in all S3 buckets for MyAccount and return a list of publicly accessible objects
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     [OutputType([System.Object[]])]
 

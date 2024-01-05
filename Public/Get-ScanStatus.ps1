@@ -1,5 +1,5 @@
 function Get-ScanStatus {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get S3 Virus Scan Status
     .DESCRIPTION
@@ -21,7 +21,7 @@ function Get-ScanStatus {
         Search all S3 objects in folder 'Docs' of bucket 'test-bucket-02340989' for tags with value "infected"
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '_creds')]
     Param(
         [Parameter(Mandatory, HelpMessage = 'Bucket name')]

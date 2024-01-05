@@ -1,5 +1,5 @@
 function Get-WindowsDisk {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         List the Windows disks
     .DESCRIPTION
@@ -18,7 +18,7 @@ function Get-WindowsDisk {
         This function requires a default AWS Credential Profile or an IAM Instance
         Profile to be set with permissions for ec2:Describe*
         Several design choices were made for compatibility with PS 4.0
-    ========================================================================= #>
+    #>
 
     Begin {
         function Get-EC2InstanceMetadata {

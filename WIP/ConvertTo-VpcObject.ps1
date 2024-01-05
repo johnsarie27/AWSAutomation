@@ -1,5 +1,5 @@
 function ConvertTo-VpcObject {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Converts VPCs to an object that can be used to populate a
         CloudFormation template.
@@ -19,7 +19,7 @@ function ConvertTo-VpcObject {
     .NOTES
         An object containing vpc(s) objects that can easitly be converted into
         JSON for a CloudFormation template.
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile containing key and secret')]

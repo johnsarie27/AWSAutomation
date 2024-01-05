@@ -1,5 +1,5 @@
 function Copy-EC2Instance {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Copy EC2 Instance
     .DESCRIPTION
@@ -37,7 +37,7 @@ function Copy-EC2Instance {
         - 0.1.0 - Initial version
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     Param(
         [Parameter(Mandatory, HelpMessage = 'EC2 Instance object to copy')]

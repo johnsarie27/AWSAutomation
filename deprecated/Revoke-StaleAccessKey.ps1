@@ -1,5 +1,5 @@
 function Revoke-StaleAccessKey {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Revoke IAM User Access Key
     .DESCRIPTION
@@ -23,7 +23,7 @@ function Revoke-StaleAccessKey {
         Remove all access keys for jsmith that are older than 90 days in MyAWSAccount profile.
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName='_deactivate')]
     Param(
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, HelpMessage='User name')]

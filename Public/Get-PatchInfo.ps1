@@ -1,5 +1,5 @@
 function Get-PatchInfo {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get AWS Systems Manager Patch information
     .DESCRIPTION
@@ -22,7 +22,7 @@ function Get-PatchInfo {
         Explanation of what the example does
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Patch Group')]

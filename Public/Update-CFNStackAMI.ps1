@@ -1,5 +1,5 @@
 function Update-CFNStackAMI {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Update CloudFormation stack with latest AMI ID
     .DESCRIPTION
@@ -15,6 +15,8 @@ function Update-CFNStackAMI {
         AWS Credential Object
     .PARAMETER ProfileName
         AWS credential profile name
+    .PARAMETER Force
+        Proceed with changes without prompting for confirmation
     .INPUTS
         None.
     .OUTPUTS
@@ -29,7 +31,7 @@ function Update-CFNStackAMI {
         - Initial version
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '__crd')]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Path to CloudFormation template file')]

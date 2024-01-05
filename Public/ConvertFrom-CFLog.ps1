@@ -1,5 +1,5 @@
 function ConvertFrom-CFLog {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Convert from CloudFront distribution log
     .DESCRIPTION
@@ -20,7 +20,7 @@ function ConvertFrom-CFLog {
         - 0.1.0 - Initial version
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, Position = 0, ValueFromPipeline, HelpMessage = 'Path to log file')]

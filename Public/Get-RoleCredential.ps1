@@ -1,5 +1,5 @@
 function Get-RoleCredential {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Get IAM credential object
     .DESCRIPTION
@@ -32,7 +32,7 @@ function Get-RoleCredential {
         General notes
         https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_configure-api-require.html
         https://docs.aws.amazon.com/powershell/latest/reference/index.html?page=Use-STSRole.html&tocid=Use-STSRole
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
     [Alias('Get-AwsCreds')]
     Param(

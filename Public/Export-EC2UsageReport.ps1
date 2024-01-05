@@ -1,5 +1,5 @@
 function Export-EC2UsageReport {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Generate reports for instances offline and running without reservation
     .DESCRIPTION
@@ -18,6 +18,8 @@ function Export-EC2UsageReport {
         AWS Credential Object
     .PARAMETER Region
         This is the AWS region containing the desired resources to be processed
+    .PARAMETER PassThru
+        Return path to report file
     .INPUTS
         None.
     .OUTPUTS
@@ -26,7 +28,7 @@ function Export-EC2UsageReport {
         PS C:\> Export-EC2UsageReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
         region
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'Path to existing folder for report')]

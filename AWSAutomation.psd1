@@ -21,13 +21,13 @@
     Author            = 'Justin Johns'
 
     # Company or vendor of this module
-    # CompanyName = 'Unknown'
+    # CompanyName     = 'Unknown'
 
     # Copyright statement for this module
     Copyright         = '(c) 2018 Justin Johns. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Functions used for reporting on AWS resources and configuration including some to create CloudFormation templates from existing AWS infrastructure'
+    Description       = 'Functions used for reporting on AWS resources and configurations including some to create CloudFormation templates from existing AWS infrastructure'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.1'
@@ -77,13 +77,13 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
-        'EBS.types.ps1xml'
-        'EC2.types.ps1xml'
-        'ELB.types.ps1xml'
-        'ELB2.types.ps1xml'
-        'Snapshot.types.ps1xml'
-        'SSM.types.ps1xml'
-        'Volume.types.ps1xml'
+        './Private/EBS.types.ps1xml'
+        './Private/EC2.types.ps1xml'
+        './Private/ELB.types.ps1xml'
+        './Private/ELB2.types.ps1xml'
+        './Private/Snapshot.types.ps1xml'
+        './Private/SSM.types.ps1xml'
+        './Private/Volume.types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module
@@ -177,7 +177,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    HelpInfoURI       = 'https://github.com/johnsarie27/AWSAutomation'
+    # HelpInfoURI       = 'https://github.com/johnsarie27/AWSAutomation'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''

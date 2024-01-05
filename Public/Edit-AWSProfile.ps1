@@ -1,5 +1,5 @@
 function Edit-AWSProfile {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Manage AWS Credential Profiles
     .DESCRIPTION
@@ -37,7 +37,7 @@ function Edit-AWSProfile {
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
     .NOTES
         Using "-AsSecureString" prevents from copy and past when running the script
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_list', HelpMessage = 'List profiles')]
@@ -63,8 +63,8 @@ function Edit-AWSProfile {
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
-        [Parameter(ParameterSetName = '_create', HelpMessage = 'New profile name')]
-        [Parameter(ParameterSetName = '_create_default', HelpMessage = 'New profile name')]
+        [Parameter(Mandatory, ParameterSetName = '_create', HelpMessage = 'Profile name')]
+        [Parameter(Mandatory, ParameterSetName = '_create_default', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_delete', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_update', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Profile name')]

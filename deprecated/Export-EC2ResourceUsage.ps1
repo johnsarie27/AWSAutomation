@@ -1,5 +1,5 @@
 function Export-EC2ResourceUsage {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Export report of EC2 CPU and memory utilization
     .DESCRIPTION
@@ -24,7 +24,7 @@ function Export-EC2ResourceUsage {
         Export a report for the past 7 days to the desktop.
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(HelpMessage = 'Number of days to generate statistics')]

@@ -1,5 +1,5 @@
 function New-CWRecoveryAlarm {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Create new CloudWatch Alarm to Recover Instance
     .DESCRIPTION
@@ -21,7 +21,7 @@ function New-CWRecoveryAlarm {
         Adds a CloudWatch Alarm to the instance configured to recover after 2 failed status checks of 5 minutes each
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'EC2 Instance Id')]

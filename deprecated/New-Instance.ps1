@@ -1,5 +1,5 @@
 function New-Instance {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Create new EC2 Instance object
     .DESCRIPTION
@@ -15,7 +15,7 @@ function New-Instance {
         Create a new EC2Instance object from all AWS objects
     .NOTES
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'EC2 Instance object(s)')]
