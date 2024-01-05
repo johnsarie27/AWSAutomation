@@ -16,7 +16,7 @@ function Set-AwsSsoCredential {
         Identity Center URL
     .PARAMETER Force
         Force add new accounts
-    .PARAMETER Accounts
+    .PARAMETER Account
         Array of account info
     .INPUTS
         None.

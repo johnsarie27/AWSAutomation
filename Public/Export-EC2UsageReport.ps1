@@ -18,6 +18,8 @@ function Export-EC2UsageReport {
         AWS Credential Object
     .PARAMETER Region
         This is the AWS region containing the desired resources to be processed
+    .PARAMETER PassThru
+        Return path to report file
     .INPUTS
         None.
     .OUTPUTS

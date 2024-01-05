@@ -63,8 +63,8 @@ function Edit-AWSProfile {
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
-        [Parameter(ParameterSetName = '_create', HelpMessage = 'New profile name')]
-        [Parameter(ParameterSetName = '_create_default', HelpMessage = 'New profile name')]
+        [Parameter(Mandatory, ParameterSetName = '_create', HelpMessage = 'Profile name')]
+        [Parameter(Mandatory, ParameterSetName = '_create_default', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_delete', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_update', HelpMessage = 'Profile name')]
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Profile name')]

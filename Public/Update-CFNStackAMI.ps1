@@ -15,6 +15,8 @@ function Update-CFNStackAMI {
         AWS Credential Object
     .PARAMETER ProfileName
         AWS credential profile name
+    .PARAMETER Force
+        Proceed with changes without prompting for confirmation
     .INPUTS
         None.
     .OUTPUTS
