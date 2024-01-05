@@ -21,13 +21,13 @@
     Author            = 'Justin Johns'
 
     # Company or vendor of this module
-    # CompanyName = 'Unknown'
+    # CompanyName     = 'Unknown'
 
     # Copyright statement for this module
     Copyright         = '(c) 2018 Justin Johns. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Functions used for reporting on AWS resources and configuration including some to create CloudFormation templates from existing AWS infrastructure'
+    Description       = 'Functions used for reporting on AWS resources and configurations including some to create CloudFormation templates from existing AWS infrastructure'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.1'

@@ -1,3 +1,9 @@
+# ==============================================================================
+# Filename: AWSAutomation.psm1
+# Version:  0.1.1 | Updated: 2024-01-04
+# Author:   Justin Johns
+# ==============================================================================
+
 # REQUIRED FOR THE CONSTRUCTOR OF EC2INSTANCE
 # Requires -Modules AWS.Tools.EC2
 
