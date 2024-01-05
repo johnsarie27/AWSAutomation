@@ -114,6 +114,7 @@
         'Get-PatchInfo'
         'Get-RoleCredential'
         'Get-R53Record'
+        'Get-S3Report'
         'Get-S3Url'
         'Get-ScanStatus'
         'Get-SecurityGroupInfo'
