@@ -1,5 +1,5 @@
 function Export-CertificateReport {
-    <# =========================================================================
+    <#
     .SYNOPSIS
         Export report for certificates
     .DESCRIPTION
@@ -26,7 +26,7 @@ function Export-CertificateReport {
         - 0.1.0 - Initial version
         Comments: <Comment(s)>
         General notes
-    ========================================================================= #>
+    #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     Param(
         [Parameter(Position = 0, HelpMessage = 'Path to export report')]
