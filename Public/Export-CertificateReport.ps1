@@ -30,8 +30,8 @@ function Export-CertificateReport {
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     Param(
         [Parameter(Position = 0, HelpMessage = 'Path to export report')]
-        #[ValidateScript({ Test-Path -Path (Split-Path -Path $_) -PathType Container })]
-        [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Filter '*.xlsx' })]
+        [ValidateScript({ Test-Path -Path (Split-Path -Path $_) -PathType Container })]
+        [ValidatePattern('^[\w:\\/-]+\.xlsx$')]
         [System.String] $Path = "$HOME\Desktop\CertificateReport_{0}.xlsx" -f (Get-Date -Format FileDateTime),
 
         [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
