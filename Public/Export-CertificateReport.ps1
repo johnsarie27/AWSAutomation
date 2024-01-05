@@ -80,7 +80,7 @@ function Export-CertificateReport {
         # VALIDATE REPORT TYPE
         if ($SecurityReport) {
             # EXPORT SECURITY REPORT
-            $certs | Select-Object Info | Export-Excel @excelParams
+            $certs | Where-Object Type -EQ 'IMPORTED' | Select-Object Info | Export-Excel @excelParams
         }
         else {
             # EXPORT REPORT
