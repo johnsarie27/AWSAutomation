@@ -7,13 +7,14 @@ Export report for certificates
 
 ### __pro (Default)
 ```
-Export-CertificateReport [[-Path] <String>] [-ProfileName] <String> [[-Region] <String>] [<CommonParameters>]
+Export-CertificateReport [[-Path] <String>] [-SecurityReport] [-ProfileName] <String> [[-Region] <String>]
+ [<CommonParameters>]
 ```
 
 ### __crd
 ```
-Export-CertificateReport [[-Path] <String>] [-Credential] <AWSCredentials> [[-Region] <String>]
- [<CommonParameters>]
+Export-CertificateReport [[-Path] <String>] [-SecurityReport] [-Credential] <AWSCredentials>
+ [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -44,6 +45,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -SecurityReport
+Export report properties relevant to security status
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ProfileName
 Name property of an AWS credential profile
 
@@ -53,7 +69,7 @@ Parameter Sets: __pro
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -68,7 +84,7 @@ Parameter Sets: __crd
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -83,7 +99,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 4
 Default value: Us-east-1
 Accept pipeline input: False
 Accept wildcard characters: False
