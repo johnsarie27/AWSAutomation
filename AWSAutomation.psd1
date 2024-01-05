@@ -77,6 +77,7 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
+        './Private/Certificate.types.ps1xml'
         './Private/EBS.types.ps1xml'
         './Private/EC2.types.ps1xml'
         './Private/ELB.types.ps1xml'
