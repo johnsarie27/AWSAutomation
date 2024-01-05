@@ -77,6 +77,7 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
+        './Private/Certificate.types.ps1xml'
         './Private/EBS.types.ps1xml'
         './Private/EC2.types.ps1xml'
         './Private/ELB.types.ps1xml'
@@ -114,6 +115,7 @@
         'Get-PatchInfo'
         'Get-RoleCredential'
         'Get-R53Record'
+        'Get-S3Report'
         'Get-S3Url'
         'Get-ScanStatus'
         'Get-SecurityGroupInfo'
