@@ -70,81 +70,96 @@ function Edit-AWSProfile {
         [Parameter(Mandatory, ParameterSetName = '_update_default', HelpMessage = 'Profile name')]
         [System.String] $ProfileName
     )
-
     Begin {
-        # VARS
+        # OPERATIONAL PARAMETERS
         $OpParams = @('Default', 'Region', 'ProfileName')
 
-        # FUNCTIONS
+        # HELPER FUNCTION
         function Confirm-Profile ([string] $ProfileName) {
             $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
             Return $ProfileExists
         }
-
-        function Read-Input ([string] $Prompt) {
-            $UInput = Read-Host -Prompt $Prompt
-            Return $UInput
-        }
     }
-
     Process {
-
-        $Result = switch ( $PSBoundParameters.Keys | Where-Object {$_ -notin $OpParams} ) {
+        # SWITCH ON PARAMETER ARGUMENTS
+        $Result = switch ($PSBoundParameters.Keys | Where-Object {$_ -notin $OpParams}) {
             List {
+                # RETURN ARRAY OF AWS CREDENTIAL PROFILES
                 Get-AWSCredential -ListProfileDetail | Sort-Object ProfileName | Out-String
             }
             Create {
-                if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
-                    if ( Confirm-Profile -ProfileName $ProfileName ) {
-                        do {
-                            Clear-Host
-                            $ProfileName = Read-Input -Prompt 'Please enter a unique profile name'
-                        } while ( Confirm-Profile -ProfileName $ProfileName )
+                # VALIDATE PROFILE HAS UNIQUE NAME
+                if ($PSBoundParameters.ContainsKey('ProfileName')) {
+                    if (Confirm-Profile -ProfileName $ProfileName) {
+                        Write-Error -Message ('Profile [{0}] already exists. Please enter a unique name.' -f $ProfileName); Break
                     }
                 }
                 else {
-                    $ProfileName = Read-Input -Prompt 'Profile name'
-                    if ( Confirm-Profile -ProfileName $ProfileName ) {
-                        do {
-                            Clear-Host
-                            $ProfileName = Read-Input -Prompt 'Please enter a unique profile name'
-                        } while ( Confirm-Profile -ProfileName $ProfileName )
+                    $ProfileName = Read-Host -Prompt 'Profile name'
+                    if (Confirm-Profile -ProfileName $ProfileName) {
+                        Write-Error -Message ('Profile [{0}] already exists. Please enter a unique name.' -f $ProfileName); Break
                     }
                 }
 
-                Write-Output `n
+                # PROMPT FOR KEYS
+                Write-Output -InputObject `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
-                $SecretKey = Read-Host -Prompt 'Secret Key'
+                $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
+
+                # CREATE NEW CREDENTIAL PROFILE
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
-                if ( $PSBoundParameters.ContainsKey('Default') ) {
+
+                # SET NEW PROFILE AS DEFAULT IF SWITCH PARAMETER DETECTED
+                if ($PSBoundParameters.ContainsKey('Default')) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
 
+                # RETURN TEXT RESULT
                 'Profile [{0}] created.' -f $ProfileName
             }
             Update {
-                if ( !(Confirm-Profile -ProfileName $ProfileName) ) { Write-Error ('Profile [{0}] not found' -f $ProfileName); Break }
+                # VALIDATE EXISTENCE OF SPECIFIED PROFILE
+                if (-Not (Confirm-Profile -ProfileName $ProfileName)) {
+                    Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
+                }
 
-                Write-Output `n
+                # PROMPT FOR KEYS
+                Write-Output -InputObject `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
-                $SecretKey = Read-Host -Prompt 'Secret Key'
+                $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
+
+                # UPDATE CREDENTIAL PROFILE WITH NEW KEYS
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
-                if ( $PSBoundParameters.ContainsKey('Default') ) {
+
+                # SET AS DEFAULT PROFILE
+                if ($PSBoundParameters.ContainsKey('Default')) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
 
+                # RETURN TEXT RESULT
                 'Profile [{0}] updated.' -f $ProfileName
             }
             Delete {
-                if ( !(Confirm-Profile -ProfileName $ProfileName) ) { Write-Error ('Profile [{0}] not found' -f $ProfileName); Break }
+                # VALIDATE EXISTENCE OF SPECIFIED PROFILE
+                if (-Not (Confirm-Profile -ProfileName $ProfileName)) {
+                    Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
+                }
+
+                # REMOVE CREDENTIAL PROFILE
                 Remove-AWSCredentialProfile -ProfileName $ProfileName
+
+                # RETURN TEXT RESULT
                 'Profile [{0}] removed.' -f $ProfileName
             }
         }
     }
-
     End {
-        if ( $PSBoundParameters.ContainsKey('List') ) { Write-Output $Result }
-        else { Write-Output $Result `n }
+        # RETURN RESULTS
+        if ($PSBoundParameters.ContainsKey('List')) {
+            Write-Output -InputObject $Result
+        }
+        else {
+            Write-Output -InputObject $Result, `n
+        }
     }
 }

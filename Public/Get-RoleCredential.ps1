@@ -8,8 +8,6 @@ function Get-RoleCredential {
         AWS Credential Profile name
     .PARAMETER Keys
         AWS access key and secret keys in a PSCredential object
-    .PARAMETER Region
-        AWS Region
     .PARAMETER Account
         Custom object containing AWS Account Name and Id properties
     .PARAMETER RoleName
@@ -26,7 +24,7 @@ function Get-RoleCredential {
         System.Object.
     .EXAMPLE
         PS C:\> $acc = [PSCustomObject] @{ Name = 'myAccount'; Id = '012345678901' }
-        PS C:\> Get-RoleCredential -ProfileName myProfile -Region us-east-1 -Acount $acc -RoleName mySuperRole
+        PS C:\> Get-RoleCredential -ProfileName myProfile -Acount $acc -RoleName mySuperRole
         Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
     .NOTES
         General notes
@@ -43,10 +41,6 @@ function Get-RoleCredential {
         [Parameter(Mandatory, HelpMessage = 'Access key and Secret key', ParameterSetName = '_keys')]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential] $Keys,
-
-        [Parameter(Mandatory, HelpMessage = 'AWS Region')]
-        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [System.String] $Region,
 
         [Parameter(Mandatory, HelpMessage = 'PS Object containing AWS Account Name and ID properties')]
         [ValidateNotNullOrEmpty()]
@@ -68,8 +62,8 @@ function Get-RoleCredential {
     )
 
     Begin {
-        # SET REGION
-        $creds = @{ Region = $Region }
+        # SET CREDENTIAL SPLATTER TABLE
+        $creds = @{ }
 
         # ADD KEYS OR PROFILE
         if ( $PSCmdlet.ParameterSetName -eq '_keys' ) {

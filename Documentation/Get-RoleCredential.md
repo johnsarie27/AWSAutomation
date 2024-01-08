@@ -7,14 +7,14 @@ Get IAM credential object
 
 ### _profile (Default)
 ```
-Get-RoleCredential -ProfileName <String> -Region <String> -Account <Object[]> -RoleName <String>
- [-SerialNumber <String>] [-TokenCode <String>] [-DurationInSeconds <Int32>] [<CommonParameters>]
+Get-RoleCredential -ProfileName <String> -Account <Object[]> -RoleName <String> [-SerialNumber <String>]
+ [-TokenCode <String>] [-DurationInSeconds <Int32>] [<CommonParameters>]
 ```
 
 ### _keys
 ```
-Get-RoleCredential -Keys <PSCredential> -Region <String> -Account <Object[]> -RoleName <String>
- [-SerialNumber <String>] [-TokenCode <String>] [-DurationInSeconds <Int32>] [<CommonParameters>]
+Get-RoleCredential -Keys <PSCredential> -Account <Object[]> -RoleName <String> [-SerialNumber <String>]
+ [-TokenCode <String>] [-DurationInSeconds <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -25,7 +25,7 @@ Get IAM Credential from IAM Role
 ### EXAMPLE 1
 ```
 $acc = [PSCustomObject] @{ Name = 'myAccount'; Id = '012345678901' }
-PS C:\> Get-RoleCredential -ProfileName myProfile -Region us-east-1 -Acount $acc -RoleName mySuperRole
+PS C:\> Get-RoleCredential -ProfileName myProfile -Acount $acc -RoleName mySuperRole
 Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
 ```
 
@@ -52,21 +52,6 @@ AWS access key and secret keys in a PSCredential object
 ```yaml
 Type: PSCredential
 Parameter Sets: _keys
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Region
-AWS Region
-
-```yaml
-Type: String
-Parameter Sets: (All)
 Aliases:
 
 Required: True
