@@ -29,7 +29,7 @@ Generate report of certificates in Amazon Certificate Manager to C:\certReport.x
 ## PARAMETERS
 
 ### -ImportedOnly
-Get report properties relevant to security status
+Return IMPORTED certificates only
 
 ```yaml
 Type: SwitchParameter

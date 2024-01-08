@@ -5,7 +5,7 @@ function Get-CertificateReport {
     .DESCRIPTION
         Get report data for certificates in Amazon Certificate Manager (similar to UI)
     .PARAMETER ImportedOnly
-        Get report properties relevant to security status
+        Return IMPORTED certificates only
     .PARAMETER ProfileName
         Name property of an AWS credential profile
     .PARAMETER Credential
@@ -30,7 +30,7 @@ function Get-CertificateReport {
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     Param(
-        [Parameter(Position = 1, HelpMessage = 'Get report properties relevant to security status')]
+        [Parameter(Position = 1, HelpMessage = 'Return IMPORTED certificates only')]
         [System.Management.Automation.SwitchParameter] $ImportedOnly,
 
         [Parameter(Mandatory, Position = 2, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
