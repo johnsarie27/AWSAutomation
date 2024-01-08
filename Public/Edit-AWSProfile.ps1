@@ -88,21 +88,16 @@ function Edit-AWSProfile {
                 Get-AWSCredential -ListProfileDetail | Sort-Object ProfileName | Out-String
             }
             Create {
+                # VALIDATE PROFILE HAS UNIQUE NAME
                 if ($PSBoundParameters.ContainsKey('ProfileName')) {
-                    if ( Confirm-Profile -ProfileName $ProfileName ) {
-                        do {
-                            Clear-Host
-                            $ProfileName = Read-Host -Prompt 'Please enter a unique profile name'
-                        } while (Confirm-Profile -ProfileName $ProfileName)
+                    if (Confirm-Profile -ProfileName $ProfileName) {
+                        Write-Error -Message ('Profile [{0}] already exists. Please enter a unique name.' -f $ProfileName); Break
                     }
                 }
                 else {
                     $ProfileName = Read-Host -Prompt 'Profile name'
                     if (Confirm-Profile -ProfileName $ProfileName) {
-                        do {
-                            Clear-Host
-                            $ProfileName = Read-Host -Prompt 'Please enter a unique profile name'
-                        } while (Confirm-Profile -ProfileName $ProfileName)
+                        Write-Error -Message ('Profile [{0}] already exists. Please enter a unique name.' -f $ProfileName); Break
                     }
                 }
 
@@ -123,6 +118,7 @@ function Edit-AWSProfile {
                 'Profile [{0}] created.' -f $ProfileName
             }
             Update {
+                # VALIDATE EXISTENCE OF SPECIFIED PROFILE
                 if (-Not (Confirm-Profile -ProfileName $ProfileName)) {
                     Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
                 }
@@ -144,10 +140,12 @@ function Edit-AWSProfile {
                 'Profile [{0}] updated.' -f $ProfileName
             }
             Delete {
+                # VALIDATE EXISTENCE OF SPECIFIED PROFILE
                 if (-Not (Confirm-Profile -ProfileName $ProfileName)) {
                     Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
                 }
 
+                # REMOVE CREDENTIAL PROFILE
                 Remove-AWSCredentialProfile -ProfileName $ProfileName
 
                 # RETURN TEXT RESULT
@@ -156,6 +154,7 @@ function Edit-AWSProfile {
         }
     }
     End {
+        # RETURN RESULTS
         if ($PSBoundParameters.ContainsKey('List')) {
             Write-Output -InputObject $Result
         }
