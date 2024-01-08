@@ -1,52 +1,35 @@
-# Export-CertificateReport
+# Get-CertificateReport
 
 ## SYNOPSIS
-Export report for certificates
+Get report data for certificates
 
 ## SYNTAX
 
 ### __pro (Default)
 ```
-Export-CertificateReport [[-Path] <String>] [-SecurityReport] [-ProfileName] <String> [[-Region] <String>]
- [<CommonParameters>]
+Get-CertificateReport [-ImportedOnly] [-ProfileName] <String> [[-Region] <String>] [<CommonParameters>]
 ```
 
 ### __crd
 ```
-Export-CertificateReport [[-Path] <String>] [-SecurityReport] [-Credential] <AWSCredentials>
- [[-Region] <String>] [<CommonParameters>]
+Get-CertificateReport [-ImportedOnly] [-Credential] <AWSCredentials> [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Export report for certificates in Amazon Certificate Manager (similar to UI)
+Get report data for certificates in Amazon Certificate Manager (similar to UI)
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Export-CertificateReport -ProfileName myProfile -Region us-east-1 -Path C:\certReport.xlsx
+Get-CertificateReport -ProfileName myProfile -Region us-east-1
 Generate report of certificates in Amazon Certificate Manager to C:\certReport.xlsx
 ```
 
 ## PARAMETERS
 
-### -Path
-Path to export report
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: "$HOME\Desktop\CertificateReport_{0}.xlsx" -f (Get-Date -Format FileDateTime)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -SecurityReport
-Export report properties relevant to security status
+### -ImportedOnly
+Return IMPORTED certificates only
 
 ```yaml
 Type: SwitchParameter
@@ -115,10 +98,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### None.
 ## NOTES
-Name:     Export-CertificateReport
+Name:     Get-CertificateReport
 Author:   Justin Johns
-Version:  0.1.0 | Last Edit: 2024-01-05
-- 0.1.0 - Initial version
+Version:  0.1.1 | Last Edit: 2024-01-08
+- 0.1.1 - (2024-01-05) Changed function from Export- to Get-
+- 0.1.0 - (2024-01-05) Initial version
 Comments: \<Comment(s)\>
 General notes
 
