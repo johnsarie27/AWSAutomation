@@ -80,11 +80,6 @@ function Edit-AWSProfile {
             $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
             Return $ProfileExists
         }
-
-        function Read-Input ([string] $Prompt) {
-            $UInput = Read-Host -Prompt $Prompt
-            Return $UInput
-        }
     }
 
     Process {
@@ -98,16 +93,16 @@ function Edit-AWSProfile {
                     if ( Confirm-Profile -ProfileName $ProfileName ) {
                         do {
                             Clear-Host
-                            $ProfileName = Read-Input -Prompt 'Please enter a unique profile name'
+                            $ProfileName = Read-Host -Prompt 'Please enter a unique profile name'
                         } while ( Confirm-Profile -ProfileName $ProfileName )
                     }
                 }
                 else {
-                    $ProfileName = Read-Input -Prompt 'Profile name'
+                    $ProfileName = Read-Host -Prompt 'Profile name'
                     if ( Confirm-Profile -ProfileName $ProfileName ) {
                         do {
                             Clear-Host
-                            $ProfileName = Read-Input -Prompt 'Please enter a unique profile name'
+                            $ProfileName = Read-Host -Prompt 'Please enter a unique profile name'
                         } while ( Confirm-Profile -ProfileName $ProfileName )
                     }
                 }
