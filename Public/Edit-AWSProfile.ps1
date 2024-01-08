@@ -105,7 +105,7 @@ function Edit-AWSProfile {
                     }
                 }
 
-                Write-Output `n
+                Write-Output -InputObject `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
                 $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
@@ -117,10 +117,10 @@ function Edit-AWSProfile {
             }
             Update {
                 if (-Not (Confirm-Profile -ProfileName $ProfileName)) {
-                    Write-Error ('Profile [{0}] not found' -f $ProfileName); Break
+                    Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
                 }
 
-                Write-Output `n
+                Write-Output -InputObject `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
                 $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
@@ -132,7 +132,7 @@ function Edit-AWSProfile {
             }
             Delete {
                 if (-Not (Confirm-Profile -ProfileName $ProfileName)) {
-                    Write-Error ('Profile [{0}] not found' -f $ProfileName); Break
+                    Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
                 }
 
                 Remove-AWSCredentialProfile -ProfileName $ProfileName
@@ -142,10 +142,10 @@ function Edit-AWSProfile {
     }
     End {
         if ($PSBoundParameters.ContainsKey('List')) {
-            Write-Output $Result
+            Write-Output -InputObject $Result
         }
         else {
-            Write-Output $Result `n
+            Write-Output -InputObject $Result `n
         }
     }
 }
