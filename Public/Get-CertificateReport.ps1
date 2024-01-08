@@ -60,17 +60,14 @@ function Get-CertificateReport {
         # GET CERTIFICATE LIST
         $certsList = Get-ACMCertificateList @awsCreds
 
-        # CREATE ARRAY WITH CERT DETAILS
-        $certs = foreach ($cert in $certsList) { Get-ACMCertificateDetail @awsCreds -CertificateArn $cert.CertificateArn }
-
         # VALIDATE REPORT TYPE
         if ($PSBoundParameters.ContainsKey('ImportedOnly')) {
             # RETURN SECURITY REPORT
-            $certs | Where-Object Type -EQ 'IMPORTED' | Select-Object Info
+            foreach ($cert in $certsList) { Get-ACMCertificateDetail @awsCreds -CertificateArn $cert.CertificateArn | Where-Object Type -EQ 'IMPORTED' | Select-Object Info }
         }
         else {
             # RETURN REPORT
-            $certs | Select-Object Report
+            foreach ($cert in $certsList) { Get-ACMCertificateDetail @awsCreds -CertificateArn $cert.CertificateArn | Select-Object Report }
         }
     }
 }
