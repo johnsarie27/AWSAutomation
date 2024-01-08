@@ -71,10 +71,10 @@ function Edit-AWSProfile {
         [System.String] $ProfileName
     )
     Begin {
-        # VARS
+        # OPERATIONAL PARAMETERS
         $OpParams = @('Default', 'Region', 'ProfileName')
 
-        # FUNCTIONS
+        # HELPER FUNCTION
         function Confirm-Profile ([string] $ProfileName) {
             $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
             Return $ProfileExists
@@ -84,6 +84,7 @@ function Edit-AWSProfile {
         # SWITCH ON PARAMETER ARGUMENTS
         $Result = switch ($PSBoundParameters.Keys | Where-Object {$_ -notin $OpParams}) {
             List {
+                # RETURN ARRAY OF AWS CREDENTIAL PROFILES
                 Get-AWSCredential -ListProfileDetail | Sort-Object ProfileName | Out-String
             }
             Create {
@@ -105,14 +106,20 @@ function Edit-AWSProfile {
                     }
                 }
 
+                # PROMPT FOR KEYS
                 Write-Output -InputObject `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
                 $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
+
+                # CREATE NEW CREDENTIAL PROFILE
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
+
+                # SET NEW PROFILE AS DEFAULT IF SWITCH PARAMETER DETECTED
                 if ($PSBoundParameters.ContainsKey('Default')) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
 
+                # RETURN TEXT RESULT
                 'Profile [{0}] created.' -f $ProfileName
             }
             Update {
@@ -120,14 +127,20 @@ function Edit-AWSProfile {
                     Write-Error -Message ('Profile [{0}] not found' -f $ProfileName); Break
                 }
 
+                # PROMPT FOR KEYS
                 Write-Output -InputObject `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
                 $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
+
+                # UPDATE CREDENTIAL PROFILE WITH NEW KEYS
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
+
+                # SET AS DEFAULT PROFILE
                 if ($PSBoundParameters.ContainsKey('Default')) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
                 }
 
+                # RETURN TEXT RESULT
                 'Profile [{0}] updated.' -f $ProfileName
             }
             Delete {
@@ -136,6 +149,8 @@ function Edit-AWSProfile {
                 }
 
                 Remove-AWSCredentialProfile -ProfileName $ProfileName
+
+                # RETURN TEXT RESULT
                 'Profile [{0}] removed.' -f $ProfileName
             }
         }
@@ -145,7 +160,7 @@ function Edit-AWSProfile {
             Write-Output -InputObject $Result
         }
         else {
-            Write-Output -InputObject $Result `n
+            Write-Output -InputObject $Result, `n
         }
     }
 }
