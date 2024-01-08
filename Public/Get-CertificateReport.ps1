@@ -23,7 +23,7 @@ function Get-CertificateReport {
         Name:     Get-CertificateReport
         Author:   Justin Johns
         Version:  0.1.1 | Last Edit: 2024-01-08
-        - 0.1.1 - (2024-01-05) Changed function from Export- to Get-
+        - 0.1.1 - (2024-01-05) Changed function from Export- to Get-CertificateReport
         - 0.1.0 - (2024-01-05) Initial version
         Comments: <Comment(s)>
         General notes
