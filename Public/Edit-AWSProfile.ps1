@@ -109,7 +109,7 @@ function Edit-AWSProfile {
 
                 Write-Output `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
-                $SecretKey = Read-Host -Prompt 'Secret Key'
+                $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
                 if ( $PSBoundParameters.ContainsKey('Default') ) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
@@ -122,7 +122,7 @@ function Edit-AWSProfile {
 
                 Write-Output `n
                 $AccessKey = Read-Host -Prompt 'Access Key'
-                $SecretKey = Read-Host -Prompt 'Secret Key'
+                $SecretKey = Read-Host -Prompt 'Secret Key' -MaskInput
                 Set-AWSCredential -AccessKey $AccessKey -SecretKey $SecretKey -StoreAs $ProfileName
                 if ( $PSBoundParameters.ContainsKey('Default') ) {
                     Initialize-AWSDefaultConfiguration -ProfileName $ProfileName -Region $Region
