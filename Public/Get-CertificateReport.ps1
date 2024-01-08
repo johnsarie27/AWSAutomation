@@ -1,13 +1,11 @@
-function Export-CertificateReport {
+function Get-CertificateReport {
     <#
     .SYNOPSIS
-        Export report for certificates
+        Get report data for certificates
     .DESCRIPTION
-        Export report for certificates in Amazon Certificate Manager (similar to UI)
-    .PARAMETER Path
-        Path to export report
-    .PARAMETER SecurityReport
-        Export report properties relevant to security status
+        Get report data for certificates in Amazon Certificate Manager (similar to UI)
+    .PARAMETER ImportedOnly
+        Get report properties relevant to security status
     .PARAMETER ProfileName
         Name property of an AWS credential profile
     .PARAMETER Credential
@@ -19,25 +17,21 @@ function Export-CertificateReport {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> Export-CertificateReport -ProfileName myProfile -Region us-east-1 -Path C:\certReport.xlsx
+        PS C:\> Get-CertificateReport -ProfileName myProfile -Region us-east-1
         Generate report of certificates in Amazon Certificate Manager to C:\certReport.xlsx
     .NOTES
-        Name:     Export-CertificateReport
+        Name:     Get-CertificateReport
         Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2024-01-05
-        - 0.1.0 - Initial version
+        Version:  0.1.1 | Last Edit: 2024-01-08
+        - 0.1.1 - (2024-01-05) Changed function from Export- to Get-
+        - 0.1.0 - (2024-01-05) Initial version
         Comments: <Comment(s)>
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     Param(
-        [Parameter(Position = 0, HelpMessage = 'Path to export report')]
-        [ValidateScript({ Test-Path -Path (Split-Path -Path $_) -PathType Container })]
-        [ValidatePattern('^[\w:\\/-]+\.xlsx$')]
-        [System.String] $Path = "$HOME\Desktop\CertificateReport_{0}.xlsx" -f (Get-Date -Format FileDateTime),
-
-        [Parameter(Position = 1, HelpMessage = 'Export report properties relevant to security status')]
-        [System.Management.Automation.SwitchParameter] $SecurityReport,
+        [Parameter(Position = 1, HelpMessage = 'Get report properties relevant to security status')]
+        [System.Management.Automation.SwitchParameter] $ImportedOnly,
 
         [Parameter(Mandatory, Position = 2, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -61,14 +55,6 @@ function Export-CertificateReport {
         else {
             $awsCreds = @{ Credential = $Credential; Region = $Region }
         }
-
-        # EXCEL PARAM SPLATTER TABLE
-        $excelParams = @{
-            AutoSize   = $true
-            TableStyle = 'Medium2'
-            Style      = (New-ExcelStyle -Bold -Range '1:1' -HorizontalAlignment Center)
-            Path       = $Path
-        }
     }
     Process {
         # GET CERTIFICATE LIST
@@ -78,13 +64,13 @@ function Export-CertificateReport {
         $certs = foreach ($cert in $certsList) { Get-ACMCertificateDetail @awsCreds -CertificateArn $cert.CertificateArn }
 
         # VALIDATE REPORT TYPE
-        if ($SecurityReport) {
-            # EXPORT SECURITY REPORT
-            $certs | Where-Object Type -EQ 'IMPORTED' | Select-Object Info | Export-Excel @excelParams
+        if ($PSBoundParameters.ContainsKey('ImportedOnly')) {
+            # RETURN SECURITY REPORT
+            $certs | Where-Object Type -EQ 'IMPORTED' | Select-Object Info
         }
         else {
-            # EXPORT REPORT
-            $certs | Select-Object Report | Export-Excel @excelParams
+            # RETURN REPORT
+            $certs | Select-Object Report
         }
     }
 }

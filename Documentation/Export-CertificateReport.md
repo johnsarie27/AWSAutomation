@@ -1,4 +1,4 @@
-# Export-CertificateReport
+# Get-CertificateReport
 
 ## SYNOPSIS
 Export report for certificates
@@ -7,13 +7,13 @@ Export report for certificates
 
 ### __pro (Default)
 ```
-Export-CertificateReport [[-Path] <String>] [-SecurityReport] [-ProfileName] <String> [[-Region] <String>]
+Get-CertificateReport [[-Path] <String>] [-SecurityReport] [-ProfileName] <String> [[-Region] <String>]
  [<CommonParameters>]
 ```
 
 ### __crd
 ```
-Export-CertificateReport [[-Path] <String>] [-SecurityReport] [-Credential] <AWSCredentials>
+Get-CertificateReport [[-Path] <String>] [-SecurityReport] [-Credential] <AWSCredentials>
  [[-Region] <String>] [<CommonParameters>]
 ```
 
@@ -24,7 +24,7 @@ Export report for certificates in Amazon Certificate Manager (similar to UI)
 
 ### EXAMPLE 1
 ```
-Export-CertificateReport -ProfileName myProfile -Region us-east-1 -Path C:\certReport.xlsx
+Get-CertificateReport -ProfileName myProfile -Region us-east-1 -Path C:\certReport.xlsx
 Generate report of certificates in Amazon Certificate Manager to C:\certReport.xlsx
 ```
 
@@ -115,7 +115,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### None.
 ## NOTES
-Name:     Export-CertificateReport
+Name:     Get-CertificateReport
 Author:   Justin Johns
 Version:  0.1.0 | Last Edit: 2024-01-05
 - 0.1.0 - Initial version
