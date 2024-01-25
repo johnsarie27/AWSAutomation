@@ -1,4 +1,4 @@
-# Find-PublicS3Objects
+# Find-PublicS3Object
 
 ## SYNOPSIS
 Find publicly accessible S3 objects
@@ -6,7 +6,7 @@ Find publicly accessible S3 objects
 ## SYNTAX
 
 ```
-Find-PublicS3Objects [-ProfileName] <String> [[-Credential] <AWSCredentials>] [[-BucketName] <String>]
+Find-PublicS3Object [-ProfileName] <String> [[-Credential] <AWSCredentials>] [[-BucketName] <String>]
  [<CommonParameters>]
 ```
 
@@ -17,7 +17,7 @@ Search S3 bucket(s) and return a list of publicly accessible objects
 
 ### EXAMPLE 1
 ```
-Find-PublicS3Objects -ProfileName MyAccount
+Find-PublicS3Object -ProfileName MyAccount
 Search all objects in all S3 buckets for MyAccount and return a list of publicly accessible objects
 ```
 

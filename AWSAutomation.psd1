@@ -107,7 +107,7 @@
         'Export-SECSecret'
         'Find-InsecureS3BucketPolicy'
         'Find-NextSubnet'
-        'Find-PublicS3Objects'
+        'Find-PublicS3Object'
         'Get-AssociationStatus'
         'Get-CertificateReport'
         'Get-IAMReport'
