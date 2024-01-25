@@ -6,8 +6,8 @@ Get AWS network infrastructure
 ## SYNTAX
 
 ```
-Get-NetworkInfo [[-ProfileName] <String>] [[-Credential] <AWSCredentials>] [[-Region] <String>]
- [-VpcId] <String> [<CommonParameters>]
+Get-NetworkInfo [-VpcId] <String> [[-ProfileName] <String>] [[-Credential] <AWSCredentials>]
+ [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -25,6 +25,21 @@ Get network infrastructure details for VPC vpc-12345678 in us-east-1 for store p
 
 ## PARAMETERS
 
+### -VpcId
+Id of an AWS VPC
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ProfileName
 Name property of an AWS credential profile
 
@@ -34,7 +49,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -49,7 +64,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -64,24 +79,9 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -VpcId
-Id of an AWS VPC
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
 Position: 4
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
