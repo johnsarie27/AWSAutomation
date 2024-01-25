@@ -22,7 +22,7 @@ function New-CWRecoveryAlarm {
     .NOTES
         General notes
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'EC2 Instance Id')]
         [ValidatePattern('i-[\w\d]{8,17}')]
@@ -42,7 +42,6 @@ function New-CWRecoveryAlarm {
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region
     )
-
     Begin {
         # SET ALARM PARAMS
         $alarmParams = @{
@@ -62,7 +61,6 @@ function New-CWRecoveryAlarm {
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $alarmParams['ProfileName'] = $ProfileName }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $alarmParams['Credential'] = $Credential }
     }
-
     Process {
         # LOOP ALL INSTANCES
         foreach ( $Id in $InstanceId ) {
@@ -70,8 +68,13 @@ function New-CWRecoveryAlarm {
             $alarmParams['AlarmName'] = 'awsec2-{0}-High-Status-Check-Failed-System' -f $Id
             $alarmParams['Dimension'] = @{ Name = 'InstanceId'; Value = $Id }
 
-            # CREATE NEW ALARM
-            Write-CWMetricAlarm @alarmParams
+            # SHOULD PROCESS
+            if ($PSCmdlet.ShouldProcess($alarmParams['AlarmName'], "Create new CloudWatch Alarm")) {
+
+                # CREATE NEW ALARM
+                Write-CWMetricAlarm @alarmParams
+            }
+
         }
     }
 }

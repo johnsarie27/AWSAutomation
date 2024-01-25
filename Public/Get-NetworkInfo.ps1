@@ -6,14 +6,14 @@ function Get-NetworkInfo {
         This function iterates through the networking infrastructure (VPC's,
         Subnets, and Route Tables) and outputs a list of objects using the
         Route Tables as a connection point.
+    .PARAMETER VpcId
+        Id of an AWS VPC
     .PARAMETER ProfileName
         Name property of an AWS credential profile
     .PARAMETER Credential
         AWS Credential Object
     .PARAMETER Region
         AWS region
-    .PARAMETER VpcId
-        Id of an AWS VPC
     .INPUTS
         System.String. Get-SecurityGroupInfo accepts string values for all parameters
     .OUTPUTS
@@ -33,6 +33,10 @@ function Get-NetworkInfo {
     #>
     [CmdletBinding()]
     Param(
+        [Parameter(Mandatory = $true, HelpMessage = 'VPC ID')]
+        [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]
+        [System.String] $VpcId,
+
         [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [System.String] $ProfileName,
@@ -43,11 +47,7 @@ function Get-NetworkInfo {
 
         [Parameter(HelpMessage = 'AWS Region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
-        [System.String] $Region,
-
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'VPC ID')]
-        [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]
-        [System.String] $VpcId
+        [System.String] $Region
     )
 
     $awsParams = @{

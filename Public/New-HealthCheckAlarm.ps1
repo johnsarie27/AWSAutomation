@@ -26,12 +26,13 @@ function New-HealthCheckAlarm {
     .NOTES
         Name:     New-HealthCheckAlarm
         Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2022-05-26
-        - <VersionNotes> (or remove this line if no version notes)
+        Version:  0.1.1 | Last Edit: 2024-01-25
+        - 0.1.1 - (2024-01-25) Added support for ShouldProcess
+        - 0.1.0 - (2022-05-26) Initial version
         Comments: <Comment(s)>
         General notes
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Alarm Name')]
         [ValidatePattern('^[\w-]+$')]
@@ -90,7 +91,11 @@ function New-HealthCheckAlarm {
             Select             = '*'
         }
 
-        # CREATE ALARM
-        Write-CWMetricAlarm @alarmParams @awsCreds
+        # SHOULD PROCESS
+        if ($PSCmdlet.ShouldProcess($Name, "Create new CloudWatch Alarm")) {
+
+            # CREATE ALARM
+            Write-CWMetricAlarm @alarmParams @awsCreds
+        }
     }
 }

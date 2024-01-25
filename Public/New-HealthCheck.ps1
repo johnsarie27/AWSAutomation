@@ -30,12 +30,13 @@ function New-HealthCheck {
     .NOTES
         Name:     New-HealthCheck
         Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2022-05-26
-        - <VersionNotes> (or remove this line if no version notes)
+        Version:  0.1.1 | Last Edit: 2024-01-25
+        - 0.1.1 - (2024-01-25) Added support for ShouldProcess
+        - 0.1.0 - (2022-05-26) Initial version
         Comments: <Comment(s)>
         General notes
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Health Check name (tag)')]
         [ValidatePattern('^[\w-]+$')]
@@ -113,8 +114,12 @@ function New-HealthCheck {
             $newHcParams['HealthCheckConfig_SearchString'] = $SearchString
         }
 
-        # CREATE NEW HEALTCH CHECK
-        $newHC = New-R53HealthCheck @newHcParams @awsCreds
+        # SHOULD PROCESS
+        if ($PSCmdlet.ShouldProcess($Name, "Create new Route53 Health Check")) {
+
+            # CREATE NEW HEALTCH CHECK
+            $newHC = New-R53HealthCheck @newHcParams @awsCreds
+        }
 
         # GET EXISTING TAGS
         #Get-R53TagsForResource -ResourceId $newHC.HealthCheck.Id -ResourceType 'healthcheck' @awsCreds
