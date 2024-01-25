@@ -71,14 +71,14 @@ function Get-WindowsDisk {
             }
 
             if ($d.path -like "*PROD_PVDISK*") {
-                $BlockDeviceName = Convert-SCSITargetIdToDeviceName((Get-WmiObject -Class Win32_Diskdrive | Where-Object { $_.DeviceID -eq ("\\.\PHYSICALDRIVE" + $d.Number) }).SCSITargetId)
+                $BlockDeviceName = Convert-SCSITargetIdToDeviceName((Get-CimInstance -Class Win32_Diskdrive | Where-Object { $_.DeviceID -eq ("\\.\PHYSICALDRIVE" + $d.Number) }).SCSITargetId)
                 $BlockDeviceName = "/dev/" + $BlockDeviceName
                 $BlockDevice = $BlockDeviceMappings | Where-Object { $BlockDeviceName -like "*" + $_.DeviceName + "*" }
                 $EbsVolumeID = $BlockDevice.Ebs.VolumeId
                 $VirtualDevice = if ($VirtualDeviceMap.ContainsKey($BlockDeviceName)) { $VirtualDeviceMap[$BlockDeviceName] } else { $null }
             }
             elseif ($d.path -like "*PROD_AMAZON_EC2_NVME*") {
-                $BlockDeviceName = Get-EC2InstanceMetadata "meta-data/block-device-mapping/ephemeral$((Get-WmiObject -Class Win32_Diskdrive | Where-Object {$_.DeviceID -eq ("\\.\PHYSICALDRIVE"+$d.Number) }).SCSIPort - 2)"
+                $BlockDeviceName = Get-EC2InstanceMetadata "meta-data/block-device-mapping/ephemeral$((Get-CimInstance -Class Win32_Diskdrive | Where-Object {$_.DeviceID -eq ("\\.\PHYSICALDRIVE"+$d.Number) }).SCSIPort - 2)"
                 $BlockDevice = $null
                 $VirtualDevice = if ($VirtualDeviceMap.ContainsKey($BlockDeviceName)) { $VirtualDeviceMap[$BlockDeviceName] } else { $null }
             }
