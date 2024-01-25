@@ -82,6 +82,7 @@
         './Private/EC2.types.ps1xml'
         './Private/ELB.types.ps1xml'
         './Private/ELB2.types.ps1xml'
+        './Private/ELB2.Listener.types.ps1xml'
         './Private/Snapshot.types.ps1xml'
         './Private/SSM.types.ps1xml'
         './Private/Volume.types.ps1xml'
