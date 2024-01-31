@@ -51,7 +51,7 @@ function Get-S3Url {
         }
         else {
             # RETURN URL WITHOUT REGION
-            'https://{0}.s3.amazonaws.com/{2}' -f $BucketName, $Key
+            'https://{0}.s3.amazonaws.com/{1}' -f $BucketName, $Key
         }
     }
 }
