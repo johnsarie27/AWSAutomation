@@ -6,7 +6,7 @@ Get S3 object URL
 ## SYNTAX
 
 ```
-Get-S3Url [-BucketName] <String> [[-Region] <String>] [-Key] <String> [<CommonParameters>]
+Get-S3Url [-BucketName] <String> [-Key] <String> [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -37,21 +37,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Region
-AWS Region
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: Us-east-1
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Key
 S3 Object key
 
@@ -61,6 +46,21 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Region
+AWS Region
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: 3
 Default value: None
 Accept pipeline input: False
@@ -79,8 +79,9 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 Name:     Get-S3Url
 Author:   Justin Johns
-Version:  0.1.0 | Last Edit: 2023-11-02
-- 0.1.0 - Initial version
+Version:  0.1.1 | Last Edit: 2024-01-31
+- 0.1.1 - (2024-01-31) Fixed issue with incorrect path using region
+- 0.1.0 - (2023-11-02) Initial version
 Comments: \<Comment(s)\>
 General notes
 
