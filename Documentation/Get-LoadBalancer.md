@@ -5,14 +5,14 @@ Get Elastic Load Balancer v2
 
 ## SYNTAX
 
-### __crd (Default)
-```
-Get-LoadBalancer [-Credential] <AWSCredentials[]> [[-Region] <String>] [<CommonParameters>]
-```
-
-### __pro
+### _pro (Default)
 ```
 Get-LoadBalancer [-ProfileName] <String[]> [[-Region] <String>] [<CommonParameters>]
+```
+
+### _crd
+```
+Get-LoadBalancer [-Credential] <AWSCredentials[]> [[-Region] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -33,7 +33,7 @@ Name property of an AWS credential profile
 
 ```yaml
 Type: String[]
-Parameter Sets: __pro
+Parameter Sets: _pro
 Aliases:
 
 Required: True
@@ -48,7 +48,7 @@ AWS Credential Object
 
 ```yaml
 Type: AWSCredentials[]
-Parameter Sets: __crd
+Parameter Sets: _crd
 Aliases:
 
 Required: True

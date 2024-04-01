@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.8.4'
+    ModuleVersion     = '0.8.5'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -56,7 +56,6 @@
         #'AWS.Tools.CloudFront'
         'AWS.Tools.CloudWatch'
         'AWS.Tools.EC2'
-        'AWS.Tools.ElasticLoadBalancing'
         'AWS.Tools.ElasticLoadBalancingV2'
         'AWS.Tools.IdentityManagement'
         'AWS.Tools.KeyManagementService'
