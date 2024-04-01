@@ -56,7 +56,6 @@
         #'AWS.Tools.CloudFront'
         'AWS.Tools.CloudWatch'
         'AWS.Tools.EC2'
-        'AWS.Tools.ElasticLoadBalancing'
         'AWS.Tools.ElasticLoadBalancingV2'
         'AWS.Tools.IdentityManagement'
         'AWS.Tools.KeyManagementService'

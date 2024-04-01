@@ -20,14 +20,14 @@ function Get-LoadBalancer {
     .NOTES
         General notes
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [CmdletBinding(DefaultParameterSetName = '_pro')]
     [OutputType([Amazon.ElasticLoadBalancingV2.Model.LoadBalancer[]])]
     Param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = '_pro', HelpMessage = 'AWS Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline, ParameterSetName = '_crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
@@ -37,21 +37,24 @@ function Get-LoadBalancer {
         [System.String] $Region
     )
     Process {
-        if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
-            foreach ( $name in $ProfileName ) {
+        if ($PSCmdlet.ParameterSetName -eq '_pro') {
+            foreach ($name in $ProfileName) {
+                # GET LOAD BALANCERS
                 Get-ELB2LoadBalancer -ProfileName $name -Region $Region
-                #Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)
             }
         }
-        elseif ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
-            foreach ( $cred in $Credential ) {
+        elseif ($PSCmdlet.ParameterSetName -eq '_crd') {
+            foreach ($cred in $Credential) {
+                # GET LOAD BALANCERS
                 Get-ELB2LoadBalancer -Credential $cred -Region $Region
-                #Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)
             }
         }
         else {
+            # GET LOAD BALANCERS
             Get-ELB2LoadBalancer -Region $Region
-            #Write-Verbose -Message ('[{0}] instances found' -f $ec2Instances.Count)
         }
+
+        # OUTPUT VERBOSE
+        Write-Verbose -Message ('Elastic load balancers found [{0}]' -f $ec2Instances.Count)
     }
 }
