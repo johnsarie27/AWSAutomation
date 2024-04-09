@@ -5,9 +5,14 @@ Retrieve security group information from an AWS VPC
 
 ## SYNTAX
 
+### _prf (Default)
 ```
-Get-SecurityGroupInfo [[-ProfileName] <String>] [[-Credential] <AWSCredentials>] [[-Region] <String>]
- [-VpcId] <String> [<CommonParameters>]
+Get-SecurityGroupInfo -ProfileName <String> -Region <String> -VpcId <String> [<CommonParameters>]
+```
+
+### _crd
+```
+Get-SecurityGroupInfo -Credential <AWSCredentials> -Region <String> -VpcId <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,11 +35,11 @@ Name property of an AWS credential profile
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: _prf
 Aliases:
 
-Required: False
-Position: 1
+Required: True
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -45,11 +50,11 @@ AWS Credential Object
 
 ```yaml
 Type: AWSCredentials
-Parameter Sets: (All)
+Parameter Sets: _crd
 Aliases:
 
-Required: False
-Position: 2
+Required: True
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -63,8 +68,8 @@ Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 3
+Required: True
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -79,7 +84,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 4
+Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
