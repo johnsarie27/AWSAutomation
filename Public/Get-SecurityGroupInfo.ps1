@@ -22,25 +22,24 @@ function Get-SecurityGroupInfo {
         PS C:\> $a = Get-SecurityGroupInfo -ProfileName $P -VpcId $V
         Store all security groups from Profile $P and VPC $V in varibale $a
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '_prf')]
     Param(
-        [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_prf', HelpMessage = 'AWS Profile containing key and secret')]
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_crd', HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
-        [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS Region')]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
-        [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'VPC ID')]
-        [ValidateScript( { $_ -match 'vpc-[a-z0-9]{8}' })]
+        [Parameter(Mandatory = $true, ValueFromPipeline, HelpMessage = 'VPC ID')]
+        [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]
         [System.String] $VpcId
     )
-
     Begin {
         # SET API PARAMS
         $secGrpParams = @{
@@ -56,21 +55,20 @@ function Get-SecurityGroupInfo {
         $sgRules = [System.Collections.Generic.List[System.Object]]::new()
         $propOrder = @('GroupId', 'GroupName', 'Description', 'RuleType', 'IpProtocol', 'FromPort', 'ToPort', 'CidrIp', 'Instances')
     }
-
     Process {
         # LOOP THROUGH SECURITY GROUPS
-        foreach ( $sg in $securityGroups ) {
+        foreach ($sg in $securityGroups) {
             # GENERIC LISTS
             $sgInstances = [System.Collections.Generic.List[System.Object]]::new()
 
             # ADD EC2 INSTANCES
-            foreach ( $i in $ec2 ) {
+            foreach ($i in $ec2) {
                 $nameTag = ($i.Tags | Where-Object Key -CEQ Name).Value
-                if ( $i.SecurityGroups.GroupName -contains $sg.GroupName ) { $sgInstances.Add($nameTag) }
+                if ($i.SecurityGroups.GroupName -contains $sg.GroupName) { $sgInstances.Add($nameTag) }
             }
 
             # CREATE SECURITY GROUP INGRESS
-            foreach ( $IpPermissions in $sg.IpPermissions ) {
+            foreach ($IpPermissions in $sg.IpPermissions) {
                 $SecurityGroup = @{
                     #VpcId       = $sg.VpcId
                     GroupId     = $sg.GroupId
@@ -81,7 +79,7 @@ function Get-SecurityGroupInfo {
                     Instances   = $sgInstances -join ", "
                 }
 
-                if ( $IpPermissions.IpProtocol -ne -1 ) {
+                if ($IpPermissions.IpProtocol -ne -1) {
                     $SecurityGroup.FromPort = $IpPermissions.FromPort
                     $SecurityGroup.ToPort = $IpPermissions.ToPort
                 }
@@ -93,18 +91,19 @@ function Get-SecurityGroupInfo {
                 $SecurityGroup.CidrIp = "0.0.0.0/0"
                 } #>
                 $cidr = $null
-                if ( $IpPermissions.Ipv4Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv4Ranges.CidrIp }
-                elseif ( $IpPermissions.Ipv6Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv6Ranges.CidrIp }
-                else { $cidr = $IpPermissions.IpRanges }
+                if ($IpPermissions.Ipv4Ranges.CidrIp) { $cidr = $IpPermissions.Ipv4Ranges.CidrIp }
+                elseif ($IpPermissions.Ipv6Ranges.CidrIp) { $cidr = $IpPermissions.Ipv6Ranges.CidrIp }
+                elseif ($IpPermissions.IpRanges) { $cidr = $IpPermissions.IpRanges }
+                else { $cidr = 'self' }
 
-                if ( $cidr.GetType().BaseType.Name -eq 'Array' ) { $SecurityGroup.CidrIp = $cidr -join ", " }
+                if ($cidr.Count -GT 1) { $SecurityGroup.CidrIp = $cidr -join ", " }
                 else { $SecurityGroup.CidrIp = $cidr }
 
                 $sgRules.Add([PSCustomObject] $SecurityGroup)
             }
 
             # CREATE SECURITY GROUP EGRESS
-            foreach ( $IpPermissions in $sg.IpPermissionsEgress ) {
+            foreach ($IpPermissions in $sg.IpPermissionsEgress) {
                 $SecurityGroup = @{
                     #VpcId       = $sg.VpcId
                     GroupId     = $sg.GroupId
@@ -115,7 +114,7 @@ function Get-SecurityGroupInfo {
                     Instances   = $sgInstances -join ", "
                 }
 
-                if ( $IpPermissions.IpProtocol -ne -1 ) {
+                if ($IpPermissions.IpProtocol -ne -1) {
                     $SecurityGroup.FromPort = $IpPermissions.FromPort
                     $SecurityGroup.ToPort = $IpPermissions.ToPort
                 }
@@ -127,18 +126,18 @@ function Get-SecurityGroupInfo {
                 $SecurityGroup.CidrIp = "0.0.0.0/0"
                 } #>
                 $cidr = $null
-                if ( $IpPermissions.Ipv4Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv4Ranges.CidrIp }
-                elseif ( $IpPermissions.Ipv6Ranges.CidrIp ) { $cidr = $IpPermissions.Ipv6Ranges.CidrIp }
-                else { $cidr = $IpPermissions.IpRanges }
+                if ($IpPermissions.Ipv4Ranges.CidrIp) { $cidr = $IpPermissions.Ipv4Ranges.CidrIp }
+                elseif ($IpPermissions.Ipv6Ranges.CidrIp) { $cidr = $IpPermissions.Ipv6Ranges.CidrIp }
+                elseif ($IpPermissions.IpRanges) { $cidr = $IpPermissions.IpRanges }
+                else { $cidr = 'self' }
 
-                if ( $cidr.GetType().BaseType.Name -eq 'Array' ) { $SecurityGroup.CidrIp = $cidr -join ", " }
+                if ($cidr.Count -GT 1) { $SecurityGroup.CidrIp = $cidr -join ", " }
                 else { $SecurityGroup.CidrIp = $cidr }
 
                 $sgRules.Add([PSCustomObject] $SecurityGroup)
             }
         }
     }
-
     End {
         # RETURN DATA
         $sgRules | Select-Object -Property $propOrder
