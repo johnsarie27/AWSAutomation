@@ -30,7 +30,7 @@ function Invoke-SSMRunCommand {
     .NOTES
         Name:     Invoke-SSMRunCommand
         Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2024-04-12
+        Version:  0.1.1 | Last Edit: 2024-04-12
         Comments: <Comment(s)>
     #>
     [CmdletBinding()]
