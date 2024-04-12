@@ -123,7 +123,6 @@
         'Get-SSMInstance'
         'Get-SSMNonCompliance'
         'Get-WindowsDisk'
-        'Invoke-CertificateImport'
         'Invoke-SSMRunCommand'
         'New-CWRecoveryAlarm'
         'New-HealthCheck'
