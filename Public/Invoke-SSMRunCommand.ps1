@@ -105,11 +105,14 @@ function Invoke-SSMRunCommand {
         # CHECK FOR NOTIFICATION
         if ($PSBoundParameters.ContainsKey('TopicARN')) {
             # ADD NOTIFICATION CONFIGS
-            $cmdParams['ServiceRoleArn'] = 'arn:aws:iam:{0}:role/{1}' -f $accountId, $RoleName
+            $cmdParams['ServiceRoleArn'] = 'arn:aws:iam::{0}:role/{1}' -f $accountId, $RoleName
             $cmdParams['NotificationConfig_NotificationArn'] = $TopicARN
             $cmdParams['NotificationConfig_NotificationEvent'] = 'Success', 'Failed' # 'InProgress', 'Success', 'TimedOut', 'Cancelled', 'Failed'
             $cmdParams['NotificationConfig_NotificationType'] = 'Command' # 'Invocation'
         }
+
+        # OUTPUT VERBOSE
+        Write-Verbose -Message ('Role ARN [{0}]' -f $cmdParams.ServiceRoleArn)
     }
     Process {
         # EXECUTE SSM RUN COMMAND AND RETURN OBJECT
