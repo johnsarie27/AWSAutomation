@@ -1,0 +1,118 @@
+function Invoke-SSMRunCommand {
+    <#
+    .SYNOPSIS
+        Send SNS run command
+    .DESCRIPTION
+        Send SNS run command with some pre-established values
+    .PARAMETER Command
+        Command to execute in PowerShell
+    .PARAMETER Comment
+        SSM command comment
+    .PARAMETER ComputerName
+        Computer name to run command on
+    .PARAMETER TimeoutSeconds
+        Timeout in seconds
+    .PARAMETER TopicARN
+        SNS Topic ARN for notification
+    .PARAMETER RoleName
+        SNS service role name
+    .PARAMETER ProfileName
+        AWS Profile
+    .PARAMETER Region
+        AWS Region
+    .INPUTS
+        None.
+    .OUTPUTS
+        System.Object.
+    .EXAMPLE
+        PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -ComputerName MyComputer @commonParams
+        Runs the command "Get-Service" on MyComputer
+    .NOTES
+        Name:     Invoke-SSMRunCommand
+        Author:   Justin Johns
+        Version:  0.1.0 | Last Edit: 2024-04-12
+        Comments: <Comment(s)>
+    #>
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true, HelpMessage = 'Command to execute in PowerShell')]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.ScriptBlock] $Command,
+
+        [Parameter(Mandatory = $false, HelpMessage = 'SSM command comment')]
+        [ValidateNotNullOrEmpty()]
+        [System.String] $Comment,
+
+        [Parameter(Mandatory = $true, HelpMessage = 'Computer name to run command on')]
+        [ValidateNotNullOrEmpty()]
+        [System.String[]] $ComputerName,
+
+        [Parameter(Mandatory = $false, HelpMessage = 'Timeout in seconds')]
+        [ValidateRange(3600, 172800)]
+        [System.Int32] $TimeoutSeconds = 3600,
+
+        [Parameter(Mandatory = $false, HelpMessage = 'SNS Topic ARN for notification')]
+        [ValidatePattern('^arn:aws:sns:us-(?:east|west)-[1-2]:\d{12}:[\w-]+$')]
+        [System.String] $TopicARN, # 'arn:aws:sns:{0}:{1}:InfrastructureAlerts' -f $Region, $parentAccountId
+
+        [Parameter(Mandatory = $false, HelpMessage = 'SNS service role ARN')]
+        #[ValidatePattern('^arn:aws:iam:\d{12}:role/[\w-]+$')]
+        [ValidatePattern('^[\w-]+$')]
+        [System.String] $RoleName,
+
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS Profile')]
+        [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
+        [System.String] $ProfileName,
+
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
+        [ValidateNotNullOrEmpty()]
+        [System.String] $Region
+    )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
+        # VALIDATE NOTIFICATION PARAMETERS
+        if ($PSBoundParameters.ContainsKey('TopicARN') -and -Not ($PSBoundParameters.ContainsKey('RoleName'))) {
+            # ERROR AND TERMINATE
+            Write-Error -Message ('Both TopicARN and RoleName must be provided to enable notifications') -ErrorAction Stop
+        }
+        if ($PSBoundParameters.ContainsKey('RoleName') -and -Not ($PSBoundParameters.ContainsKey('TopicARN'))) {
+            # ERROR AND TERMINATE
+            Write-Error -Message ('Both TopicARN and RoleName must be provided to enable notifications') -ErrorAction Stop
+        }
+
+        # SET PARENT ACCOUNT ID
+        #$parentAccountId = if ($ProfileName -match '^soc2') { '099209493614' } else { '691675645364' }
+
+        # SET ACCOUNT ID
+        $accountId = (Get-STSCallerIdentity -ProfileName $ProfileName -Region $Region).Account
+
+        # SET COMMAND HASH
+        $cmdParams = @{
+            #TimeoutSeconds = 3600 # 3600 seconds = 1 hour # DELIVERY TIMEOUT
+            DocumentName = 'AWS-RunPowerShellScript'
+            Target       = @{ Key = 'tag:Name'; Values = $ComputerName }
+            Comment      = $Comment
+            Parameter    = @{
+                commands         = $Command.ToString()
+                executionTimeout = $TimeoutSeconds.ToString()
+            }
+            ProfileName  = $ProfileName
+            Region       = $Region
+        }
+
+        # CHECK FOR NOTIFICATION
+        if ($PSBoundParameters.ContainsKey('TopicARN')) {
+            # ADD NOTIFICATION CONFIGS
+            $cmdParams['ServiceRoleArn'] = 'arn:aws:iam:{0}:role/{1}' -f $accountId, $RoleName
+            $cmdParams['NotificationConfig_NotificationArn'] = $TopicARN
+            $cmdParams['NotificationConfig_NotificationEvent'] = 'Success', 'Failed' # 'InProgress', 'Success', 'TimedOut', 'Cancelled', 'Failed'
+            $cmdParams['NotificationConfig_NotificationType'] = 'Command' # 'Invocation'
+        }
+    }
+    Process {
+        # EXECUTE SSM RUN COMMAND AND RETURN OBJECT
+        Send-SSMCommand @cmdParams
+    }
+}
