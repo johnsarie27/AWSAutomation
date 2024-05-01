@@ -6,9 +6,9 @@ Send SNS run command
 ## SYNTAX
 
 ```
-Invoke-SSMRunCommand [-Command] <ScriptBlock> [[-Comment] <String>] [-ComputerName] <String[]>
- [[-TimeoutSeconds] <Int32>] [[-TopicARN] <String>] [[-RoleName] <String>] [-ProfileName] <String>
- [-Region] <String> [<CommonParameters>]
+Invoke-SSMRunCommand [-Command] <ScriptBlock> [[-Comment] <String>] [[-ComputerName] <String[]>]
+ [[-Tag] <Target>] [[-TimeoutSeconds] <Int32>] [[-TopicARN] <String>] [[-RoleName] <String>]
+ [-ProfileName] <String> [-Region] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -19,7 +19,13 @@ Send SNS run command with some pre-established values
 ### EXAMPLE 1
 ```
 Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -ComputerName MyComputer @commonParams
-Runs the command "Get-Service" on MyComputer
+Runs the command "Get-Service" on system with name tag MyComputer
+```
+
+### EXAMPLE 2
+```
+Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Env';Values='Production'} @commonParams
+Runs the command "Get-Service" on all systems with the 'Production' tag assigned
 ```
 
 ## PARAMETERS
@@ -62,8 +68,23 @@ Type: String[]
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Tag
+Instance name tag
+
+```yaml
+Type: Target
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -78,7 +99,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 5
 Default value: 3600
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -93,7 +114,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -108,7 +129,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -123,7 +144,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 7
+Position: 8
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -138,7 +159,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 8
+Position: 9
 Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
@@ -156,7 +177,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 Name:     Invoke-SSMRunCommand
 Author:   Justin Johns
-Version:  0.1.0 | Last Edit: 2024-04-12
+Version:  0.1.2 | Last Edit: 2024-05-01
 Comments: \<Comment(s)\>
 
 ## RELATED LINKS

@@ -10,6 +10,8 @@ function Invoke-SSMRunCommand {
         SSM command comment
     .PARAMETER ComputerName
         Computer name to run command on
+    .PARAMETER Tag
+        Instance name tag
     .PARAMETER TimeoutSeconds
         Timeout in seconds
     .PARAMETER TopicARN
@@ -26,11 +28,14 @@ function Invoke-SSMRunCommand {
         System.Object.
     .EXAMPLE
         PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -ComputerName MyComputer @commonParams
-        Runs the command "Get-Service" on MyComputer
+        Runs the command "Get-Service" on system with name tag MyComputer
+    .EXAMPLE
+        PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Env';Values='Production'} @commonParams
+        Runs the command "Get-Service" on all systems with the 'Production' tag assigned
     .NOTES
         Name:     Invoke-SSMRunCommand
         Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-04-12
+        Version:  0.1.2 | Last Edit: 2024-05-01
         Comments: <Comment(s)>
     #>
     [CmdletBinding()]
@@ -43,9 +48,14 @@ function Invoke-SSMRunCommand {
         [ValidateNotNullOrEmpty()]
         [System.String] $Comment,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'Computer name to run command on')]
+        [Parameter(Mandatory = $false, HelpMessage = 'Instance name tag to run command on')]
         [ValidateNotNullOrEmpty()]
         [System.String[]] $ComputerName,
+
+        [Parameter(Mandatory = $false, HelpMessage = 'Instance tag (key and values) to run command on')]
+        [ValidateNotNullOrEmpty()]
+        #[System.Collections.Hashtable] $Tag,
+        [Amazon.SimpleSystemsManagement.Model.Target] $Tag,
 
         [Parameter(Mandatory = $false, HelpMessage = 'Timeout in seconds')]
         [ValidateRange(3600, 172800)]
@@ -82,8 +92,19 @@ function Invoke-SSMRunCommand {
             Write-Error -Message ('Both TopicARN and RoleName must be provided to enable notifications') -ErrorAction Stop
         }
 
-        # SET PARENT ACCOUNT ID
-        #$parentAccountId = if ($ProfileName -match '^soc2') { '099209493614' } else { '691675645364' }
+        # VALIDATE AND SET TARGET
+        if ($PSBoundParameters.ContainsKey('ComputerName')) {
+            # SET NAME TAG
+            $target = @{ Key = 'tag:Name'; Values = $ComputerName }
+        }
+        elseif ($PSBoundParameters.ContainsKey('Tag')) {
+            # SET OTHER TAG
+            $target = @{ Key = ('tag:{0}' -f $Tag.Key); Values = $Tag.Values }
+        }
+        else {
+            # ERROR AND TERMINATE
+            Write-Error -Message ('Command must include either "ComputerName" or "Tag" parameter') -ErrorAction Stop
+        }
 
         # SET ACCOUNT ID
         $accountId = (Get-STSCallerIdentity -ProfileName $ProfileName -Region $Region).Account
@@ -92,7 +113,7 @@ function Invoke-SSMRunCommand {
         $cmdParams = @{
             #TimeoutSeconds = 3600 # 3600 seconds = 1 hour # DELIVERY TIMEOUT
             DocumentName = 'AWS-RunPowerShellScript'
-            Target       = @{ Key = 'tag:Name'; Values = $ComputerName }
+            Target       = $target
             Comment      = $Comment
             Parameter    = @{
                 commands         = $Command.ToString()
