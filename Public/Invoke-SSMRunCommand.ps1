@@ -11,7 +11,7 @@ function Invoke-SSMRunCommand {
     .PARAMETER ComputerName
         Computer name to run command on
     .PARAMETER Tag
-        Instance tag
+        Instance name tag
     .PARAMETER TimeoutSeconds
         Timeout in seconds
     .PARAMETER TopicARN
@@ -28,11 +28,14 @@ function Invoke-SSMRunCommand {
         System.Object.
     .EXAMPLE
         PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -ComputerName MyComputer @commonParams
-        Runs the command "Get-Service" on MyComputer
+        Runs the command "Get-Service" on system with name tag MyComputer
+    .EXAMPLE
+        PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Env';Values='Production'} @commonParams
+        Runs the command "Get-Service" on all systems with the 'Production' tag assigned
     .NOTES
         Name:     Invoke-SSMRunCommand
         Author:   Justin Johns
-        Version:  0.1.2 | Last Edit: 2024-04-29
+        Version:  0.1.2 | Last Edit: 2024-05-01
         Comments: <Comment(s)>
     #>
     [CmdletBinding()]
@@ -49,9 +52,10 @@ function Invoke-SSMRunCommand {
         [ValidateNotNullOrEmpty()]
         [System.String[]] $ComputerName,
 
-        [Parameter(Mandatory = $false, HelpMessage = 'Instance tag (key and value) to run command on')]
+        [Parameter(Mandatory = $false, HelpMessage = 'Instance tag (key and values) to run command on')]
         [ValidateNotNullOrEmpty()]
-        [System.Collections.Hashtable] $Tag, # USE TAG TYPE
+        #[System.Collections.Hashtable] $Tag,
+        [Amazon.SimpleSystemsManagement.Model.Target] $Tag,
 
         [Parameter(Mandatory = $false, HelpMessage = 'Timeout in seconds')]
         [ValidateRange(3600, 172800)]
@@ -95,7 +99,7 @@ function Invoke-SSMRunCommand {
         }
         elseif ($PSBoundParameters.ContainsKey('Tag')) {
             # SET OTHER TAG
-            $target = @{ Key = ('tag:{0}' -f $Tag['Name']); Values = $Tag['Value'] }
+            $target = @{ Key = ('tag:{0}' -f $Tag.Key); Values = $Tag.Values }
         }
         else {
             # ERROR AND TERMINATE
