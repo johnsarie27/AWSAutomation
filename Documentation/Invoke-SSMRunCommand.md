@@ -6,9 +6,9 @@ Send SNS run command
 ## SYNTAX
 
 ```
-Invoke-SSMRunCommand [-Command] <ScriptBlock> [[-Comment] <String>] [[-ComputerName] <String[]>]
- [[-Tag] <Target>] [[-TimeoutSeconds] <Int32>] [[-TopicARN] <String>] [[-RoleName] <String>]
- [-ProfileName] <String> [-Region] <String> [<CommonParameters>]
+Invoke-SSMRunCommand [-Command] <ScriptBlock> [[-Comment] <String>] [[-Tag] <Target>]
+ [[-TimeoutSeconds] <Int32>] [[-TopicARN] <String>] [[-RoleName] <String>] [-ProfileName] <String>
+ [-Region] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -18,7 +18,7 @@ Send SNS run command with some pre-established values
 
 ### EXAMPLE 1
 ```
-Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -ComputerName MyComputer @commonParams
+Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Name';Values='MyComputer'} @commonParams
 Runs the command "Get-Service" on system with name tag MyComputer
 ```
 
@@ -60,21 +60,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ComputerName
-Computer name to run command on
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Tag
 Instance name tag
 
@@ -84,7 +69,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -99,7 +84,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: 3600
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -114,7 +99,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -129,7 +114,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -144,7 +129,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 8
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -159,7 +144,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 9
+Position: 8
 Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
