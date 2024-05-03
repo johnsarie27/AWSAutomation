@@ -8,8 +8,6 @@ function Invoke-SSMRunCommand {
         Command to execute in PowerShell
     .PARAMETER Comment
         SSM command comment
-    .PARAMETER ComputerName
-        Computer name to run command on
     .PARAMETER Tag
         Instance name tag
     .PARAMETER TimeoutSeconds
@@ -27,7 +25,7 @@ function Invoke-SSMRunCommand {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -ComputerName MyComputer @commonParams
+        PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Name';Values='MyComputer'} @commonParams
         Runs the command "Get-Service" on system with name tag MyComputer
     .EXAMPLE
         PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Env';Values='Production'} @commonParams
@@ -47,10 +45,6 @@ function Invoke-SSMRunCommand {
         [Parameter(Mandatory = $false, HelpMessage = 'SSM command comment')]
         [ValidateNotNullOrEmpty()]
         [System.String] $Comment,
-
-        [Parameter(Mandatory = $false, HelpMessage = 'Instance name tag to run command on')]
-        [ValidateNotNullOrEmpty()]
-        [System.String[]] $ComputerName,
 
         [Parameter(Mandatory = $false, HelpMessage = 'Instance tag (key and values) to run command on')]
         [ValidateNotNullOrEmpty()]
@@ -92,20 +86,6 @@ function Invoke-SSMRunCommand {
             Write-Error -Message ('Both TopicARN and RoleName must be provided to enable notifications') -ErrorAction Stop
         }
 
-        # VALIDATE AND SET TARGET
-        if ($PSBoundParameters.ContainsKey('ComputerName')) {
-            # SET NAME TAG
-            $target = @{ Key = 'tag:Name'; Values = $ComputerName }
-        }
-        elseif ($PSBoundParameters.ContainsKey('Tag')) {
-            # SET OTHER TAG
-            $target = @{ Key = ('tag:{0}' -f $Tag.Key); Values = $Tag.Values }
-        }
-        else {
-            # ERROR AND TERMINATE
-            Write-Error -Message ('Command must include either "ComputerName" or "Tag" parameter') -ErrorAction Stop
-        }
-
         # SET ACCOUNT ID
         $accountId = (Get-STSCallerIdentity -ProfileName $ProfileName -Region $Region).Account
 
@@ -113,7 +93,7 @@ function Invoke-SSMRunCommand {
         $cmdParams = @{
             #TimeoutSeconds = 3600 # 3600 seconds = 1 hour # DELIVERY TIMEOUT
             DocumentName = 'AWS-RunPowerShellScript'
-            Target       = $target
+            Target       = @{ Key = ('tag:{0}' -f $Tag.Key); Values = $Tag.Values }
             Comment      = $Comment
             Parameter    = @{
                 commands         = $Command.ToString()
