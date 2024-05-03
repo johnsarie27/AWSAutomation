@@ -46,7 +46,7 @@ function Invoke-SSMRunCommand {
         [ValidateNotNullOrEmpty()]
         [System.String] $Comment,
 
-        [Parameter(Mandatory = $false, HelpMessage = 'Instance tag (key and values) to run command on')]
+        [Parameter(Mandatory = $true, HelpMessage = 'Instance tag (key and values) to run command on')]
         [ValidateNotNullOrEmpty()]
         #[System.Collections.Hashtable] $Tag,
         [Amazon.SimpleSystemsManagement.Model.Target] $Tag,
