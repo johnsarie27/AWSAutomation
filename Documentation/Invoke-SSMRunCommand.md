@@ -6,9 +6,8 @@ Send SNS run command
 ## SYNTAX
 
 ```
-Invoke-SSMRunCommand [-Command] <ScriptBlock> [[-Comment] <String>] [[-Tag] <Target>]
- [[-TimeoutSeconds] <Int32>] [[-TopicARN] <String>] [[-RoleName] <String>] [-ProfileName] <String>
- [-Region] <String> [<CommonParameters>]
+Invoke-SSMRunCommand [-Command] <ScriptBlock> [[-Comment] <String>] [-Tag] <Target> [[-TimeoutSeconds] <Int32>]
+ [[-TopicARN] <String>] [[-RoleName] <String>] [-ProfileName] <String> [-Region] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -68,7 +67,7 @@ Type: Target
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 3
 Default value: None
 Accept pipeline input: False

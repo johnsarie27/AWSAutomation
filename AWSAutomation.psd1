@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.8.11'
+    ModuleVersion     = '0.8.12'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -76,6 +76,7 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
+        './Private/AwsSecurityFinding.types.ps1xml'
         './Private/CertificateDetail.types.ps1xml'
         './Private/CertificateSummary.types.ps1xml'
         './Private/EBS.types.ps1xml'
