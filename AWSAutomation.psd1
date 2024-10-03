@@ -76,6 +76,7 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
+        './Private/AwsSecurityFinding.types.ps1xml'
         './Private/CertificateDetail.types.ps1xml'
         './Private/CertificateSummary.types.ps1xml'
         './Private/EBS.types.ps1xml'
