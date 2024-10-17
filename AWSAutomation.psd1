@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.8.12'
+    ModuleVersion     = '0.8.13'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -80,7 +80,8 @@
         './Private/CertificateDetail.types.ps1xml'
         './Private/CertificateSummary.types.ps1xml'
         './Private/EBS.types.ps1xml'
-        './Private/EC2.types.ps1xml'
+        './Private/EC2.Image.types.ps1xml'
+        './Private/EC2.Instance.types.ps1xml'
         './Private/ELB.types.ps1xml'
         './Private/ELB2.types.ps1xml'
         './Private/ELB2.Listener.types.ps1xml'
@@ -113,6 +114,7 @@
         'Get-CertificateReport'
         'Get-IAMReport'
         'Get-Instance'
+        'Get-LatestImage'
         'Get-LoadBalancer'
         'Get-NetworkInfo'
         'Get-PatchInfo'
