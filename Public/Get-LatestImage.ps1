@@ -18,8 +18,7 @@ function Get-LatestImage {
         System.Object.
     .EXAMPLE
         PS C:\> Get-LatestImage @commonParams -NameTag 'MyInstance' -BackupDays 3
-        Returns the latest image(s) for the instance 'MyInstance' from 3 days ago,
-        not from the last 3 days.
+        Returns the latest image(s) for the instance 'MyInstance' from the last 3 days
     .NOTES
         Name:     Get-LatestImage
         Author:   Justin Johns
@@ -52,17 +51,26 @@ function Get-LatestImage {
         # SET CREDENTIALS
         $creds = @{ ProfileName = 'esripsfedramp'; Region = 'us-east-1' }
 
-        # SET INSTANCE NAME
-        $restoreDate = (Get-Date).AddDays(-$BackupDays)
-
         # OUTPUT VERBOSE
-        Write-Verbose -Message ('Getting image(s) for instance [{0}] from [{1:yyyy-MM-dd}*]' -f $NameTag, $restoreDate)
+        Write-Verbose -Message ('Getting image(s) for instance [{0}] from:' -f $NameTag)
     }
     Process {
+        # SET DATE VALUES ARRAY
+        $dateVals = @()
+
+        # LOOP THROUGH EACH DAY TILL TODAY
+        for ($i = $BackupDays; $i -gt -1; $i--) {
+            # OUTPUT VERBOSE
+            Write-Verbose -Message ('{0:yyyy-MM-dd}*' -f (Get-Date).AddDays(-$i))
+
+            # ADD DATE TO ARRAY
+            $dateVals += ('{0:yyyy-MM-dd}*' -f (Get-Date).AddDays(-$i))
+        }
+
         # SET FILTERS FOR AMI SEARCH
         $filters = @(
             @{ Name = 'tag:Name'; Values = $NameTag }
-            @{ Name = 'creation-date'; Values = ('{0:yyyy-MM-dd}*' -f $restoreDate) }
+            @{ Name = 'creation-date'; Values = $dateVals }
         )
 
         # GET IMAGES FROM YESTERDAY
