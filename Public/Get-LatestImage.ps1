@@ -49,7 +49,7 @@ function Get-LatestImage {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
         # SET CREDENTIALS
-        $creds = @{ ProfileName = 'esripsfedramp'; Region = 'us-east-1' }
+        $creds = @{ ProfileName = $ProfileName; Region = $Region }
 
         # OUTPUT VERBOSE
         Write-Verbose -Message ('Getting image(s) for instance [{0}] from:' -f $NameTag)
