@@ -13,10 +13,10 @@ function Get-AwsServiceReference {
     .EXAMPLE
         PS C:\> Get-AwsServiceReference
         Returns list of all AWS Services and their reference URLs.
-
+    .EXAMPLE
         PS C:\> Get-AwsServiceReference -ServiceName 'ssm'
         Returns the reference information for the AWS Systems Manager (SSM) service.
-
+    .EXAMPLE
         PS C:\> Get-AwsServiceReference -ServiceName 'ssm','s3'
         Returns the reference information for the AWS Systems Manager (SSM) and Amazon Simple Storage Service (S3) services.
     .NOTES

@@ -20,11 +20,17 @@ Get-AwsServiceReference
 Returns list of all AWS Services and their reference URLs.
 ```
 
-PS C:\\\> Get-AwsServiceReference -ServiceName 'ssm'
+### EXAMPLE 2
+```
+Get-AwsServiceReference -ServiceName 'ssm'
 Returns the reference information for the AWS Systems Manager (SSM) service.
+```
 
-PS C:\\\> Get-AwsServiceReference -ServiceName 'ssm','s3'
+### EXAMPLE 3
+```
+Get-AwsServiceReference -ServiceName 'ssm','s3'
 Returns the reference information for the AWS Systems Manager (SSM) and Amazon Simple Storage Service (S3) services.
+```
 
 ## PARAMETERS
 
