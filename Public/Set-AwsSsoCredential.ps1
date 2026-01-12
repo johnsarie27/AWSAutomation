@@ -79,7 +79,10 @@ function Set-AwsSsoCredential {
 
                 # START DEVICE AUTH
                 $Device = $Client | Start-SSOOIDCDeviceAuthorization -StartUrl $StartUrl -Region $Region @PsuedoCreds
-                Write-Output 'A Browser window should open. Please login there and click ALLOW.'
+                Write-Output 'A browser window should open.'
+                Write-Output 'Please login there and verify this code matches the one displayed in your browser.'
+                Write-Output 'Then click "Confirm and continue".'
+                Write-Output "Verification Code: $($Device.UserCode)"
 
                 # OPEN DEFAULT BROWSER WITH URL POINTING TO IDENTITY CENTER WITH VERIFICATION CODE ALREADY SUPPLIED
                 Start-Process $Device.VerificationUriComplete
