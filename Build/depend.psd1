@@ -15,10 +15,9 @@
     # PowerShellGet     = '2.0.1'
 
     # Common modules
-    BuildHelpers                        = '2.0.16'
-    Pester                              = '5.6.1'
+    Pester                              = '5.1.1'
     PlatyPS                             = '0.14.2'
-    psake                               = '4.9.0'
+    psake                               = '4.9.1'
     #PSDeploy         = '1.0.5'
     PSScriptAnalyzer                    = '1.24.0'
     # REQUIRED FOR THIS SPECIFIC MODULE
