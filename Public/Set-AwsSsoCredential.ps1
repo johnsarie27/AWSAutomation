@@ -79,7 +79,10 @@ function Set-AwsSsoCredential {
 
                 # START DEVICE AUTH
                 $Device = $Client | Start-SSOOIDCDeviceAuthorization -StartUrl $StartUrl -Region $Region @PsuedoCreds
-                Write-Output 'A Browser window should open. Please login there and click ALLOW.'
+                Write-Output -InputObject 'A browser window should open.'
+                Write-Output -InputObject 'Please login there and verify this code matches the one displayed in your browser.'
+                Write-Output -InputObject 'Then click "Confirm and continue".'
+                Write-Output -InputObject "Verification Code: $($Device.UserCode)"
 
                 # OPEN DEFAULT BROWSER WITH URL POINTING TO IDENTITY CENTER WITH VERIFICATION CODE ALREADY SUPPLIED
                 Start-Process $Device.VerificationUriComplete
@@ -106,7 +109,7 @@ function Set-AwsSsoCredential {
 
                 # IF EXISTING ACCOUNT LEVEL CREDS ARE EXPIRED, RENEW THEM OR SKIP IF ALREADY SETUP
                 if (([DateTimeOffset]::FromUnixTimeSeconds($IdentityCenterAccounts[$i].CredsExpiration / 1000)).DateTime -lt (Get-Date).ToUniversalTime()) {
-                    Write-Output "Registering profile: $($IdentityCenterAccounts[$i].Profile)"
+                    Write-Output -InputObject "Registering profile: $($IdentityCenterAccounts[$i].Profile)"
 
                     # GET NEW SHORT LIVED ACCOUNT CREDS USING TOKEN FROM IDENTITY CENTER
                     $TempCreds = $IdentityCenterToken | Get-SSORoleCredential -AccountId $IdentityCenterAccounts[$i].AccountId -RoleName $IdentityCenterAccounts[$i].RoleName -Region $Region @PsuedoCreds
@@ -127,7 +130,7 @@ function Set-AwsSsoCredential {
             $CredsTime = $IdentityCenterTokenExpiration - (Get-Date)
             Set-Variable -Name "$($IdentityCenterName)_identity_center_accounts" -Value $IdentityCenterAccounts.Clone() -Scope Global
 
-            Write-Output "`r$($IdentityCenterAccounts.Count) Profiles registered, $(('{0:D2}:{1:D2}:{2:D2} left on Identity Center token' -f $CredsTime.Hours, $CredsTime.Minutes, $CredsTime.Seconds).TrimStart('0 :'))"
+            Write-Output -InputObject "`r$($IdentityCenterAccounts.Count) Profiles registered, $(('{0:D2}:{1:D2}:{2:D2} left on Identity Center token' -f $CredsTime.Hours, $CredsTime.Minutes, $CredsTime.Seconds).TrimStart('0 :'))"
         }
         catch {
             Write-Error "Ran into an issue: Line $($_.InvocationInfo.ScriptLineNumber) returned '$($_.Exception.Message)'"
