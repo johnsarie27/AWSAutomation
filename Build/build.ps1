@@ -57,7 +57,7 @@ if ($PSBoundParameters.Keys -contains 'ResolveDependency') {
     $PSBoundParameters.Remove('ResolveDependency')
 }
 else {
-    Write-Output "Skipping dependency check...`n" -ForegroundColor 'Yellow'
+    Write-Output -InputObject "Skipping dependency check...`n"
 }
 
 # Init BuildHelpers

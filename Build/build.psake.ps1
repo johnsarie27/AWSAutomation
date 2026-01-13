@@ -227,7 +227,7 @@ Task 'CreateBuildArtifact' -depends 'Init' {
     try {
         $releaseFilename = "$($env:BHProjectName)-v$($manifestVersion.ToString()).zip"
         $releasePath = Join-Path -Path $ArtifactFolder -ChildPath $releaseFilename
-        Write-Output -InputObject "Creating release artifact [$releasePath] using manifest version [$manifestVersion]" -ForegroundColor 'Yellow'
+        Write-Output -InputObject "Creating release artifact [$releasePath] using manifest version [$manifestVersion]"
         Compress-Archive -Path "$StagingFolder/*" -DestinationPath $releasePath -Force -Verbose -ErrorAction 'Stop'
     }
     catch {
