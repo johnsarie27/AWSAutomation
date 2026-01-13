@@ -96,7 +96,7 @@ Task 'CombineFunctionsAndStage' -depends 'Setup' {
 # Import new module
 Task 'ImportStagingModule' -depends 'Init', 'CombineFunctionsAndStage' {
     $lines
-    Write-Output "Reloading staged module from path: [$StagingModulePath]`n"
+    Write-Output -InputObject "Reloading staged module from path: [$StagingModulePath]`n"
 
     # Reload module
     if (Get-Module -Name $env:BHProjectName) {
@@ -109,7 +109,7 @@ Task 'ImportStagingModule' -depends 'Init', 'CombineFunctionsAndStage' {
 # Run PSScriptAnalyzer against code to ensure quality and best practices are used
 Task 'Analyze' -depends 'ImportStagingModule' {
     $lines
-    Write-Output "Running PSScriptAnalyzer on path: [$StagingModulePath]`n"
+    Write-Output -InputObject "Running PSScriptAnalyzer on path: [$StagingModulePath]`n"
 
     $Results = Invoke-ScriptAnalyzer -Path $StagingModulePath -Recurse -Settings $ScriptAnalyzerSettingsPath -Verbose:$VerbosePreference
     $Results | Select-Object 'RuleName', 'Severity', 'ScriptName', 'Line', 'Message' | Format-List
@@ -166,7 +166,7 @@ Task 'Test' -depends 'ImportStagingModule' {
 # Create new Documentation markdown files from comment-based help
 Task 'UpdateDocumentation' -depends 'ImportStagingModule' {
     $lines
-    Write-Output "Updating Markdown help in Staging folder: [$DocumentationPath]`n"
+    Write-Output -InputObject "Updating Markdown help in Staging folder: [$DocumentationPath]`n"
 
     # $null = Import-Module -Name $env:BHPSModuleManifest -Global -Force -PassThru -Verbose
 
@@ -184,7 +184,7 @@ Task 'UpdateDocumentation' -depends 'ImportStagingModule' {
     New-MarkdownHelp @platyPSParams -ErrorAction 'SilentlyContinue' -Verbose | Out-Null
 
     # Update index.md
-    Write-Output "Copying index.md...`n"
+    Write-Output -InputObject "Copying index.md...`n"
     Copy-Item -Path "$env:BHProjectPath\README.md" -Destination "$($DocumentationPath)\index.md" -Force -Verbose | Out-Null
 
 }
@@ -194,7 +194,7 @@ Task 'CopyDocumentation' -depends 'UpdateDocumentation' {
     $lines
 
     $ProductionDocumentatonPath = Join-Path -Path $ProjectRoot -ChildPath 'Documentation'
-    Write-Output "Copying Markdown help from Staging folder [$DocumentationPath] to Production folder [$ProductionDocumentatonPath]`n"
+    Write-Output -InputObject "Copying Markdown help from Staging folder [$DocumentationPath] to Production folder [$ProductionDocumentatonPath]`n"
 
     # cleanup
     Remove-Item -Path $ProductionDocumentatonPath -Recurse -Force -ErrorAction 'SilentlyContinue'
@@ -227,21 +227,21 @@ Task 'CreateBuildArtifact' -depends 'Init' {
     try {
         $releaseFilename = "$($env:BHProjectName)-v$($manifestVersion.ToString()).zip"
         $releasePath = Join-Path -Path $ArtifactFolder -ChildPath $releaseFilename
-        Write-Output "Creating release artifact [$releasePath] using manifest version [$manifestVersion]" -ForegroundColor 'Yellow'
+        Write-Output -InputObject "Creating release artifact [$releasePath] using manifest version [$manifestVersion]" -ForegroundColor 'Yellow'
         Compress-Archive -Path "$StagingFolder/*" -DestinationPath $releasePath -Force -Verbose -ErrorAction 'Stop'
     }
     catch {
         throw "Could not create release artifact [$releasePath] using manifest version [$manifestVersion]"
     }
 
-    Write-Output "`nFINISHED: Release artifact creation."
+    Write-Output -InputObject "`nFINISHED: Release artifact creation."
 }
 
 # cleanup dirs and files when finished
 Task 'Cleanup' {
     $lines
 
-    Write-Output 'Cleaning leftover/unneeded artifacts'
+    Write-Output -InputObject 'Cleaning leftover/unneeded artifacts'
 
     # cleanup
     Remove-Item -Path $ArtifactFolder -Recurse -Force -ErrorAction 'SilentlyContinue'
