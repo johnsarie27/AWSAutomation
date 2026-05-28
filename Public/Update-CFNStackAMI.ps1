@@ -83,7 +83,7 @@ function Update-CFNStackAMI {
                 $template.Mappings.RegionMap.$Region.Baseline = $ami.ImageId
             }
             else {
-                Throw ('Region: {0} not found in template' -f $Region)
+                Write-Error -Message ('Region: {0} not found in template' -f $Region) -ErrorAction Stop
             }
 
             # SAVE FILE

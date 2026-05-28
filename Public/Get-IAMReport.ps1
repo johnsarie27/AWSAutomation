@@ -67,7 +67,7 @@ function Get-IAMReport {
                 Write-Verbose -Message ('Report contains [{0}] records' -f $IAMReport.Count)
             }
             else {
-                Throw 'Failed to retrieve report from AWS. Check report status in AWS console'
+                Write-Error -Message 'Failed to retrieve report from AWS. Check report status in AWS console' -ErrorAction Stop
             }
         }
     }

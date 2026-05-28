@@ -83,7 +83,7 @@ function New-HealthCheck {
 
         # VALIDATE SEARCH STRING
         if ($Type -EQ 'HTTPS_STR_MATCH' -AND -NOT $PSBoundParameters.ContainsKey('SearchString')) {
-            Throw 'No SearchString found. Health check type String Match must contain string.'
+            Write-Error -Message 'No SearchString found. Health check type String Match must contain string.' -ErrorAction Stop
         }
     }
     Process {

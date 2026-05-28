@@ -70,7 +70,7 @@ function Export-SECSecret {
 
         # CHECK FOR EXISTING FILE
         if (Test-Path -Path $exportPath -PathType Leaf) {
-            Throw ('File already exists: {0}' -f $exportPath)
+            Write-Error -Message ('File already exists: {0}' -f $exportPath) -ErrorAction Stop
         }
     }
     Process {

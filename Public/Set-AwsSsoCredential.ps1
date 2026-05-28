@@ -133,8 +133,8 @@ function Set-AwsSsoCredential {
             Write-Output -InputObject "`r$($IdentityCenterAccounts.Count) Profiles registered, $(('{0:D2}:{1:D2}:{2:D2} left on Identity Center token' -f $CredsTime.Hours, $CredsTime.Minutes, $CredsTime.Seconds).TrimStart('0 :'))"
         }
         catch {
-            Write-Error "Ran into an issue: Line $($_.InvocationInfo.ScriptLineNumber) returned '$($_.Exception.Message)'"
-            throw $PSItem
+            $msg = "Ran into an issue: Line {0} returned '{1}'" -f $PSItem.InvocationInfo.ScriptLineNumber, $PSItem.Exception.Message
+            Write-Error -Message $msg -ErrorAction Stop
         }
     }
 }

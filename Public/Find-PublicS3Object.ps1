@@ -47,7 +47,7 @@ function Find-PublicS3Object {
                 $buckets = @(Get-S3Bucket @awsParams -BucketName $BucketName)
             }
             else {
-                Throw ('Bucket [{0}] not found' -f $BucketName)
+                Write-Error -Message ('Bucket [{0}] not found' -f $BucketName) -ErrorAction Stop
             }
         } else {
             $buckets = @(Get-S3Bucket @awsParams)
