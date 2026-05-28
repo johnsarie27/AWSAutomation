@@ -18,6 +18,8 @@ function Get-RoleCredential {
         Value provided by MFA device
     .PARAMETER DurationInSeconds
         Duration of temporary credential in seconds
+    .PARAMETER Region
+        AWS region used for the STS endpoint when assuming the role. Defaults to us-east-1.
     .INPUTS
         None.
     .OUTPUTS
@@ -58,7 +60,11 @@ function Get-RoleCredential {
 
         [Parameter(HelpMessage = 'Duration of temporary credential in seconds')]
         [ValidateNotNullOrEmpty()]
-        [System.Int32] $DurationInSeconds = 3600
+        [System.Int32] $DurationInSeconds = 3600,
+
+        [Parameter(HelpMessage = 'AWS region for the STS endpoint')]
+        [ValidateNotNullOrEmpty()]
+        [System.String] $Region = 'us-east-1'
     )
 
     Begin {
@@ -78,6 +84,7 @@ function Get-RoleCredential {
         $stsParams = @{
             RoleSessionName   = 'SwitchToChild'
             DurationInSeconds = $DurationInSeconds # AWS DEFAULT IS 3600 (1 HOUR)
+            Region            = $Region            # REQUIRED BY AWS.TOOLS V5 / SDK V4 STS ENDPOINT RESOLUTION
         }
 
         # ADD MFA SERIAL AND CODE IF PROVIDED
