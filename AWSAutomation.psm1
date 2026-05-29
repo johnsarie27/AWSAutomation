@@ -1,6 +1,5 @@
 # ==============================================================================
 # Filename: AWSAutomation.psm1
-# Version:  0.1.1 | Updated: 2024-01-04
 # Author:   Justin Johns
 # ==============================================================================
 
@@ -15,14 +14,16 @@ foreach ( $directory in @('Public', 'Private') ) {
 # VARIABLES
 $AlphabetList = 0..25 | ForEach-Object { [char](65 + $_) }
 
-[int] $i = 0 ; $VolumeLookupTable = @{}
-foreach ( $letter in $AlphabetList ) {
-    $key = 'T' + $i.ToString("00") ; [string] $value = ('xvd' + $letter).ToLower()
-    $VolumeLookupTable.Add( $key, $value ) ; $i++
+$VolumeLookupTable = @{}
+for ($i = 0; $i -lt $AlphabetList.Count; $i++) {
+    $key = 'T' + $i.ToString('00')
+    [System.String] $value = ('xvd' + $AlphabetList[$i]).ToLower()
+    $VolumeLookupTable.Add($key, $value)
 }
 $VolumeLookupTable.T00 = '/dev/sda1/'
 
 # EXPORT MEMBERS
-# EXPORTING IS SPECIFIED IN THE MODULE MANIFEST AND UNNECESSARY HERE
-#Export-ModuleMember -Function *
-#Export-ModuleMember -Variable *
+# FUNCTIONS ARE EXPORTED VIA THE MANIFEST; VARIABLES AND ALIASES ARE
+# EXPORTED HERE SO THE MANIFEST'S VariablesToExport / AliasesToExport
+# LISTS ARE HONORED REGARDLESS OF HOW THE MODULE IS LOADED.
+Export-ModuleMember -Variable * -Alias *

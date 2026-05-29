@@ -20,13 +20,10 @@ function Get-AwsServiceReference {
         PS C:\> Get-AwsServiceReference -ServiceName 'ssm','s3'
         Returns the reference information for the AWS Systems Manager (SSM) and Amazon Simple Storage Service (S3) services.
     .NOTES
-        Name:     Get-AwsServiceReference
-        Author:   Phillip Glodowski
-        Version:  0.0.1 | Last Edit: 2025-08-28
-        - Version history is captured in repository commit history
-        Comments:
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory = $false, HelpMessage = 'Service Name(s)')]
         [System.String[]] $ServiceName

@@ -18,32 +18,37 @@ function Get-AssociationStatus {
         System.Object.
     .EXAMPLE
         PS C:\> Get-AssociationStatus -Name UpdateAgent -Credential $c -Region us-east-1
-        Explanation of what the example does
+        Returns the per-target execution result of the most recent run of the SSM
+        association named 'UpdateAgent' in us-east-1 using AWS credential $c.
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.SimpleSystemsManagement.Model.AssociationExecutionTarget])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Systems Manager Association name')]
         [ValidateNotNullOrEmpty()]
         [System.String] $Name,
 
-        [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, Position = 1, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
 
-        if ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_credential' ) {
 
             foreach ( $c in $Credential ) {
 
@@ -69,7 +74,7 @@ function Get-AssociationStatus {
                 Get-SSMAssociationExecutionTarget -AssociationId $assoc.AssociationId -ExecutionId $assocExec[0].ExecutionId @awsCreds
             }
         }
-        if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_profile' ) {
 
             foreach ( $p in $ProfileName ) {
 

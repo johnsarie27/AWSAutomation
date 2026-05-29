@@ -17,17 +17,19 @@ function Find-PublicS3Object {
     .EXAMPLE
         PS C:\> Find-PublicS3Object -ProfileName MyAccount
         Search all objects in all S3 buckets for MyAccount and return a list of publicly accessible objects
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Object[]])]
 
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(Mandatory, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
@@ -38,6 +40,8 @@ function Find-PublicS3Object {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
 
@@ -47,7 +51,7 @@ function Find-PublicS3Object {
                 $buckets = @(Get-S3Bucket @awsParams -BucketName $BucketName)
             }
             else {
-                Throw ('Bucket [{0}] not found' -f $BucketName)
+                Write-Error -Message ('Bucket [{0}] not found' -f $BucketName) -ErrorAction Stop
             }
         } else {
             $buckets = @(Get-S3Bucket @awsParams)
@@ -55,7 +59,6 @@ function Find-PublicS3Object {
 
         $results = [System.Collections.Generic.List[PSObject]]::new()
     }
-
     Process {
         # ITERATE THROUGH ALL BUCKETS IN ACCOUNT
         foreach ( $b in $buckets ) {
@@ -85,7 +88,6 @@ function Find-PublicS3Object {
             }
         }
     }
-
     End {
         $results
     }

@@ -21,18 +21,21 @@ function Get-SecurityGroupInfo {
     .EXAMPLE
         PS C:\> $a = Get-SecurityGroupInfo -ProfileName $P -VpcId $V
         Store all security groups from Profile $P and VPC $V in varibale $a
+    .NOTES
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '_prf')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
-        [Parameter(Mandatory = $true, ParameterSetName = '_prf', HelpMessage = 'AWS Profile containing key and secret')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '_crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
@@ -41,6 +44,8 @@ function Get-SecurityGroupInfo {
         [System.String] $VpcId
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET API PARAMS
         $secGrpParams = @{
             Region = $Region

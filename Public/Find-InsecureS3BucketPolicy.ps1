@@ -19,17 +19,19 @@ function Find-InsecureS3BucketPolicy {
         PS C:\> Find-InsecureS3BucketPolicy -ProfileName MyProfile
         Search through all buckets in account represented by MyProfile for bucket
         policies that allow non-authenticated principles.
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Object[]])]
 
     Param(
-        [Parameter(HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
@@ -40,6 +42,8 @@ function Find-InsecureS3BucketPolicy {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $splat = @{ ProfileName = $ProfileName } }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $splat = @{ Credential = $Credential } }
 
@@ -58,7 +62,6 @@ function Find-InsecureS3BucketPolicy {
 
         $Results = [System.Collections.Generic.List[System.Object]]::new()
     }
-
     Process {
         foreach ( $b in $Buckets ) {
             $splat.BucketName = $b.BucketName
@@ -66,14 +69,13 @@ function Find-InsecureS3BucketPolicy {
             $Policy = Get-S3BucketPolicy @splat | ConvertFrom-Json
 
             foreach ( $i in $Policy.Statement ) {
-                if ( $i -and ([string] $i.Principal) -notmatch '(ARN|Service)' ) {
+                if ( $i -and ([System.String] $i.Principal) -notmatch '(ARN|Service)' ) {
                     $i | Add-Member -MemberType NoteProperty -Name BucketName -Value $splat.BucketName
                     $Results.Add($i)
                 }
             }
         }
     }
-
     End {
         $Results
     }

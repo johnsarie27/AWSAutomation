@@ -15,35 +15,39 @@ function Get-LoadBalancer {
     .OUTPUTS
         Amazon.ElasticLoadBalancingV2.Model.LoadBalancer.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Get-LoadBalancer -ProfileName MyProfile -Region us-east-1
+        Returns every Application/Network Load Balancer (ELBv2) in us-east-1 for
+        the account represented by AWS profile 'MyProfile'.
     .NOTES
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '_pro')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([Amazon.ElasticLoadBalancingV2.Model.LoadBalancer[]])]
     Param(
-        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = '_pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline, ParameterSetName = '_crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
-        if ($PSCmdlet.ParameterSetName -eq '_pro') {
+        if ($PSCmdlet.ParameterSetName -eq '_profile') {
             foreach ($name in $ProfileName) {
                 # GET LOAD BALANCERS
                 Get-ELB2LoadBalancer -ProfileName $name -Region $Region
             }
         }
-        elseif ($PSCmdlet.ParameterSetName -eq '_crd') {
+        elseif ($PSCmdlet.ParameterSetName -eq '_credential') {
             foreach ($cred in $Credential) {
                 # GET LOAD BALANCERS
                 Get-ELB2LoadBalancer -Credential $cred -Region $Region

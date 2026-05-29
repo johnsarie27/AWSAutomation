@@ -25,14 +25,10 @@ function Update-CFNStackAMI {
         PS C:\> Update-CFNStackAMI -Path C:\cfnStack.template -OSVersion Server2019
         Get the latest Windows Server 2019 AMI from AWS and update the RegionMap with the Image ID
     .NOTES
-        Name:     Update-CFNStackAMI
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2022-07-11
-        - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '__crd')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '_profile')]
+    [OutputType([System.Void])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Path to CloudFormation template file')]
         [ValidateScript({ Test-Json -Json (Get-Content -Path $_ -Raw) })]
@@ -42,16 +38,16 @@ function Update-CFNStackAMI {
         [ValidateSet('Server2016', 'Server2019', 'Server2022')]
         [System.String] $OSVersion,
 
-        [Parameter(Mandatory, Position = 2, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory, Position = 2, HelpMessage = 'AWS region')]
         [ValidateScript({ $_ -in (Get-AWSRegion).Region })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region,
 
-        [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
@@ -64,8 +60,8 @@ function Update-CFNStackAMI {
         # SET COMMON PARAMETERS
         $awsParams = @{ Region = $Region }
         switch ($PSCmdlet.ParameterSetName) {
-            '__pro' { $awsParams['ProfileName'] = $ProfileName }
-            '__crd' { $awsParams['Credential'] = $Credential }
+            '_profile'    { $awsParams['ProfileName'] = $ProfileName }
+            '_credential' { $awsParams['Credential'] = $Credential }
         }
     }
     Process {
@@ -83,7 +79,7 @@ function Update-CFNStackAMI {
                 $template.Mappings.RegionMap.$Region.Baseline = $ami.ImageId
             }
             else {
-                Throw ('Region: {0} not found in template' -f $Region)
+                Write-Error -Message ('Region: {0} not found in template' -f $Region) -ErrorAction Stop
             }
 
             # SAVE FILE

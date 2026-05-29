@@ -20,16 +20,18 @@ function Export-SECSecret {
         System.String.
     .EXAMPLE
         PS C:\> Export-SECSecret -SecretId mySecret -DestinationPath C:\
-        Explanation of what the example does
+        Retrieves the value of secret 'mySecret' from AWS Secrets Manager and writes
+        it to a file under C:\.
     .NOTES
-        Name:      Export-SECSecret
-        Author:    Justin Johns
-        Version:   0.1.1 | Last Edit: 2022-04-06
-        - Updated action for existing file
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.String])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidUsingConvertToSecureStringWithPlainText',
+        '',
+        Justification = 'The plaintext password is read from AWS Secrets Manager and immediately converted to a SecureString so it can be exported via ConvertFrom-SecureString. There is no caller-supplied plaintext to avoid.'
+    )]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'ID of secret in Secrets Manager')]
         [ValidateNotNullOrEmpty()]
@@ -40,11 +42,11 @@ function Export-SECSecret {
         [Alias('Path')]
         [System.String] $DestinationPath,
 
-        [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
@@ -55,13 +57,20 @@ function Export-SECSecret {
     Begin {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
+        # GUARD: ConvertFrom-SecureString without -Key relies on Windows DPAPI.
+        # On Linux/macOS the output is not encrypted and is not portable back to a
+        # SecureString in a meaningful way, so refuse to run there.
+        if ([System.Environment]::OSVersion.Platform -ne [System.PlatformID]::Win32NT) {
+            Write-Error -Message 'Export-SECSecret is Windows-only: it depends on DPAPI via ConvertFrom-SecureString. Run on Windows or extend the function to accept a -Key parameter.' -ErrorAction Stop
+        }
+
         # SET COMMON PARAMETERS FOR AUTHENTICATION
         $awsCreds = @{ Region = $Region }
 
         # SET AUTHENTICATION TYPE
         switch ($PSCmdlet.ParameterSetName) {
-            '__pro' { $awsCreds['ProfileName'] = $ProfileName }
-            '__crd' { $awsCreds['Credential'] = $Credential }
+            '_profile'    { $awsCreds['ProfileName'] = $ProfileName }
+            '_credential' { $awsCreds['Credential'] = $Credential }
         }
 
         # SET DESTINATION FULL PATH
@@ -70,7 +79,7 @@ function Export-SECSecret {
 
         # CHECK FOR EXISTING FILE
         if (Test-Path -Path $exportPath -PathType Leaf) {
-            Throw ('File already exists: {0}' -f $exportPath)
+            Write-Error -Message ('File already exists: {0}' -f $exportPath) -ErrorAction Stop
         }
     }
     Process {

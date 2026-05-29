@@ -14,32 +14,42 @@ function Get-WindowsDisk {
     .LINK
         https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-windows-volumes.html#windows-volume-mapping
     .NOTES
-        General notes
+        Status: Stable
+        Comments:
         This function requires a default AWS Credential Profile or an IAM Instance
-        Profile to be set with permissions for ec2:Describe*
-        Several design choices were made for compatibility with PS 4.0
+        Profile to be set with permissions for ec2:Describe*.
+        Several design choices were made for compatibility with PS 4.0.
     #>
+    [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject[]])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseDeclaredVarsMoreThanAssignments',
+        'VolumeName',
+        Justification = 'Assigned inside a ForEach-Object script block and consumed in the enclosing foreach scope on the output object; the analyzer does not trace data flow across that boundary.'
+    )]
+    Param()
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         function Get-EC2InstanceMetadata {
-            param([string]$Path)
+            param([System.String] $Path)
             (Invoke-WebRequest -Uri "http://169.254.169.254/latest/$Path").Content
         }
 
         function Convert-SCSITargetIdToDeviceName {
-            param([int]$SCSITargetId)
+            param([System.Int32] $SCSITargetId)
             if ($SCSITargetId -eq 0) {
                 return "sda1"
             }
             $deviceName = "xvd"
             if ($SCSITargetId -gt 25) {
-                $deviceName += [char](0x60 + [int]($SCSITargetId / 26))
+                $deviceName += [System.Char](0x60 + [System.Int32]($SCSITargetId / 26))
             }
-            $deviceName += [char](0x61 + $SCSITargetId % 26)
+            $deviceName += [System.Char](0x61 + $SCSITargetId % 26)
             return $deviceName
         }
     }
-
     Process {
         try {
             $InstanceId = Get-EC2InstanceMetadata "meta-data/instance-id"

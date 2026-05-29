@@ -21,18 +21,14 @@ function New-HealthCheckAlarm {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> New-HealthCheckAlarm
-        Explanation of what the example does
+        PS C:\> New-HealthCheckAlarm -Name api-prod-unhealthy -HealthCheckId $id -AlarmActionArn $arn -Credential $c -Region us-east-1
+        Creates a CloudWatch alarm in us-east-1 that fires (via $arn) when the
+        Route53 health check $id reports unhealthy for three consecutive periods.
     .NOTES
-        Name:     New-HealthCheckAlarm
-        Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-01-25
-        - 0.1.1 - (2024-01-25) Added support for ShouldProcess
-        - 0.1.0 - (2022-05-26) Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [CmdletBinding(DefaultParameterSetName = '_profile', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([Amazon.CloudWatch.Model.PutMetricAlarmResponse])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Alarm Name')]
         [ValidatePattern('^[\w-]+$')]
@@ -46,15 +42,15 @@ function New-HealthCheckAlarm {
         [ValidateNotNullOrEmpty()]
         [System.String] $AlarmActionArn,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
@@ -63,10 +59,10 @@ function New-HealthCheckAlarm {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
         # SET CREDENTIALS
-        if ($PSCmdlet.ParameterSetName -EQ '__pro') {
+        if ($PSCmdlet.ParameterSetName -eq '_profile') {
             $awsCreds = @{ ProfileName = $ProfileName; Region = $Region }
         }
-        elseif ($PSCmdlet.ParameterSetName -EQ '__crd') {
+        elseif ($PSCmdlet.ParameterSetName -eq '_credential') {
             $awsCreds = @{ Credential = $Credential; Region = $Region }
         }
     }

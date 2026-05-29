@@ -22,33 +22,33 @@ function Get-NetworkInfo {
         PS C:\> Get-NetworkInfo -ProfileName $P $Region 'us-east-1' -VpcId vpc-12345678
         Get network infrastructure details for VPC vpc-12345678 in us-east-1 for store profile.
     .NOTES
-        The output is not printable so I used the following code to format it:
-            $Output = ""
-            foreach ( $item in $list ) {
-                $Output += $item | Select-Object Name, Id, VpcId | Out-String
-                $Output += $item | Select-Object -EXP Routes | Out-String
-                $Output += $item | Select-Object -EXP Subnets | Out-String
-            }
-            $Output
+        Status: Stable
+        Comments:
+        The output objects contain nested route and subnet collections that do not
+        format usefully with the default formatter. Pipe through Out-String per
+        sub-property if a flat text rendering is needed.
     #>
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'VPC ID')]
         [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]
         [System.String] $VpcId,
 
-        [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region
     )
+
+    Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
     $awsParams = @{
         Region = $Region

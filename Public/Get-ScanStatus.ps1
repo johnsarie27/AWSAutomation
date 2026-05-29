@@ -20,9 +20,10 @@ function Get-ScanStatus {
         PS C:\> Get-ScanStatus -ProfileName myAcc -BucketName 'test-bucket-02340989' -KeyPrefix 'Docs'
         Search all S3 objects in folder 'Docs' of bucket 'test-bucket-02340989' for tags with value "infected"
     .NOTES
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '_creds')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.Management.Automation.PSCustomObject[]])]
     Param(
         [Parameter(Mandatory, HelpMessage = 'Bucket name')]
         [ValidateNotNullOrEmpty()]
@@ -32,16 +33,18 @@ function Get-ScanStatus {
         [ValidateNotNullOrEmpty()]
         [System.String] $KeyPrefix,
 
-        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory, ParameterSetName = '_creds', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # CONFIGURE CREDENTIALS AND ADD KEY PREFIX IF SPECIFIED
         $creds = @{ BucketName = $BucketName }
         if ( $PSBoundParameters.ContainsKey('KeyPrefix') ) { $creds.Add('KeyPrefix', $KeyPrefix) }
@@ -53,7 +56,6 @@ function Get-ScanStatus {
         # REMOVE KEY PREFIX
         if ( $creds['KeyPrefix'] ) { $creds.Remove('KeyPrefix') }
     }
-
     Process {
         # LOOP THROUGH EACH S3 OBJECT
         foreach ( $i in $objects ) {

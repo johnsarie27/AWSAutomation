@@ -14,14 +14,18 @@ function ConvertTo-CFStackParam {
         PS C:\> ConvertTo-CFStackParam -Parameter @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
         Output new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.CloudFormation.Model.Parameter[]])]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Hashtable with CloudFormation Stack Parameter(s)')]
         [System.Collections.Hashtable] $Parameter
     )
 
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
         # LOOP THROUGH EACH KEY-VALUE PAIR IN THE HASH TABLE
         foreach ( $p in $Parameter.Keys ) {

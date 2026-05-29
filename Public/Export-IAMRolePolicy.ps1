@@ -22,15 +22,16 @@ function Export-IAMRolePolicy {
         PS C:\> Export-IAMRolePolicy -ProfileName MyAwsAccount -RoleName MyNewRole
         Generates an Excel Spreadsheet of all matching Roles with a list of their Policies
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
-        [Parameter(HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
@@ -48,6 +49,8 @@ function Export-IAMRolePolicy {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET EXCEL PARAMETERS
         $excelParams = @{
             AutoSize     = $true
@@ -66,7 +69,6 @@ function Export-IAMRolePolicy {
             $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('IAMRolePolicies_{0:yyyy-MM}.xlsx' -f (Get-Date))
         }
     }
-
     Process {
         # CHECK FOR CREDENTIALS
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
@@ -149,7 +151,6 @@ function Export-IAMRolePolicy {
             }
         }
     }
-
     End {
         # RETURN NEW PATH
         if ( $PSBoundParameters.ContainsKey('PassThru') ) { $excelParams['Path'] }

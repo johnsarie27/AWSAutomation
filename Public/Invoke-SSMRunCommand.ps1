@@ -31,12 +31,10 @@ function Invoke-SSMRunCommand {
         PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Env';Values='Production'} @commonParams
         Runs the command "Get-Service" on all systems with the 'Production' tag assigned
     .NOTES
-        Name:     Invoke-SSMRunCommand
-        Author:   Justin Johns
-        Version:  0.1.2 | Last Edit: 2024-05-01
-        Comments: <Comment(s)>
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.SimpleSystemsManagement.Model.Command])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Command to execute in PowerShell')]
         [ValidateNotNullOrEmpty()]
@@ -64,11 +62,11 @@ function Invoke-SSMRunCommand {
         [ValidatePattern('^[\w-]+$')]
         [System.String] $RoleName,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region

@@ -26,19 +26,20 @@ function Export-CFNStackDrift {
         PS C:\> Export-CFNStackDrift -ProfileName myProfile -StackName Stack1 -SheetName Stack1 -Path "$HOME\Desktop\StackDrift.xlsx"
         Exports an Excel Spreadsheet containing the objects IN_SYNC and DRIFTED in separate tabs
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Profile')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
@@ -57,6 +58,8 @@ function Export-CFNStackDrift {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET EXCEL PARAMS AND DESIRED PROPERTIES
         $excelParams = @{
             FreezeTopRow = $true
@@ -74,7 +77,6 @@ function Export-CFNStackDrift {
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $creds.Add("Credential", $Credential) }
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $creds['ProfileName'] = $ProfileName }
     }
-
     Process {
         # RUN DRIFT AND WAIT 5 SECONDS FOR RESULTS
         Start-CFNStackDriftDetection @creds -StackName $StackName | Out-Null

@@ -36,9 +36,12 @@ function Edit-AWSProfile {
     .LINK
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
     .NOTES
-        Using "-AsSecureString" prevents from copy and past when running the script
+        Status: Stable
+        Comments:
+        Using -AsSecureString prevents copy/paste when running the script.
     #>
     [CmdletBinding()]
+    [OutputType([System.String])]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_list', HelpMessage = 'List profiles')]
         [System.Management.Automation.SwitchParameter] $List,
@@ -71,11 +74,13 @@ function Edit-AWSProfile {
         [System.String] $ProfileName
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # OPERATIONAL PARAMETERS
         $OpParams = @('Default', 'Region', 'ProfileName')
 
         # HELPER FUNCTION
-        function Confirm-Profile ([string] $ProfileName) {
+        function Confirm-Profile ([System.String] $ProfileName) {
             <# $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
             Return $ProfileExists #>
 

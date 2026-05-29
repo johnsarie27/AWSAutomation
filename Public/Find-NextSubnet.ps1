@@ -18,24 +18,27 @@ function Find-NextSubnet {
         PS C:\> Find-NextSubnet -ProfileName $myProfile
         Returns the second octet of the next available subnet CIDR range
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.Int32])]
     Param(
-        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, ParameterSetName = '_creds', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         $vpcs = [System.Collections.Generic.List[Amazon.EC2.Model.Vpc]]::new()
         $subVal = [System.Collections.Generic.List[System.Int32]]::new()
 
@@ -45,7 +48,6 @@ function Find-NextSubnet {
         # EXCLUDE ALL DEFAULT VPC'S (172.31.0.0/16) AND SERVICES VPC
         $where = { $_.CidrBlock -notmatch '^172\.' }
     }
-
     Process {
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
             foreach ( $p in $ProfileName ) {
@@ -66,7 +68,7 @@ function Find-NextSubnet {
 
         # GET GREATEST SECOND OCTET
         foreach ( $range in $custVpcs.CidrBlock ) {
-            $subVal.Add([int] ($range -replace '10\.(\d{1,3})(\.\d{1,3}){2}/16', '$1'))
+            $subVal.Add([System.Int32] ($range -replace '10\.(\d{1,3})(\.\d{1,3}){2}/16', '$1'))
         }
 
         # SORT SUBNET OCTET 2 FROM LOWEST TO HIGHEST

@@ -20,24 +20,20 @@ function Get-S3Report {
         PS C:\> Get-S3Report -ProfileName myProfile -Region us-west-2
         Return an array of objects containing information on the S3 bucket version and lifecycle policies
     .NOTES
-        Name:     Get-S3Report
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2024-01-04
-        - 0.1.0 - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__pro')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
+        [Parameter(Mandatory, Position = 0, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory, Position = 0, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 0, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Position = 1, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 1, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region = 'us-east-1'
     )
@@ -45,7 +41,7 @@ function Get-S3Report {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
         # SET CREDENTIALS
-        if ($PSCmdlet.ParameterSetName -EQ '__pro') {
+        if ($PSCmdlet.ParameterSetName -eq '_profile') {
             $awsCreds = @{ ProfileName = $ProfileName; Region = $Region }
         }
         else {

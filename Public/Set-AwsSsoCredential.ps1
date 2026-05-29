@@ -23,18 +23,39 @@ function Set-AwsSsoCredential {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> Set-AwsSsoCredential -Account
-        Explanation of what the example does
+        PS C:\> Set-AwsSsoCredential -Account $accounts
+        Performs the AWS IAM Identity Center device-authorization flow against the
+        default Start URL and writes refreshed access keys for every account in
+        $accounts to ~/.aws/credentials.
     .NOTES
-        Name:     Set-AwsSsoCredential
-        Author:   Michael Hatcher
-        Version:  0.1.0 | Last Edit: 2023-07-19
-        - 0.1.0 - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
+        Comments:
         https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/update-aws-cli-credentials-from-aws-iam-identity-center-by-using-powershell.html
+
+        Token cache: this function stores the IAM Identity Center access
+        token, its expiration, and the per-account credential state in
+        three Global-scope variables so subsequent invocations in the
+        same PowerShell session can refresh account credentials without
+        re-authenticating in the browser:
+
+            $Global:<IdentityCenterName>_identity_center_token
+            $Global:<IdentityCenterName>_identity_center_token_expiration
+            $Global:<IdentityCenterName>_identity_center_accounts
+
+        where <IdentityCenterName> is the leading host label of -StartUrl
+        (for example 'mcssec' for https://mcssec.awsapps.com/start/).
+        The variables persist until the PowerShell session ends. To
+        clear them manually:
+
+            Remove-Variable -Scope Global -Name '<IdentityCenterName>_identity_center_*'
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidGlobalVars',
+        '',
+        Justification = 'Token and per-account state are cached in Global-scope variables to avoid re-authenticating each invocation. See .NOTES.'
+    )]
     Param(
         [Parameter(Mandatory = $false, HelpMessage = 'Identity Center region')]
         [System.String] $Region = 'us-east-1',
@@ -133,8 +154,8 @@ function Set-AwsSsoCredential {
             Write-Output -InputObject "`r$($IdentityCenterAccounts.Count) Profiles registered, $(('{0:D2}:{1:D2}:{2:D2} left on Identity Center token' -f $CredsTime.Hours, $CredsTime.Minutes, $CredsTime.Seconds).TrimStart('0 :'))"
         }
         catch {
-            Write-Error "Ran into an issue: Line $($_.InvocationInfo.ScriptLineNumber) returned '$($_.Exception.Message)'"
-            throw $PSItem
+            $msg = "Ran into an issue: Line {0} returned '{1}'" -f $PSItem.InvocationInfo.ScriptLineNumber, $PSItem.Exception.Message
+            Write-Error -Message $msg -ErrorAction Stop
         }
     }
 }

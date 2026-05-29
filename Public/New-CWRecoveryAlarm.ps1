@@ -20,21 +20,22 @@ function New-CWRecoveryAlarm {
         PS C:\> New-CWRecoveryAlarm -InstanceId 'i-00000000' -ProfileName 'MyProfie'
         Adds a CloudWatch Alarm to the instance configured to recover after 2 failed status checks of 5 minutes each
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([Amazon.CloudWatch.Model.MetricAlarm])]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'EC2 Instance Id')]
         [ValidatePattern('i-[\w\d]{8,17}')]
         [Alias('Id', 'Instance')]
         [System.String[]] $InstanceId,
 
-        [Parameter(HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
@@ -43,6 +44,8 @@ function New-CWRecoveryAlarm {
         [System.String] $Region
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET ALARM PARAMS
         $alarmParams = @{
             Region             = $Region

@@ -29,14 +29,15 @@ function Get-RoleCredential {
         PS C:\> Get-RoleCredential -ProfileName myProfile -Acount $acc -RoleName mySuperRole
         Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
     .NOTES
-        General notes
+        Status: Stable
+        Comments:
         https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_configure-api-require.html
         https://docs.aws.amazon.com/powershell/latest/reference/index.html?page=Use-STSRole.html&tocid=Use-STSRole
     #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
-    [Alias('Get-AwsCreds')]
+    [OutputType([System.Collections.Hashtable])]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile', ParameterSetName = '_profile')]
+        [Parameter(Mandatory, HelpMessage = 'AWS credential profile name', ParameterSetName = '_profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
@@ -68,6 +69,8 @@ function Get-RoleCredential {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET CREDENTIAL SPLATTER TABLE
         $creds = @{ }
 

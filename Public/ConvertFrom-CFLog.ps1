@@ -14,14 +14,10 @@ function ConvertFrom-CFLog {
         PS C:\> ConvertFrom-CFLog -Path C:\cloudfront.log
         Converts content of log file "cloudfront.log" to objects
     .NOTES
-        Name:     ConvertFrom-CFLog
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2023-10-30
-        - 0.1.0 - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory, Position = 0, ValueFromPipeline, HelpMessage = 'Path to log file')]
         [ValidateScript({ Test-Path -Path $_ -PathType Leaf <# -Include "*.log" #> })]

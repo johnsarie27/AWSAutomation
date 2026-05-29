@@ -28,24 +28,27 @@ function Export-EC2UsageReport {
         PS C:\> Export-EC2UsageReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
         region
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
         [Parameter(HelpMessage = 'Path to existing folder for report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Container })]
         [Alias('DestinationPath')]
         [System.String] $OutputDirectory,
 
-        [Parameter(HelpMessage = 'AWS Credential Profie with key and secret')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('PN')]
         [System.String[]] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
@@ -54,21 +57,23 @@ function Export-EC2UsageReport {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         function Get-AvailableEBS {
             [CmdletBinding(DefaultParameterSetName = '_profile')]
             [OutputType([System.Object[]])]
             Param(
-                [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Credential Profile name')]
+                [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
                 [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-                [string[]] $ProfileName,
+                [System.String[]] $ProfileName,
 
-                [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS Credential Object')]
+                [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
                 [ValidateNotNullOrEmpty()]
                 [Amazon.Runtime.AWSCredentials[]] $Credential,
 
                 [Parameter(HelpMessage = 'Name of desired AWS Region.')]
                 [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-                [String] $Region
+                [System.String] $Region
             )
 
             $results = [System.Collections.Generic.List[System.Object]]::new()
@@ -135,7 +140,6 @@ function Export-EC2UsageReport {
         Write-Verbose -Message ('EC2 instances: {0}' -f $ec2.Count)
         Write-Verbose -Message ('EBS volumes: {0}' -f $allVolumes.Count)
     }
-
     Process {
         # ADD DATA VALUES FOR COST INFO
         Get-CostInfo -Region $Region -Instance $ec2 | Out-Null
@@ -164,7 +168,6 @@ function Export-EC2UsageReport {
             $allVolumes | Export-Excel @excelParams -WorksheetName 'Unattached EBS'
         }
     }
-
     End {
         # RETURN REPORT PATH
         if ( $PSBoundParameters.ContainsKey('PassThru') ) {

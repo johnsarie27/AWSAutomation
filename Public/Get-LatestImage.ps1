@@ -20,13 +20,10 @@ function Get-LatestImage {
         PS C:\> Get-LatestImage @commonParams -NameTag 'MyInstance' -BackupDays 3
         Returns the latest image(s) for the instance 'MyInstance' from the last 3 days
     .NOTES
-        Name:     Get-LatestImage
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2024-10-17
-        - Version history is captured in repository commit history
-        Comments: <Comment(s)>
+        Status: Stable
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.EC2.Model.Image])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'EC2 Instance name tag value')]
         [ValidatePattern('^[\w-]+$')]
@@ -36,11 +33,11 @@ function Get-LatestImage {
         [ValidateRange(1, 90)]
         [System.Int32] $BackupDays = 3,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region

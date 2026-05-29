@@ -18,17 +18,18 @@ function Get-R53Record {
         PS C:\> Get-R53Record -ProfileName MyProfile -ZoneName 'myDomain.com.'
         Get all "A" and "CNAME" records for the zone 'myDomain.com.'
     .NOTES
-        General notes
+        Status: Stable
     #>
 
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject[]])]
     Param(
-        [Parameter(HelpMessage = 'AWS Profile containing access key and secret')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile')]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
@@ -39,6 +40,8 @@ function Get-R53Record {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET PROPERTIES TO GET
         $Properties = @('Type', 'Name', @{N = 'Value'; E = { $_.ResourceRecords.Value } }, 'TTL')
 
@@ -49,7 +52,6 @@ function Get-R53Record {
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
     }
-
     Process {
         # GET HOSTED ZONE WITH GIVEN NAME
         $zone = Get-R53HostedZoneList @awsParams | Where-Object Name -EQ $ZoneName
@@ -61,7 +63,6 @@ function Get-R53Record {
         $awsParams['HostedZoneId'] = $zone.Id
         $records = (Get-R53ResourceRecordSet @awsParams).ResourceRecordSets
     }
-
     End {
         # RETURN RECORDS
         $records | Where-Object $Where | Select-Object -Property $Properties

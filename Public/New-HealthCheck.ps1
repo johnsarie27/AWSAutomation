@@ -25,18 +25,14 @@ function New-HealthCheck {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> New-HealthCheck
-        Explanation of what the example does
+        PS C:\> New-HealthCheck -Name api-prod -DNS api.example.com -ResourcePath '/health' -Type HTTPS -ProfileName MyProfile -Region us-east-1
+        Creates a Route53 HTTPS health check against https://api.example.com/health
+        and tags it with Name=api-prod using AWS profile 'MyProfile'.
     .NOTES
-        Name:     New-HealthCheck
-        Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-01-25
-        - 0.1.1 - (2024-01-25) Added support for ShouldProcess
-        - 0.1.0 - (2022-05-26) Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [CmdletBinding(DefaultParameterSetName = '_profile', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([Amazon.Route53.Model.ChangeTagsForResourceResponse])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Health Check name (tag)')]
         [ValidatePattern('^[\w-]+$')]
@@ -57,15 +53,15 @@ function New-HealthCheck {
         [Parameter(Mandatory = $false, HelpMessage = 'Search string')]
         [System.String] $SearchString,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
@@ -74,16 +70,16 @@ function New-HealthCheck {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
         # SET CREDENTIALS
-        if ($PSCmdlet.ParameterSetName -EQ '__pro') {
+        if ($PSCmdlet.ParameterSetName -eq '_profile') {
             $awsCreds = @{ ProfileName = $ProfileName; Region = $Region }
         }
-        elseif ($PSCmdlet.ParameterSetName -EQ '__crd') {
+        elseif ($PSCmdlet.ParameterSetName -eq '_credential') {
             $awsCreds = @{ Credential = $Credential; Region = $Region }
         }
 
         # VALIDATE SEARCH STRING
         if ($Type -EQ 'HTTPS_STR_MATCH' -AND -NOT $PSBoundParameters.ContainsKey('SearchString')) {
-            Throw 'No SearchString found. Health check type String Match must contain string.'
+            Write-Error -Message 'No SearchString found. Health check type String Match must contain string.' -ErrorAction Stop
         }
     }
     Process {
@@ -100,7 +96,7 @@ function New-HealthCheck {
             HealthCheckConfig_Type                     = $Type
             HealthCheckConfig_Region                   = @('us-east-1', 'us-west-1', 'us-west-2')
             Select                                     = '*'
-            ErrorAction                                = 1 # Stop
+            ErrorAction                                = 'Stop'
             #AlarmIdentifier_Name                       = ''
             #HealthCheckConfig_SearchString             = # COMMENT OUT FOR HTTPS
             #HealthCheckConfig_Disabled                 = $false
@@ -130,7 +126,7 @@ function New-HealthCheck {
             ResourceType = 'healthcheck'
             AddTag       = @{ Key = 'Name'; Value = $Name }
             Select       = '*'
-            ErrorAction  = 1 # STOP
+            ErrorAction  = 'Stop'
         }
         Edit-R53TagsForResource @tagParams @awsCreds
     }
