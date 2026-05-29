@@ -91,16 +91,21 @@ Intentionally **not** changed per maintainer:
 - `RequiredModules` left as bare names (no exact-version pinning).
 - `AlphabetList` / `VolumeLookupTable` continue to be exported.
 
-### 9. Root module ([AWSAutomation.psm1](../AWSAutomation.psm1))
+### 9. Root module ([AWSAutomation.psm1](../AWSAutomation.psm1)) — **CLOSED**
 
-Close to the reference pattern but:
+- `$VolumeLookupTable` builder split to one statement per line; the `;`
+  statement separators are gone.
+- `[int]` / `[string]` accelerators inside the builder replaced with
+  `[System.Int32]` / `[System.String]`.
+- Added explicit `Export-ModuleMember -Variable * -Alias *` so the
+  manifest's `VariablesToExport` / `AliasesToExport` lists are honored
+  regardless of how the module is loaded. `-Function` is still left to
+  the manifest.
+- Stale `Version:` / `Updated:` header line removed (git owns version
+  history).
 
-- The `$VolumeLookupTable` builder uses semicolons-as-statement-separators on
-  single lines — split to one statement per line.
-- Per the standard, omit `Export-ModuleMember -Function *` (already done) but
-  consider explicitly `Export-ModuleMember -Variable * -Alias *` so the
-  manifest's variable/alias exports are honored regardless of how the module
-  is dot-sourced.
+Verified `Import-Module` still surfaces `AlphabetList` and
+`VolumeLookupTable` via `Get-Module`.
 
 ### 10. CI workflows ([.github/workflows](../.github/workflows))
 
