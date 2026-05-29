@@ -57,6 +57,13 @@ function Export-SECSecret {
     Begin {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
+        # GUARD: ConvertFrom-SecureString without -Key relies on Windows DPAPI.
+        # On Linux/macOS the output is not encrypted and is not portable back to a
+        # SecureString in a meaningful way, so refuse to run there.
+        if ([System.Environment]::OSVersion.Platform -ne [System.PlatformID]::Win32NT) {
+            Write-Error -Message 'Export-SECSecret is Windows-only: it depends on DPAPI via ConvertFrom-SecureString. Run on Windows or extend the function to accept a -Key parameter.' -ErrorAction Stop
+        }
+
         # SET COMMON PARAMETERS FOR AUTHENTICATION
         $awsCreds = @{ Region = $Region }
 
