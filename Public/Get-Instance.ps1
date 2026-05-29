@@ -25,7 +25,6 @@ function Get-Instance {
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.EC2.Model.Instance[]])]
-
     Param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -40,7 +39,9 @@ function Get-Instance {
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
-
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
         if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
             foreach ( $name in $ProfileName ) {
