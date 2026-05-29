@@ -142,15 +142,21 @@ Coverage for the remaining "thin wrapper" `Get-*`/`Find-*` functions
 exporters, local/interactive functions, and multi-call aggregators are
 intentionally out of scope until they get a refactor pass.
 
-### 12. `Begin`/`Process` discipline
+### 12. `Begin`/`Process` discipline — **CLOSED**
 
-Many functions either omit `Begin` or do real work outside `Process`.
+[Public/Get-IAMReport.ps1](../Public/Get-IAMReport.ps1) was the only
+offender: it did parameter setup *and* the blocking IAM credential-report
+polling loop (`Start-Sleep -Seconds 10`) inside `Begin`. The report
+fetch now lives in `Process`, leaving `Begin` for true init
+(`$date`, `$accounts` list, `$params`/`$account` resolution from
+parameter set). Behavior is unchanged — the function takes no
+pipeline input, so `Process` runs exactly once. Existing
+`Tests/Unit/Get-IAMReport.tests.ps1` still passes (5/5).
+
 [Public/Get-Instance.ps1](../Public/Get-Instance.ps1) is `Process`-only
-(fine, pipeline-friendly). But
-[Public/Get-IAMReport.ps1](../Public/Get-IAMReport.ps1) does parameter setup
-*and* the full report fetch (a blocking polling loop with `Start-Sleep`)
-inside `Begin`, then iterates inside `Process`. Per the standard, `Begin` is
-for init only.
+and pipeline-friendly (correct). Spot-checked other functions with
+`Start-Sleep` / polling: `Export-CFNStackDrift` already has the work
+in `Process` and `Begin` only sets up Excel + creds params (correct).
 
 ### 13. `deprecated/` and `WIP/` cleanup
 

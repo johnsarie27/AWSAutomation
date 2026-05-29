@@ -51,7 +51,9 @@ function Get-IAMReport {
             $params = @{ Credential = $Credential }
             $account = (Get-STSCallerIdentity -Credential $Credential).Account
         }
+    }
 
+    Process {
         # IMPORT AWS IAM REPORT
         if ( $PSBoundParameters.ContainsKey('Path') ) {
             $iamReport = Import-Csv -Path $Path
@@ -72,9 +74,7 @@ function Get-IAMReport {
                 Write-Error -Message 'Failed to retrieve report from AWS. Check report status in AWS console' -ErrorAction Stop
             }
         }
-    }
 
-    Process {
         # LOOP THROUGH REPORT
         foreach ( $row in $iamReport ) {
 
