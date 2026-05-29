@@ -119,12 +119,28 @@ Verified `Import-Module` still surfaces `AlphabetList` and
 - All `.\Build\build.ps1` invocations changed to `./Build/build.ps1`
   for cross-platform idiomatic paths under `pwsh` on `ubuntu-latest`.
 
-### 11. Tests directory layout
+### 11. Tests directory layout — **CLOSED (skeleton + Tier A examples)**
 
-There is no `Tests/Unit/` directory — only `Tests/Common/` with
-`Help.Tests.ps1`, `Manifest.Tests.ps1`, `Meta.Tests.ps1`. Standard expects a
-per-function `Tests/Unit/Verb-Noun.tests.ps1`. None exist today; this is a
-long-tail debt item but worth flagging.
+`Tests/Unit/` directory created with a README that documents the
+`Verb-Noun.tests.ps1` per-function convention, the build task to run the
+suite (`./Build/build.ps1 -TaskList Test`), the BuildHelpers env vars
+(`$env:BHProjectName`, `$env:BHPSModuleManifest`), and points at the
+team-wide PowerShell skill (`references/pester-testing.md`) for full
+conventions.
+
+Seven example test files (31 tests, all passing) cover the highest-value
+functions across the three core archetypes so future contributors can
+copy the closest pattern:
+
+- Pure transform: `ConvertTo-CFStackParam`, `Get-S3Url`
+- File-fixture parser (TestDrive): `ConvertFrom-CFLog`, `ConvertFrom-ELBLog`
+- AWS-cmdlet mock + `[ValidateScript]` shim: `Find-NextSubnet`,
+  `Get-LatestImage`, `Get-IAMReport`
+
+Coverage for the remaining "thin wrapper" `Get-*`/`Find-*` functions
+(Tier B) is tracked in #69. Orchestration wrappers, side-effect-heavy
+exporters, local/interactive functions, and multi-call aggregators are
+intentionally out of scope until they get a refactor pass.
 
 ### 12. `Begin`/`Process` discipline
 
