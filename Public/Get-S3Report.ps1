@@ -28,6 +28,7 @@ function Get-S3Report {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Credential Profile object')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]

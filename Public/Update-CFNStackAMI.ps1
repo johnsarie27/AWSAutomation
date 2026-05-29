@@ -33,6 +33,7 @@ function Update-CFNStackAMI {
         General notes
     #>
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '__crd')]
+    [OutputType([System.Void])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Path to CloudFormation template file')]
         [ValidateScript({ Test-Json -Json (Get-Content -Path $_ -Raw) })]

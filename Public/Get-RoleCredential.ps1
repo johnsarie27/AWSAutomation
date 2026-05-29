@@ -34,6 +34,7 @@ function Get-RoleCredential {
         https://docs.aws.amazon.com/powershell/latest/reference/index.html?page=Use-STSRole.html&tocid=Use-STSRole
     #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.Collections.Hashtable])]
     [Alias('Get-AwsCreds')]
     Param(
         [Parameter(Mandatory, HelpMessage = 'AWS Profile', ParameterSetName = '_profile')]

@@ -23,6 +23,7 @@ function Get-AssociationStatus {
         General notes
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.SimpleSystemsManagement.Model.AssociationExecutionTarget])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Systems Manager Association name')]
         [ValidateNotNullOrEmpty()]

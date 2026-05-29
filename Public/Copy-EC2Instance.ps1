@@ -39,6 +39,7 @@ function Copy-EC2Instance {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
+    [OutputType([Amazon.EC2.Model.Reservation])]
     Param(
         [Parameter(Mandatory, HelpMessage = 'EC2 Instance object to copy')]
         [ValidateNotNullOrEmpty()]

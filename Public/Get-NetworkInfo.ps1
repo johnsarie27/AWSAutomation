@@ -32,6 +32,7 @@ function Get-NetworkInfo {
             $Output
     #>
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'VPC ID')]
         [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]

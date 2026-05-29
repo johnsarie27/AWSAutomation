@@ -24,6 +24,7 @@ function Get-PatchInfo {
         General notes
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.SimpleSystemsManagement.Model.InstancePatchState])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Patch Group')]
         [ValidateNotNullOrEmpty()]

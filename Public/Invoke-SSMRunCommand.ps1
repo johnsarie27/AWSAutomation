@@ -37,6 +37,7 @@ function Invoke-SSMRunCommand {
         Comments: <Comment(s)>
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.SimpleSystemsManagement.Model.Command])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Command to execute in PowerShell')]
         [ValidateNotNullOrEmpty()]

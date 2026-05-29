@@ -19,23 +19,26 @@ function Get-WindowsDisk {
         Profile to be set with permissions for ec2:Describe*
         Several design choices were made for compatibility with PS 4.0
     #>
+    [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject[]])]
+    Param()
 
     Begin {
         function Get-EC2InstanceMetadata {
-            param([string]$Path)
+            param([System.String] $Path)
             (Invoke-WebRequest -Uri "http://169.254.169.254/latest/$Path").Content
         }
 
         function Convert-SCSITargetIdToDeviceName {
-            param([int]$SCSITargetId)
+            param([System.Int32] $SCSITargetId)
             if ($SCSITargetId -eq 0) {
                 return "sda1"
             }
             $deviceName = "xvd"
             if ($SCSITargetId -gt 25) {
-                $deviceName += [char](0x60 + [int]($SCSITargetId / 26))
+                $deviceName += [System.Char](0x60 + [System.Int32]($SCSITargetId / 26))
             }
-            $deviceName += [char](0x61 + $SCSITargetId % 26)
+            $deviceName += [System.Char](0x61 + $SCSITargetId % 26)
             return $deviceName
         }
     }

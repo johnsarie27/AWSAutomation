@@ -30,6 +30,7 @@ function Export-SECSecret {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [OutputType([System.String])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'ID of secret in Secrets Manager')]
         [ValidateNotNullOrEmpty()]

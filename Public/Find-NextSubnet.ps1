@@ -21,6 +21,7 @@ function Find-NextSubnet {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
+    [OutputType([System.Int32])]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
@@ -66,7 +67,7 @@ function Find-NextSubnet {
 
         # GET GREATEST SECOND OCTET
         foreach ( $range in $custVpcs.CidrBlock ) {
-            $subVal.Add([int] ($range -replace '10\.(\d{1,3})(\.\d{1,3}){2}/16', '$1'))
+            $subVal.Add([System.Int32] ($range -replace '10\.(\d{1,3})(\.\d{1,3}){2}/16', '$1'))
         }
 
         # SORT SUBNET OCTET 2 FROM LOWEST TO HIGHEST

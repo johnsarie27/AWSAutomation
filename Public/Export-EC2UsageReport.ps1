@@ -30,6 +30,7 @@ function Export-EC2UsageReport {
         region
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
         [Parameter(HelpMessage = 'Path to existing folder for report')]
         [ValidateScript({ Test-Path -Path $_ -PathType Container })]
@@ -60,7 +61,7 @@ function Export-EC2UsageReport {
             Param(
                 [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Credential Profile name')]
                 [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
-                [string[]] $ProfileName,
+                [System.String[]] $ProfileName,
 
                 [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS Credential Object')]
                 [ValidateNotNullOrEmpty()]
@@ -68,7 +69,7 @@ function Export-EC2UsageReport {
 
                 [Parameter(HelpMessage = 'Name of desired AWS Region.')]
                 [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
-                [String] $Region
+                [System.String] $Region
             )
 
             $results = [System.Collections.Generic.List[System.Object]]::new()

@@ -23,6 +23,7 @@ function New-CWRecoveryAlarm {
         General notes
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([Amazon.CloudWatch.Model.MetricAlarm])]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'EC2 Instance Id')]
         [ValidatePattern('i-[\w\d]{8,17}')]

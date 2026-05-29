@@ -35,6 +35,7 @@ function ConvertFrom-ELBLog {
         }
     #>
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory, Position = 0, ValueFromPipeline, HelpMessage = 'Path to raw log file')]
         [ValidateScript({ Test-Path -Path $_ -PathType Leaf -Filter "*.log" })]

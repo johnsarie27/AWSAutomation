@@ -39,6 +39,7 @@ function Edit-AWSProfile {
         Using "-AsSecureString" prevents from copy and past when running the script
     #>
     [CmdletBinding()]
+    [OutputType([System.String])]
     Param(
         [Parameter(Mandatory, ParameterSetName = '_list', HelpMessage = 'List profiles')]
         [System.Management.Automation.SwitchParameter] $List,
@@ -75,7 +76,7 @@ function Edit-AWSProfile {
         $OpParams = @('Default', 'Region', 'ProfileName')
 
         # HELPER FUNCTION
-        function Confirm-Profile ([string] $ProfileName) {
+        function Confirm-Profile ([System.String] $ProfileName) {
             <# $ProfileExists = (Get-AWSCredential -ListProfileDetail).ProfileName -contains $ProfileName
             Return $ProfileExists #>
 

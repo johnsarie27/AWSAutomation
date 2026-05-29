@@ -29,6 +29,7 @@ function Get-CertificateReport {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Position = 1, HelpMessage = 'Return IMPORTED certificates only')]
         [System.Management.Automation.SwitchParameter] $ImportedOnly,

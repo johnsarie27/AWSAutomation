@@ -17,6 +17,7 @@ function ConvertTo-CFStackParam {
         General notes
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.CloudFormation.Model.Parameter[]])]
     Param(
         [Parameter(Mandatory, ValueFromPipeline, HelpMessage = 'Hashtable with CloudFormation Stack Parameter(s)')]
         [System.Collections.Hashtable] $Parameter

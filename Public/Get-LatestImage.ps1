@@ -27,6 +27,7 @@ function Get-LatestImage {
         Comments: <Comment(s)>
     #>
     [CmdletBinding()]
+    [OutputType([Amazon.EC2.Model.Image])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'EC2 Instance name tag value')]
         [ValidatePattern('^[\w-]+$')]

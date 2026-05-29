@@ -66,7 +66,7 @@ function Find-InsecureS3BucketPolicy {
             $Policy = Get-S3BucketPolicy @splat | ConvertFrom-Json
 
             foreach ( $i in $Policy.Statement ) {
-                if ( $i -and ([string] $i.Principal) -notmatch '(ARN|Service)' ) {
+                if ( $i -and ([System.String] $i.Principal) -notmatch '(ARN|Service)' ) {
                     $i | Add-Member -MemberType NoteProperty -Name BucketName -Value $splat.BucketName
                     $Results.Add($i)
                 }

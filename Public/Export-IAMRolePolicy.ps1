@@ -25,6 +25,7 @@ function Export-IAMRolePolicy {
         General notes
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
         [Parameter(HelpMessage = 'AWS Credential Profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]

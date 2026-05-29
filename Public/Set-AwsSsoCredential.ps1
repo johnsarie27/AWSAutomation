@@ -35,6 +35,7 @@ function Set-AwsSsoCredential {
         https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/update-aws-cli-credentials-from-aws-iam-identity-center-by-using-powershell.html
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
         [Parameter(Mandatory = $false, HelpMessage = 'Identity Center region')]
         [System.String] $Region = 'us-east-1',

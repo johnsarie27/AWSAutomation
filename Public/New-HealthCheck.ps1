@@ -37,6 +37,7 @@ function New-HealthCheck {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([Amazon.Route53.Model.ChangeTagsForResourceResponse])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Health Check name (tag)')]
         [ValidatePattern('^[\w-]+$')]

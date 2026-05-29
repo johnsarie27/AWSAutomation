@@ -27,6 +27,7 @@ function Get-AwsServiceReference {
         Comments:
     #>
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory = $false, HelpMessage = 'Service Name(s)')]
         [System.String[]] $ServiceName

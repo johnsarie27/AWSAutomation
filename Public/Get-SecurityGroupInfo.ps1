@@ -23,6 +23,7 @@ function Get-SecurityGroupInfo {
         Store all security groups from Profile $P and VPC $V in varibale $a
     #>
     [CmdletBinding(DefaultParameterSetName = '_prf')]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
         [Parameter(Mandatory = $true, ParameterSetName = '_prf', HelpMessage = 'AWS Profile containing key and secret')]
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]

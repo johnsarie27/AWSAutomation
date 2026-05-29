@@ -21,6 +21,7 @@ function Get-SSMNonCompliance {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [OutputType([Amazon.SimpleSystemsManagement.Model.ComplianceItem[]])]
     Param(
         [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile containing access key and secret')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]

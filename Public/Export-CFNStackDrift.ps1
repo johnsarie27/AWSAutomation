@@ -29,6 +29,7 @@ function Export-CFNStackDrift {
         General notes
     #>
     [CmdletBinding()]
+    [OutputType([System.Void])]
     Param(
         [Parameter(HelpMessage = 'AWS Credential Object')]
         [ValidateNotNullOrEmpty()]

@@ -23,6 +23,7 @@ function Get-ScanStatus {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '_creds')]
+    [OutputType([System.Management.Automation.PSCustomObject[]])]
     Param(
         [Parameter(Mandatory, HelpMessage = 'Bucket name')]
         [ValidateNotNullOrEmpty()]

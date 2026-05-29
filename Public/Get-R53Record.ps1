@@ -22,6 +22,7 @@ function Get-R53Record {
     #>
 
     [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject[]])]
     Param(
         [Parameter(HelpMessage = 'AWS Profile containing access key and secret')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]

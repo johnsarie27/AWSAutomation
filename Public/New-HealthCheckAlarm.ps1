@@ -33,6 +33,7 @@ function New-HealthCheckAlarm {
         General notes
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [OutputType([Amazon.CloudWatch.Model.PutMetricAlarmResponse])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Alarm Name')]
         [ValidatePattern('^[\w-]+$')]
