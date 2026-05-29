@@ -14,76 +14,60 @@ across the 36 public functions.
 
 ## High-priority gaps
 
-### 1. `Throw` used for terminating errors (preference violation)
+### 1. `Throw` used for terminating errors (preference violation) — **CLOSED**
 
-6 occurrences. Replace each with
-`Write-Error -Message '...' -ErrorAction Stop` (also applies inside
-`ValidateScript` blocks per stored user preferences).
+All 6 `Throw` sites in `Public/` replaced with
+`Write-Error -Message '...' -ErrorAction Stop` during the early refactor
+sweep. `Get-IAMReport` will be re-checked as part of gap #6.
 
-- [Public/Export-SECSecret.ps1](../Public/Export-SECSecret.ps1) line 73
-- [Public/Find-PublicS3Object.ps1](../Public/Find-PublicS3Object.ps1) line 50
-- [Public/Get-IAMReport.ps1](../Public/Get-IAMReport.ps1) line 70
-- [Public/New-HealthCheck.ps1](../Public/New-HealthCheck.ps1) line 86
-- [Public/Set-AwsSsoCredential.ps1](../Public/Set-AwsSsoCredential.ps1) line 137
-- [Public/Update-CFNStackAMI.ps1](../Public/Update-CFNStackAMI.ps1) line 86
+### 2. `[OutputType()]` missing on ~80% of public functions — **CLOSED**
 
-### 2. `[OutputType()]` missing on ~80% of public functions
+All 36 public functions now declare `[OutputType()]` with concrete
+SDK/.NET types (or `[System.Void]` for action-only cmdlets). Closed in
+commit `6632b6f`.
 
-Only 7 of 36 functions declare `[OutputType()]`. Every function that returns
-data needs one with a full .NET type. Use `[OutputType([System.Void])]` for
-action-only functions like `New-HealthCheck`, `Edit-AWSProfile`,
-`Invoke-SSMRunCommand`.
+### 3. Type accelerators (`[string]`, `[int]`, `[char]`) still in use — **CLOSED**
 
-### 3. Type accelerators (`[string]`, `[int]`, `[char]`) still in use
+All listed type accelerators promoted to full `System.*` names alongside
+the OutputType sweep in commit `6632b6f`.
 
-Promote all to `System.*` full names.
+### 4. Double-quoted string interpolation — **CLOSED (deferred for `Set-AwsSsoCredential`)**
 
-- [Public/Edit-AWSProfile.ps1](../Public/Edit-AWSProfile.ps1) line 78
-- [Public/Export-EC2UsageReport.ps1](../Public/Export-EC2UsageReport.ps1) line 71
-- [Public/Find-InsecureS3BucketPolicy.ps1](../Public/Find-InsecureS3BucketPolicy.ps1) line 69
-- [Public/Find-NextSubnet.ps1](../Public/Find-NextSubnet.ps1) line 69
-- [Public/Get-WindowsDisk.ps1](../Public/Get-WindowsDisk.ps1) lines 25, 30, 36
+The only function flagged was `Set-AwsSsoCredential`, which is upstream
+AWS-authored code (see the prescriptive-guidance URL in its `.NOTES`).
+Per maintainer decision, the upstream style is preserved; only the
+`.NOTES` header and any `Throw` sites are aligned to our standards.
 
-### 4. Double-quoted string interpolation
+### 5. `Set-AwsSsoCredential` is a standards hot-spot — **CLOSED (scoped)**
 
-The standard requires the `-f` format operator over `"$(...)"`. Concentrated
-in [Public/Set-AwsSsoCredential.ps1](../Public/Set-AwsSsoCredential.ps1) (e.g.
-`"$($IdentityCenterName)_..."`). Convert to
-`'{0}_identity_center_token' -f $IdentityCenterName`, etc.
+This function is upstream AWS-authored code shared via the prescriptive
+guidance URL in its `.NOTES`. By maintainer decision, the upstream
+implementation is preserved as-is **except** for:
 
-### 5. `Set-AwsSsoCredential` is a standards hot-spot
+- `.NOTES` header normalized to the `Status:` convention (commit
+  `0a529c8`).
+- `throw $PSItem` replaced with `Write-Error -ErrorAction Stop` (already
+  in place; verified during gap #5 review).
 
-Single biggest deviation in the module:
+The remaining deviations (`Write-Output` prompts, `$Global:` token cache,
+hardcoded default Start URL, explicit `Mandatory = $false`,
+double-quoted interpolation) are intentionally left to stay close to the
+upstream source.
 
-- Uses `Write-Output` for user-facing prompts (should be
-  `Write-Information -InformationAction Continue` or `Write-Warning`).
-- Uses `$Global:` scoped variables for token caching — violates "prefer
-  function-local scope".
-- Header is the old `Name/Author/Version/Last Edit` block instead of the
-  `Status: ...` convention.
-- Catches and re-throws via `throw $PSItem` plus a string-interpolated
-  `Write-Error`.
-- Hardcoded org default `'https://mcssec.awsapps.com/start/'` — should be a
-  parameter without a built-in default, or read from config.
-- `Mandatory = $false` written out explicitly (use shorthand `Mandatory` only
-  when true; omit otherwise).
+### 6. `Get-IAMReport` legacy patterns — **CLOSED**
 
-### 6. `Get-IAMReport` legacy patterns
+`New-Object psobject` + 13 `Add-Member` calls replaced with a single
+`[PSCustomObject]` literal; PascalCase locals lowered to camelCase per
+standard; duplicate `Get-IAMGroupForUser` call collapsed. Output schema
+and order preserved. Gap #12 (Begin/Process discipline for this
+function) is intentionally left for a later pass.
 
-[Public/Get-IAMReport.ps1](../Public/Get-IAMReport.ps1) builds output with
-`New-Object psobject` + repeated `Add-Member` calls. Replace with
-`[PSCustomObject] @{ ... }`. Also uses `Throw` (#1) and PascalCase locals
-(`$Date`, `$Accounts`, `$IAMReport`) — should be `$date`, `$accounts`,
-`$iamReport`.
+### 7. Comment-based help — `.NOTES` format — **CLOSED**
 
-### 7. Comment-based help — `.NOTES` format
-
-Almost every function uses the old `Name/Author/Version/Last Edit` block (see
-`New-HealthCheck`, `Set-AwsSsoCredential`). Standard now is a single line
-`Status: <Stable|Beta|Experimental|Deprecated>` plus optional comments/links;
-git history owns the version/author trail. Many help blocks also have
-`Explanation of what the example does` placeholder text that needs real
-content.
+All 36 public functions normalized to the `Status:` convention; substantive
+content (URLs, permission notes, prescriptive guidance) preserved under
+`Comments:`. Placeholder example text replaced with real one-liners.
+`CONTRIBUTING.md` template updated to match. Closed in commit `0a529c8`.
 
 ## Medium-priority gaps
 
