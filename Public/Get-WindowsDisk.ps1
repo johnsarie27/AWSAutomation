@@ -22,6 +22,11 @@ function Get-WindowsDisk {
     #>
     [CmdletBinding()]
     [OutputType([System.Management.Automation.PSCustomObject[]])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseDeclaredVarsMoreThanAssignments',
+        'VolumeName',
+        Justification = 'Assigned inside a ForEach-Object script block and consumed in the enclosing foreach scope on the output object; the analyzer does not trace data flow across that boundary.'
+    )]
     Param()
 
     Begin {
