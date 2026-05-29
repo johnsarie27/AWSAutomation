@@ -51,6 +51,11 @@ function Set-AwsSsoCredential {
     #>
     [CmdletBinding()]
     [OutputType([System.Void])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidGlobalVars',
+        '',
+        Justification = 'Token and per-account state are cached in Global-scope variables to avoid re-authenticating each invocation. See .NOTES.'
+    )]
     Param(
         [Parameter(Mandatory = $false, HelpMessage = 'Identity Center region')]
         [System.String] $Region = 'us-east-1',

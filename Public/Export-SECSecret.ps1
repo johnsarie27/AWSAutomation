@@ -27,6 +27,11 @@ function Export-SECSecret {
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([System.String])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidUsingConvertToSecureStringWithPlainText',
+        '',
+        Justification = 'The plaintext password is read from AWS Secrets Manager and immediately converted to a SecureString so it can be exported via ConvertFrom-SecureString. There is no caller-supplied plaintext to avoid.'
+    )]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'ID of secret in Secrets Manager')]
         [ValidateNotNullOrEmpty()]
