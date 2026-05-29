@@ -71,28 +71,25 @@ content (URLs, permission notes, prescriptive guidance) preserved under
 
 ## Medium-priority gaps
 
-### 8. Manifest hygiene ([AWSAutomation.psd1](../AWSAutomation.psd1))
+### 8. Manifest hygiene ([AWSAutomation.psd1](../AWSAutomation.psd1)) — **CLOSED (scoped)**
 
-- `CompatiblePSEditions` not set — add `@('Core', 'Desktop')`.
-- `PowerShellVersion = '5.1'` but the skill targets PS 7+; decide whether
-  this module is dual-edition (then keep 5.1) or PS 7+ only (raise to `'7.4'`
-  and allow `Clean` blocks etc.).
-- `Copyright = '(c) 2018 ...'` — bump year.
-- `ProjectUri` still points to personal fork (`johnsarie27/AWSAutomation`) —
-  should be `PS-MCS/AWSAutomation` now that the repo lives in the org.
-- `LicenseUri`, `Tags`, `ReleaseNotes` commented out — populate at least
-  `Tags` and `LicenseUri`.
-- `RequiredModules` entries use bare names — pin to exact versions per the
-  universal standard
-  (`@{ ModuleName='AWS.Tools.EC2'; ModuleVersion='4.1.x' }`). This also
-  surfaces the inconsistency where
-  [Public/Set-AwsSsoCredential.ps1](../Public/Set-AwsSsoCredential.ps1) pins
-  `4.1.269` but the manifest does not.
-- `AlphabetList` / `VolumeLookupTable` exported as variables — consider
-  whether the module surface really needs these; if internal-only, drop from
-  `VariablesToExport`.
-- `Get-AwsCreds` alias listed in `AliasesToExport` — confirm a `Set-Alias`
-  actually exists (none found in `.psm1` or any function file).
+Applied this pass:
+
+- `CompatiblePSEditions = @('Core', 'Desktop')` added.
+- `Copyright` bumped to `(c) 2018-2026 Justin Johns. All rights reserved.`
+- `Tags` populated (`AWS, Automation, CloudFormation, EC2, IAM, S3,
+  Reporting`).
+- `LicenseUri` populated to the LICENSE file in the org repo.
+- `Get-AwsCreds` removed from `AliasesToExport` (it was never wired up
+  via `Set-Alias`); the matching `[Alias('Get-AwsCreds')]` attribute
+  removed from `Get-RoleCredential.ps1`.
+
+Intentionally **not** changed per maintainer:
+
+- `PowerShellVersion` stays at `'5.1'` (module remains dual-edition).
+- `ProjectUri` stays at the personal repo URL for now.
+- `RequiredModules` left as bare names (no exact-version pinning).
+- `AlphabetList` / `VolumeLookupTable` continue to be exported.
 
 ### 9. Root module ([AWSAutomation.psm1](../AWSAutomation.psm1))
 

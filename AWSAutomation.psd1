@@ -12,7 +12,7 @@
     ModuleVersion     = '0.9.2'
 
     # Supported PSEditions
-    # CompatiblePSEditions = @()
+    CompatiblePSEditions = @('Core', 'Desktop')
 
     # ID used to uniquely identify this module
     GUID              = 'a3b8f9d3-ac13-425b-a0bc-59d5463cc6af'
@@ -24,7 +24,7 @@
     # CompanyName     = 'Unknown'
 
     # Copyright statement for this module
-    Copyright         = '(c) 2018 Justin Johns. All rights reserved.'
+    Copyright         = '(c) 2018-2026 Justin Johns. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description       = 'Functions used for reporting on AWS resources and configurations including some to create CloudFormation templates from existing AWS infrastructure'
@@ -148,9 +148,7 @@
     )
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = @(
-        'Get-AwsCreds'
-    )
+    AliasesToExport   = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -166,10 +164,10 @@
 
         PSData = @{
             # Tags applied to this module. These help with module discovery in online galleries.
-            # Tags = @()
+            Tags = @('AWS', 'Automation', 'CloudFormation', 'EC2', 'IAM', 'S3', 'Reporting')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/johnsarie27/AWSAutomation/blob/main/LICENSE'
 
             # A URL to the main website for this project.
             ProjectUri = 'https://github.com/johnsarie27/AWSAutomation'
