@@ -158,15 +158,19 @@ and pipeline-friendly (correct). Spot-checked other functions with
 `Start-Sleep` / polling: `Export-CFNStackDrift` already has the work
 in `Process` and `Begin` only sets up Excel + creds params (correct).
 
-### 13. `deprecated/` and `WIP/` cleanup
+### 13. `deprecated/` and `WIP/` cleanup — **CLOSED**
 
-`deprecated/` (16 files) and `WIP/` (7 files) are not referenced by the
-manifest or `.psm1`. They are visible in the repo tree and confuse
-contributors. Either:
+Both folders deleted. `WIP/` (7 files) was removed earlier in the
+refactor; `deprecated/` (15 files) deleted in this gap. Neither was
+referenced by the manifest, `.psm1`, tests, or CI, and both polluted
+file-search and contributor onboarding.
 
-- Delete them (git history retains them), or
-- Move under a single `Archive/` folder explicitly excluded from packaging
-  and CI, with a README explaining why they remain.
+Anything that was in those folders is recoverable from git history:
+
+```pwsh
+git log --all -- deprecated/<File>.ps1
+git show <sha>:deprecated/<File>.ps1 > Public/<File>.ps1
+```
 
 ## Low-priority / polish
 
