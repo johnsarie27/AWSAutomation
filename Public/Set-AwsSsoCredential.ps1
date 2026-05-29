@@ -31,6 +31,23 @@ function Set-AwsSsoCredential {
         Status: Stable
         Comments:
         https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/update-aws-cli-credentials-from-aws-iam-identity-center-by-using-powershell.html
+
+        Token cache: this function stores the IAM Identity Center access
+        token, its expiration, and the per-account credential state in
+        three Global-scope variables so subsequent invocations in the
+        same PowerShell session can refresh account credentials without
+        re-authenticating in the browser:
+
+            $Global:<IdentityCenterName>_identity_center_token
+            $Global:<IdentityCenterName>_identity_center_token_expiration
+            $Global:<IdentityCenterName>_identity_center_accounts
+
+        where <IdentityCenterName> is the leading host label of -StartUrl
+        (for example 'mcssec' for https://mcssec.awsapps.com/start/).
+        The variables persist until the PowerShell session ends. To
+        clear them manually:
+
+            Remove-Variable -Scope Global -Name '<IdentityCenterName>_identity_center_*'
     #>
     [CmdletBinding()]
     [OutputType([System.Void])]
