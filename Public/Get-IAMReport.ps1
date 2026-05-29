@@ -24,11 +24,11 @@ function Get-IAMReport {
     [CmdletBinding()]
     [OutputType([System.Collections.Generic.List`1[System.Object]])]
     Param(
-        [Parameter(HelpMessage = 'AWS Credential profile')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 

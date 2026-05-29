@@ -25,7 +25,7 @@ function Export-SECSecret {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([System.String])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
         'PSAvoidUsingConvertToSecureStringWithPlainText',
@@ -42,11 +42,11 @@ function Export-SECSecret {
         [Alias('Path')]
         [System.String] $DestinationPath,
 
-        [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
@@ -62,8 +62,8 @@ function Export-SECSecret {
 
         # SET AUTHENTICATION TYPE
         switch ($PSCmdlet.ParameterSetName) {
-            '__pro' { $awsCreds['ProfileName'] = $ProfileName }
-            '__crd' { $awsCreds['Credential'] = $Credential }
+            '_profile'    { $awsCreds['ProfileName'] = $ProfileName }
+            '_credential' { $awsCreds['Credential'] = $Credential }
         }
 
         # SET DESTINATION FULL PATH

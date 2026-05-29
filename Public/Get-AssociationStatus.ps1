@@ -30,22 +30,22 @@ function Get-AssociationStatus {
         [ValidateNotNullOrEmpty()]
         [System.String] $Name,
 
-        [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, Position = 1, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
     Process {
 
-        if ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_credential' ) {
 
             foreach ( $c in $Credential ) {
 
@@ -71,7 +71,7 @@ function Get-AssociationStatus {
                 Get-SSMAssociationExecutionTarget -AssociationId $assoc.AssociationId -ExecutionId $assocExec[0].ExecutionId @awsCreds
             }
         }
-        if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_profile' ) {
 
             foreach ( $p in $ProfileName ) {
 

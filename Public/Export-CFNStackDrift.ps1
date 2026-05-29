@@ -31,15 +31,15 @@ function Export-CFNStackDrift {
     [CmdletBinding()]
     [OutputType([System.Void])]
     Param(
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Profile')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 

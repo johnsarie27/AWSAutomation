@@ -39,16 +39,16 @@ function Export-EC2UsageReport {
         [Alias('DestinationPath')]
         [System.String] $OutputDirectory,
 
-        [Parameter(HelpMessage = 'AWS Credential Profie with key and secret')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('PN')]
         [System.String[]] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 
@@ -61,11 +61,11 @@ function Export-EC2UsageReport {
             [CmdletBinding(DefaultParameterSetName = '_profile')]
             [OutputType([System.Object[]])]
             Param(
-                [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Credential Profile name')]
+                [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
                 [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
                 [System.String[]] $ProfileName,
 
-                [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS Credential Object')]
+                [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
                 [ValidateNotNullOrEmpty()]
                 [Amazon.Runtime.AWSCredentials[]] $Credential,
 

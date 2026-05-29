@@ -37,7 +37,7 @@ function Get-RoleCredential {
     [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([System.Collections.Hashtable])]
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Profile', ParameterSetName = '_profile')]
+        [Parameter(Mandatory, HelpMessage = 'AWS credential profile name', ParameterSetName = '_profile')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 

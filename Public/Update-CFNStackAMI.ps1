@@ -27,7 +27,7 @@ function Update-CFNStackAMI {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '__crd')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '_profile')]
     [OutputType([System.Void])]
     Param(
         [Parameter(Mandatory, Position = 0, HelpMessage = 'Path to CloudFormation template file')]
@@ -38,16 +38,16 @@ function Update-CFNStackAMI {
         [ValidateSet('Server2016', 'Server2019', 'Server2022')]
         [System.String] $OSVersion,
 
-        [Parameter(Mandatory, Position = 2, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory, Position = 2, HelpMessage = 'AWS region')]
         [ValidateScript({ $_ -in (Get-AWSRegion).Region })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region,
 
-        [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
@@ -60,8 +60,8 @@ function Update-CFNStackAMI {
         # SET COMMON PARAMETERS
         $awsParams = @{ Region = $Region }
         switch ($PSCmdlet.ParameterSetName) {
-            '__pro' { $awsParams['ProfileName'] = $ProfileName }
-            '__crd' { $awsParams['Credential'] = $Credential }
+            '_profile'    { $awsParams['ProfileName'] = $ProfileName }
+            '_credential' { $awsParams['Credential'] = $Credential }
         }
     }
     Process {

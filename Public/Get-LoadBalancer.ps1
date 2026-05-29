@@ -21,30 +21,30 @@ function Get-LoadBalancer {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '_pro')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([Amazon.ElasticLoadBalancingV2.Model.LoadBalancer[]])]
     Param(
-        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = '_pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline, ParameterSetName = '_crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
     Process {
-        if ($PSCmdlet.ParameterSetName -eq '_pro') {
+        if ($PSCmdlet.ParameterSetName -eq '_profile') {
             foreach ($name in $ProfileName) {
                 # GET LOAD BALANCERS
                 Get-ELB2LoadBalancer -ProfileName $name -Region $Region
             }
         }
-        elseif ($PSCmdlet.ParameterSetName -eq '_crd') {
+        elseif ($PSCmdlet.ParameterSetName -eq '_credential') {
             foreach ($cred in $Credential) {
                 # GET LOAD BALANCERS
                 Get-ELB2LoadBalancer -Credential $cred -Region $Region

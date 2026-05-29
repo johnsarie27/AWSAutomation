@@ -27,7 +27,7 @@ function New-HealthCheckAlarm {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
+    [CmdletBinding(DefaultParameterSetName = '_profile', SupportsShouldProcess, ConfirmImpact = 'High')]
     [OutputType([Amazon.CloudWatch.Model.PutMetricAlarmResponse])]
     Param(
         [Parameter(Mandatory = $true, HelpMessage = 'Alarm Name')]
@@ -42,15 +42,15 @@ function New-HealthCheckAlarm {
         [ValidateNotNullOrEmpty()]
         [System.String] $AlarmActionArn,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
@@ -59,10 +59,10 @@ function New-HealthCheckAlarm {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
 
         # SET CREDENTIALS
-        if ($PSCmdlet.ParameterSetName -EQ '__pro') {
+        if ($PSCmdlet.ParameterSetName -eq '_profile') {
             $awsCreds = @{ ProfileName = $ProfileName; Region = $Region }
         }
-        elseif ($PSCmdlet.ParameterSetName -EQ '__crd') {
+        elseif ($PSCmdlet.ParameterSetName -eq '_credential') {
             $awsCreds = @{ Credential = $Credential; Region = $Region }
         }
     }

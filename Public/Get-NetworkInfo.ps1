@@ -35,15 +35,15 @@ function Get-NetworkInfo {
         [ValidateScript({ $_ -match 'vpc-[a-z0-9]{8}' })]
         [System.String] $VpcId,
 
-        [Parameter(HelpMessage = 'AWS Profile containing key and secret')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region
     )

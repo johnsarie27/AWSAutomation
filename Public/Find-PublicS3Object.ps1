@@ -24,12 +24,12 @@ function Find-PublicS3Object {
     [OutputType([System.Object[]])]
 
     Param(
-        [Parameter(Mandatory, HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(Mandatory, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 

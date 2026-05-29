@@ -33,11 +33,11 @@ function Get-LatestImage {
         [ValidateRange(1, 90)]
         [System.Int32] $BackupDays = 3,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region

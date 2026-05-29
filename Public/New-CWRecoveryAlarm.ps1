@@ -30,12 +30,12 @@ function New-CWRecoveryAlarm {
         [Alias('Id', 'Instance')]
         [System.String[]] $InstanceId,
 
-        [Parameter(HelpMessage = 'AWS Credential Profile name')]
+        [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [Alias('Profile', 'Name')]
         [System.String] $ProfileName,
 
-        [Parameter(HelpMessage = 'AWS Credential Object')]
+        [Parameter(HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 

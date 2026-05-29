@@ -30,7 +30,7 @@ function Copy-EC2Instance {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__pro')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([Amazon.EC2.Model.Reservation])]
     Param(
         [Parameter(Mandatory, HelpMessage = 'EC2 Instance object to copy')]
@@ -51,11 +51,11 @@ function Copy-EC2Instance {
         [ValidatePattern('ami-[0-9a-z]{17}')]
         [System.String] $AMIID,
 
-        [Parameter(Mandatory, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
@@ -120,8 +120,8 @@ function Copy-EC2Instance {
         }
 
         # ADD CREDENTIALS
-        if ($PSCmdlet.ParameterSetName -eq '__pro') { $instanceParams['ProfileName'] = $ProfileName }
-        elseif ($PSCmdlet.ParameterSetName -eq '__crd') { $instanceParams['Credential'] = $Credential }
+        if ($PSCmdlet.ParameterSetName -eq '_profile') { $instanceParams['ProfileName'] = $ProfileName }
+        elseif ($PSCmdlet.ParameterSetName -eq '_credential') { $instanceParams['Credential'] = $Credential }
 
         # LAUNCH NEW EC2 INSTANCE
         New-EC2Instance @instanceParams

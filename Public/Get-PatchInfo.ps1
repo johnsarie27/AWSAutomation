@@ -31,15 +31,15 @@ function Get-PatchInfo {
         [ValidateNotNullOrEmpty()]
         [System.String] $PatchGroup,
 
-        [Parameter(Mandatory, Position = 1, ParameterSetName = '__pro', HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, Position = 1, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
@@ -48,7 +48,7 @@ function Get-PatchInfo {
         Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
     }
     Process {
-        if ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_credential' ) {
 
             # LOOP THROUGH EACH CREDENTIAL OBJECT
             foreach ($c in $Credential) {
@@ -77,7 +77,7 @@ function Get-PatchInfo {
                 }
             }
         }
-        if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_profile' ) {
 
             # LOOP THROUGH EACH PROFILE NAME
             foreach ($p in $ProfileName) {

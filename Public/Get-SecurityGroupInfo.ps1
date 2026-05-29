@@ -24,18 +24,18 @@ function Get-SecurityGroupInfo {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '_prf')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([System.Management.Automation.PSCustomObject])]
     Param(
-        [Parameter(Mandatory = $true, ParameterSetName = '_prf', HelpMessage = 'AWS Profile containing key and secret')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript( {(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_})]
         [System.String] $ProfileName,
 
-        [Parameter(Mandatory = $true, ParameterSetName = '_crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory = $true, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials] $Credential,
 
-        [Parameter(Mandatory = $true, HelpMessage = 'AWS Region')]
+        [Parameter(Mandatory = $true, HelpMessage = 'AWS region')]
         [ValidateScript({ (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region,
 

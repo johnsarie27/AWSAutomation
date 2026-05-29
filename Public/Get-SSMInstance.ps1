@@ -21,31 +21,31 @@ function Get-SSMInstance {
     .NOTES
         Status: Stable
     #>
-    [CmdletBinding(DefaultParameterSetName = '__crd')]
+    [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([Amazon.SimpleSystemsManagement.Model.InstanceInformation[]])]
 
     Param(
-        [Parameter(Mandatory, Position = 0, ParameterSetName = '__pro', HelpMessage = 'AWS Profile object')]
+        [Parameter(Mandatory, Position = 0, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '__crd', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS Region')]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName, HelpMessage = 'AWS region')]
         [ValidateScript({ $_ -in (Get-AWSRegion).Region })]
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
 
     Process {
-        if ( $PSCmdlet.ParameterSetName -eq '__pro' ) {
+        if ( $PSCmdlet.ParameterSetName -eq '_profile' ) {
             foreach ( $name in $ProfileName ) {
                 Get-SSMInstanceInformation -ProfileName $name -Region $Region
             }
         }
-        elseif ( $PSCmdlet.ParameterSetName -eq '__crd' ) {
+        elseif ( $PSCmdlet.ParameterSetName -eq '_credential' ) {
             foreach ( $cred in $Credential ) {
                 Get-SSMInstanceInformation -Credential $cred -Region $Region
             }

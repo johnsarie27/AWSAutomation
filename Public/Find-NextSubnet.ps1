@@ -23,15 +23,15 @@ function Find-NextSubnet {
     [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([System.Int32])]
     Param(
-        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS Profile')]
+        [Parameter(Mandatory, ParameterSetName = '_profile', HelpMessage = 'AWS credential profile name')]
         [ValidateScript( { (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
         [System.String[]] $ProfileName,
 
-        [Parameter(Mandatory, ParameterSetName = '_creds', HelpMessage = 'AWS Credential Object')]
+        [Parameter(Mandatory, ParameterSetName = '_credential', HelpMessage = 'AWS credentials object')]
         [ValidateNotNullOrEmpty()]
         [Amazon.Runtime.AWSCredentials[]] $Credential,
 
-        [Parameter(HelpMessage = 'AWS Region')]
+        [Parameter(HelpMessage = 'AWS region')]
         [ValidateScript( { (Get-AWSRegion).Region -contains $_ })]
         [System.String] $Region
     )
