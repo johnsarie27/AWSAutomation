@@ -18,10 +18,11 @@ function Get-PatchInfo {
     .OUTPUTS
         System.Object.
     .EXAMPLE
-        PS C:\> Get-PatchInfo PatchGroup 'staging*' -Credential $c -Region us-west-2
-        Explanation of what the example does
+        PS C:\> Get-PatchInfo -PatchGroup 'staging*' -Credential $c -Region us-west-2
+        Returns the SSM patch state for every instance in patch groups matching
+        'staging*' in us-west-2 using AWS credential $c.
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([Amazon.SimpleSystemsManagement.Model.InstancePatchState])]

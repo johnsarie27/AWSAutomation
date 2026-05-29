@@ -19,7 +19,7 @@ function Get-SSMInstance {
         Return all SSM fleet instances using the local system's EC2 Instance Profile
         in the us-west-2 region.
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.SimpleSystemsManagement.Model.InstanceInformation[]])]

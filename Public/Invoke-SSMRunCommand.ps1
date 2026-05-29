@@ -31,10 +31,7 @@ function Invoke-SSMRunCommand {
         PS C:\> Invoke-SSMRunCommand -Command { Get-Service } -Comment 'Get services' -Tag @{Key='Env';Values='Production'} @commonParams
         Runs the command "Get-Service" on all systems with the 'Production' tag assigned
     .NOTES
-        Name:     Invoke-SSMRunCommand
-        Author:   Justin Johns
-        Version:  0.1.2 | Last Edit: 2024-05-01
-        Comments: <Comment(s)>
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([Amazon.SimpleSystemsManagement.Model.Command])]

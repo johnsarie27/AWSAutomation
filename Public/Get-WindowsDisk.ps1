@@ -14,10 +14,11 @@ function Get-WindowsDisk {
     .LINK
         https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-windows-volumes.html#windows-volume-mapping
     .NOTES
-        General notes
+        Status: Stable
+        Comments:
         This function requires a default AWS Credential Profile or an IAM Instance
-        Profile to be set with permissions for ec2:Describe*
-        Several design choices were made for compatibility with PS 4.0
+        Profile to be set with permissions for ec2:Describe*.
+        Several design choices were made for compatibility with PS 4.0.
     #>
     [CmdletBinding()]
     [OutputType([System.Management.Automation.PSCustomObject[]])]

@@ -18,6 +18,8 @@ function Get-IAMReport {
     .EXAMPLE
         PS C:\> Get-IAMReport -ProfileName MyAccount
         Generate IAM report for MyAccount
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Collections.Generic.List`1[System.Object]])]

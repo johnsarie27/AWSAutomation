@@ -15,10 +15,11 @@ function Get-LoadBalancer {
     .OUTPUTS
         Amazon.ElasticLoadBalancingV2.Model.LoadBalancer.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
+        PS C:\> Get-LoadBalancer -ProfileName MyProfile -Region us-east-1
+        Returns every Application/Network Load Balancer (ELBv2) in us-east-1 for
+        the account represented by AWS profile 'MyProfile'.
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '_pro')]
     [OutputType([Amazon.ElasticLoadBalancingV2.Model.LoadBalancer[]])]

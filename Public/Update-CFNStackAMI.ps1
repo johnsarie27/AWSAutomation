@@ -25,12 +25,7 @@ function Update-CFNStackAMI {
         PS C:\> Update-CFNStackAMI -Path C:\cfnStack.template -OSVersion Server2019
         Get the latest Windows Server 2019 AMI from AWS and update the RegionMap with the Image ID
     .NOTES
-        Name:     Update-CFNStackAMI
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2022-07-11
-        - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = '__crd')]
     [OutputType([System.Void])]

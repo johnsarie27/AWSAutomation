@@ -28,6 +28,8 @@ function Export-EC2UsageReport {
         PS C:\> Export-EC2UsageReport -Region us-west-1 -ProfileName MyAccount
         Generate new EC2 report for all instances in MyAccount in the us-west-1
         region
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Void])]

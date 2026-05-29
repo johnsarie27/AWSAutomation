@@ -18,9 +18,10 @@ function Get-AssociationStatus {
         System.Object.
     .EXAMPLE
         PS C:\> Get-AssociationStatus -Name UpdateAgent -Credential $c -Region us-east-1
-        Explanation of what the example does
+        Returns the per-target execution result of the most recent run of the SSM
+        association named 'UpdateAgent' in us-east-1 using AWS credential $c.
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([Amazon.SimpleSystemsManagement.Model.AssociationExecutionTarget])]

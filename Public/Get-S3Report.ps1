@@ -20,12 +20,7 @@ function Get-S3Report {
         PS C:\> Get-S3Report -ProfileName myProfile -Region us-west-2
         Return an array of objects containing information on the S3 bucket version and lifecycle policies
     .NOTES
-        Name:     Get-S3Report
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2024-01-04
-        - 0.1.0 - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     [OutputType([System.Management.Automation.PSCustomObject])]

@@ -21,16 +21,11 @@ function New-HealthCheckAlarm {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> New-HealthCheckAlarm
-        Explanation of what the example does
+        PS C:\> New-HealthCheckAlarm -Name api-prod-unhealthy -HealthCheckId $id -AlarmActionArn $arn -Credential $c -Region us-east-1
+        Creates a CloudWatch alarm in us-east-1 that fires (via $arn) when the
+        Route53 health check $id reports unhealthy for three consecutive periods.
     .NOTES
-        Name:     New-HealthCheckAlarm
-        Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-01-25
-        - 0.1.1 - (2024-01-25) Added support for ShouldProcess
-        - 0.1.0 - (2022-05-26) Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
     [OutputType([Amazon.CloudWatch.Model.PutMetricAlarmResponse])]

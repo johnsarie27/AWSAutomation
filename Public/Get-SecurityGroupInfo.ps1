@@ -21,6 +21,8 @@ function Get-SecurityGroupInfo {
     .EXAMPLE
         PS C:\> $a = Get-SecurityGroupInfo -ProfileName $P -VpcId $V
         Store all security groups from Profile $P and VPC $V in varibale $a
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '_prf')]
     [OutputType([System.Management.Automation.PSCustomObject])]

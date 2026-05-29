@@ -14,7 +14,7 @@ function ConvertTo-CFStackParam {
         PS C:\> ConvertTo-CFStackParam -Parameter @{ pVpcCIDR = '172.16.0.0/16'; pVpcName = 'myNewVpc' }
         Output new [Amazon.CloudFormation.Model.Parameter] objects for "pVpcCIDR" and "pVpcName"
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([Amazon.CloudFormation.Model.Parameter[]])]

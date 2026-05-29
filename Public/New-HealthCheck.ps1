@@ -25,16 +25,11 @@ function New-HealthCheck {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> New-HealthCheck
-        Explanation of what the example does
+        PS C:\> New-HealthCheck -Name api-prod -DNS api.example.com -ResourcePath '/health' -Type HTTPS -ProfileName MyProfile -Region us-east-1
+        Creates a Route53 HTTPS health check against https://api.example.com/health
+        and tags it with Name=api-prod using AWS profile 'MyProfile'.
     .NOTES
-        Name:     New-HealthCheck
-        Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-01-25
-        - 0.1.1 - (2024-01-25) Added support for ShouldProcess
-        - 0.1.0 - (2022-05-26) Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd', SupportsShouldProcess, ConfirmImpact = 'High')]
     [OutputType([Amazon.Route53.Model.ChangeTagsForResourceResponse])]

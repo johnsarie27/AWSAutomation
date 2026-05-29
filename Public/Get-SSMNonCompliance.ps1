@@ -18,7 +18,7 @@ function Get-SSMNonCompliance {
         PS C:\> $socCreds.Values | Get-SSMNonCompliance -Region us-east-2
         Get any non-compliant items for all accounts in us-east-2 contained in $socCreds
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.SimpleSystemsManagement.Model.ComplianceItem[]])]

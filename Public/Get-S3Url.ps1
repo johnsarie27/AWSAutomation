@@ -18,13 +18,7 @@ function Get-S3Url {
         PS C:\> Get-S3Url -BucketName myBucket -Key Files/Test/readme.txt
         Returns the URL "https://myBucket.s3.us-east-1.amazonaws.com/Files/Test/readme.txt"
     .NOTES
-        Name:     Get-S3Url
-        Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-01-31
-        - 0.1.1 - (2024-01-31) Fixed issue with incorrect path using region
-        - 0.1.0 - (2023-11-02) Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.String])]

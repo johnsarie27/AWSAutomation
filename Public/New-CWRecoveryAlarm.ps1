@@ -20,7 +20,7 @@ function New-CWRecoveryAlarm {
         PS C:\> New-CWRecoveryAlarm -InstanceId 'i-00000000' -ProfileName 'MyProfie'
         Adds a CloudWatch Alarm to the instance configured to recover after 2 failed status checks of 5 minutes each
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     [OutputType([Amazon.CloudWatch.Model.MetricAlarm])]

@@ -20,7 +20,7 @@ function Get-ScanStatus {
         PS C:\> Get-ScanStatus -ProfileName myAcc -BucketName 'test-bucket-02340989' -KeyPrefix 'Docs'
         Search all S3 objects in folder 'Docs' of bucket 'test-bucket-02340989' for tags with value "infected"
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '_creds')]
     [OutputType([System.Management.Automation.PSCustomObject[]])]

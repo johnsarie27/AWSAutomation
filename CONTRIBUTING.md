@@ -28,28 +28,47 @@ The intended purpose of the functions in this module are internal functionality 
 - Start with this general structure
 
 ```pwsh
-function <FunctionName> {
+function Verb-Noun {
     <#
     .SYNOPSIS
-        
+        Brief one-line description.
     .DESCRIPTION
-       
+        Detailed explanation of what the function does.
+    .PARAMETER ParameterName
+        Description of the parameter.
     .INPUTS
-        
+        None.
     .OUTPUTS
-        
+        System.Object.
     .EXAMPLE
-        
+        PS C:\> Verb-Noun -ParameterName $value
+        Description of what this example does.
     .NOTES
+        Status: <Stable|Beta|Experimental|Deprecated>
+        Comments:
+        https://link-to-api-documentation
     #>
-
     [CmdletBinding()]
-    Param()
+    [OutputType([System.Management.Automation.PSCustomObject])]
+    Param(
+        [Parameter(Mandatory, HelpMessage = 'Description of the parameter')]
+        [ValidateNotNullOrEmpty()]
+        [System.String] $ParameterName
+    )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
+    Process {
+        # FUNCTION LOGIC
+    }
 }
 ```
 
 - Only use approved verbs when naming functions
 - Function must include properly defined help
+- Use full .NET type names (`[System.String]`, `[System.Int32]`) — never type accelerators
+- Use `Write-Error -Message '...' -ErrorAction Stop` instead of `Throw` for terminating errors
+- `.NOTES` must start with a `Status:` line; do not include name, author, version, or last-edit date (git history owns that)
 
 ## How to get started contributing
 

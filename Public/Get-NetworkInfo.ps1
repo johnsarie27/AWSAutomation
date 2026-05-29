@@ -22,14 +22,11 @@ function Get-NetworkInfo {
         PS C:\> Get-NetworkInfo -ProfileName $P $Region 'us-east-1' -VpcId vpc-12345678
         Get network infrastructure details for VPC vpc-12345678 in us-east-1 for store profile.
     .NOTES
-        The output is not printable so I used the following code to format it:
-            $Output = ""
-            foreach ( $item in $list ) {
-                $Output += $item | Select-Object Name, Id, VpcId | Out-String
-                $Output += $item | Select-Object -EXP Routes | Out-String
-                $Output += $item | Select-Object -EXP Subnets | Out-String
-            }
-            $Output
+        Status: Stable
+        Comments:
+        The output objects contain nested route and subnet collections that do not
+        format usefully with the default formatter. Pipe through Out-String per
+        sub-property if a flat text rendering is needed.
     #>
     [CmdletBinding()]
     [OutputType([System.Management.Automation.PSCustomObject])]

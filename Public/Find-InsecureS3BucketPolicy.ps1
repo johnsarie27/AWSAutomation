@@ -19,6 +19,8 @@ function Find-InsecureS3BucketPolicy {
         PS C:\> Find-InsecureS3BucketPolicy -ProfileName MyProfile
         Search through all buckets in account represented by MyProfile for bucket
         policies that allow non-authenticated principles.
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Object[]])]

@@ -29,7 +29,8 @@ function Get-RoleCredential {
         PS C:\> Get-RoleCredential -ProfileName myProfile -Acount $acc -RoleName mySuperRole
         Get AWS Credential object(s) for account ID 012345678901 and Role name mySuperRole
     .NOTES
-        General notes
+        Status: Stable
+        Comments:
         https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_configure-api-require.html
         https://docs.aws.amazon.com/powershell/latest/reference/index.html?page=Use-STSRole.html&tocid=Use-STSRole
     #>

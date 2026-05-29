@@ -23,15 +23,13 @@ function Set-AwsSsoCredential {
     .OUTPUTS
         None.
     .EXAMPLE
-        PS C:\> Set-AwsSsoCredential -Account
-        Explanation of what the example does
+        PS C:\> Set-AwsSsoCredential -Account $accounts
+        Performs the AWS IAM Identity Center device-authorization flow against the
+        default Start URL and writes refreshed access keys for every account in
+        $accounts to ~/.aws/credentials.
     .NOTES
-        Name:     Set-AwsSsoCredential
-        Author:   Michael Hatcher
-        Version:  0.1.0 | Last Edit: 2023-07-19
-        - 0.1.0 - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
+        Comments:
         https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/update-aws-cli-credentials-from-aws-iam-identity-center-by-using-powershell.html
     #>
     [CmdletBinding()]

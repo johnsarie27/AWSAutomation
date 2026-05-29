@@ -18,7 +18,7 @@ function Find-NextSubnet {
         PS C:\> Find-NextSubnet -ProfileName $myProfile
         Returns the second octet of the next available subnet CIDR range
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '_profile')]
     [OutputType([System.Int32])]

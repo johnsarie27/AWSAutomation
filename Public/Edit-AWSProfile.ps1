@@ -36,7 +36,9 @@ function Edit-AWSProfile {
     .LINK
         https://docs.aws.amazon.com/powershell/latest/userguide/specifying-your-aws-credentials.html#pstools-cred-provider-chain
     .NOTES
-        Using "-AsSecureString" prevents from copy and past when running the script
+        Status: Stable
+        Comments:
+        Using -AsSecureString prevents copy/paste when running the script.
     #>
     [CmdletBinding()]
     [OutputType([System.String])]

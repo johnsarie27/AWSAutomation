@@ -26,7 +26,7 @@ function Export-CFNStackDrift {
         PS C:\> Export-CFNStackDrift -ProfileName myProfile -StackName Stack1 -SheetName Stack1 -Path "$HOME\Desktop\StackDrift.xlsx"
         Exports an Excel Spreadsheet containing the objects IN_SYNC and DRIFTED in separate tabs
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Void])]

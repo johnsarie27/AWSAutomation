@@ -22,7 +22,7 @@ function Export-IAMRolePolicy {
         PS C:\> Export-IAMRolePolicy -ProfileName MyAwsAccount -RoleName MyNewRole
         Generates an Excel Spreadsheet of all matching Roles with a list of their Policies
     .NOTES
-        General notes
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([System.Void])]

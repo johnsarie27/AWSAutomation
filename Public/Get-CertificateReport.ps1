@@ -20,13 +20,7 @@ function Get-CertificateReport {
         PS C:\> Get-CertificateReport -ProfileName myProfile -Region us-east-1
         Generate report of certificates in Amazon Certificate Manager to C:\certReport.xlsx
     .NOTES
-        Name:     Get-CertificateReport
-        Author:   Justin Johns
-        Version:  0.1.1 | Last Edit: 2024-01-08
-        - 0.1.1 - (2024-01-05) Changed function from Export- to Get-CertificateReport
-        - 0.1.0 - (2024-01-05) Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     [OutputType([System.Management.Automation.PSCustomObject])]

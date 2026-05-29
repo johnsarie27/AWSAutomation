@@ -20,6 +20,8 @@ function Get-Instance {
         PS C:\> $All = Get-Instance -Region us-west-2
         Return all EC2 instances using the local system's EC2 Instance Profile
         in the us-west-2 region.
+    .NOTES
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([Amazon.EC2.Model.Instance[]])]

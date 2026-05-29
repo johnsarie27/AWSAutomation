@@ -18,7 +18,7 @@ function Get-R53Record {
         PS C:\> Get-R53Record -ProfileName MyProfile -ZoneName 'myDomain.com.'
         Get all "A" and "CNAME" records for the zone 'myDomain.com.'
     .NOTES
-        General notes
+        Status: Stable
     #>
 
     [CmdletBinding()]

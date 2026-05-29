@@ -20,14 +20,10 @@ function Export-SECSecret {
         System.String.
     .EXAMPLE
         PS C:\> Export-SECSecret -SecretId mySecret -DestinationPath C:\
-        Explanation of what the example does
+        Retrieves the value of secret 'mySecret' from AWS Secrets Manager and writes
+        it to a file under C:\.
     .NOTES
-        Name:      Export-SECSecret
-        Author:    Justin Johns
-        Version:   0.1.1 | Last Edit: 2022-04-06
-        - Updated action for existing file
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__crd')]
     [OutputType([System.String])]

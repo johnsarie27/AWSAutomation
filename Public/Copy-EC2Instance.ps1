@@ -28,15 +28,7 @@ function Copy-EC2Instance {
         PS C:\> Copy-EC2Instance -EC2Instance $ec2 -Name MyNewEC2 -Type m6i.large -AMIID $aid
         Makes a copy of EC2 Instance $ec2 with new name MyNewEC2 and type m61.large
     .NOTES
-        Name:    Copy-EC2Instance
-        Author:  Justin Johns
-        Version: 0.1.4 | Last Edit: 2023-07-19
-        - 0.1.4 - Added support for AWS Credential Profile
-        - 0.1.3 - Code clean
-        - 0.1.2 - Update comments
-        - 0.1.0 - Initial version
-        Comments: <Comment(s)>
-        General notes
+        Status: Stable
     #>
     [CmdletBinding(DefaultParameterSetName = '__pro')]
     [OutputType([Amazon.EC2.Model.Reservation])]

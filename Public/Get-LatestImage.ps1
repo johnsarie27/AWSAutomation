@@ -20,11 +20,7 @@ function Get-LatestImage {
         PS C:\> Get-LatestImage @commonParams -NameTag 'MyInstance' -BackupDays 3
         Returns the latest image(s) for the instance 'MyInstance' from the last 3 days
     .NOTES
-        Name:     Get-LatestImage
-        Author:   Justin Johns
-        Version:  0.1.0 | Last Edit: 2024-10-17
-        - Version history is captured in repository commit history
-        Comments: <Comment(s)>
+        Status: Stable
     #>
     [CmdletBinding()]
     [OutputType([Amazon.EC2.Model.Image])]
