@@ -22,7 +22,7 @@ function Get-IAMReport {
         Status: Stable
     #>
     [CmdletBinding()]
-    [OutputType([System.Collections.Generic.List`1[System.Object]])]
+    [OutputType([System.Object[]])]
     Param(
         [Parameter(HelpMessage = 'AWS credential profile name')]
         [ValidateScript({ (Get-AWSCredential -ListProfileDetail).ProfileName -contains $_ })]
