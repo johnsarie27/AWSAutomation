@@ -42,6 +42,8 @@ function Find-InsecureS3BucketPolicy {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $splat = @{ ProfileName = $ProfileName } }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $splat = @{ Credential = $Credential } }
 
@@ -60,7 +62,6 @@ function Find-InsecureS3BucketPolicy {
 
         $Results = [System.Collections.Generic.List[System.Object]]::new()
     }
-
     Process {
         foreach ( $b in $Buckets ) {
             $splat.BucketName = $b.BucketName
@@ -75,7 +76,6 @@ function Find-InsecureS3BucketPolicy {
             }
         }
     }
-
     End {
         $Results
     }

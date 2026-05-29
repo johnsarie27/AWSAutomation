@@ -23,6 +23,9 @@ function ConvertTo-CFStackParam {
         [System.Collections.Hashtable] $Parameter
     )
 
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
         # LOOP THROUGH EACH KEY-VALUE PAIR IN THE HASH TABLE
         foreach ( $p in $Parameter.Keys ) {

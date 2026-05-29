@@ -74,6 +74,8 @@ function Edit-AWSProfile {
         [System.String] $ProfileName
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # OPERATIONAL PARAMETERS
         $OpParams = @('Default', 'Region', 'ProfileName')
 

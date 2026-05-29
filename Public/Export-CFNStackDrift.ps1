@@ -58,6 +58,8 @@ function Export-CFNStackDrift {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET EXCEL PARAMS AND DESIRED PROPERTIES
         $excelParams = @{
             FreezeTopRow = $true
@@ -75,7 +77,6 @@ function Export-CFNStackDrift {
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $creds.Add("Credential", $Credential) }
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $creds['ProfileName'] = $ProfileName }
     }
-
     Process {
         # RUN DRIFT AND WAIT 5 SECONDS FOR RESULTS
         Start-CFNStackDriftDetection @creds -StackName $StackName | Out-Null

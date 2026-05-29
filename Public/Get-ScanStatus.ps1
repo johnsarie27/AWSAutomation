@@ -43,6 +43,8 @@ function Get-ScanStatus {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # CONFIGURE CREDENTIALS AND ADD KEY PREFIX IF SPECIFIED
         $creds = @{ BucketName = $BucketName }
         if ( $PSBoundParameters.ContainsKey('KeyPrefix') ) { $creds.Add('KeyPrefix', $KeyPrefix) }
@@ -54,7 +56,6 @@ function Get-ScanStatus {
         # REMOVE KEY PREFIX
         if ( $creds['KeyPrefix'] ) { $creds.Remove('KeyPrefix') }
     }
-
     Process {
         # LOOP THROUGH EACH S3 OBJECT
         foreach ( $i in $objects ) {

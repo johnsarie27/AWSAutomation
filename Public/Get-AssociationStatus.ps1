@@ -43,6 +43,9 @@ function Get-AssociationStatus {
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
 
         if ( $PSCmdlet.ParameterSetName -eq '_credential' ) {

@@ -40,6 +40,8 @@ function Get-R53Record {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET PROPERTIES TO GET
         $Properties = @('Type', 'Name', @{N = 'Value'; E = { $_.ResourceRecords.Value } }, 'TTL')
 
@@ -50,7 +52,6 @@ function Get-R53Record {
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
     }
-
     Process {
         # GET HOSTED ZONE WITH GIVEN NAME
         $zone = Get-R53HostedZoneList @awsParams | Where-Object Name -EQ $ZoneName
@@ -62,7 +63,6 @@ function Get-R53Record {
         $awsParams['HostedZoneId'] = $zone.Id
         $records = (Get-R53ResourceRecordSet @awsParams).ResourceRecordSets
     }
-
     End {
         # RETURN RECORDS
         $records | Where-Object $Where | Select-Object -Property $Properties

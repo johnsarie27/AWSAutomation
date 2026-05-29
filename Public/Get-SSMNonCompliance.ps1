@@ -37,6 +37,8 @@ function Get-SSMNonCompliance {
         [System.String] $Region
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         $filter = @(
             @{ Key = 'Status'; Type = 'Equal'; Values = 'NON_COMPLIANT' }
             #@{ Key = "ComplianceType"; Values = 'Association' } # 'Association|Patch'

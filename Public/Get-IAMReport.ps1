@@ -39,6 +39,8 @@ function Get-IAMReport {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET VARS
         $date = Get-Date
         $accounts = [System.Collections.Generic.List[System.Object]]::new()
@@ -52,7 +54,6 @@ function Get-IAMReport {
             $account = (Get-STSCallerIdentity -Credential $Credential).Account
         }
     }
-
     Process {
         # IMPORT AWS IAM REPORT
         if ( $PSBoundParameters.ContainsKey('Path') ) {

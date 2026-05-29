@@ -44,6 +44,8 @@ function Get-SecurityGroupInfo {
         [System.String] $VpcId
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET API PARAMS
         $secGrpParams = @{
             Region = $Region

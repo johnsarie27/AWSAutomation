@@ -40,6 +40,8 @@ function Find-PublicS3Object {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) { $awsParams = @{ ProfileName = $ProfileName } }
         if ( $PSBoundParameters.ContainsKey('Credential') ) { $awsParams = @{ Credential = $Credential } }
 
@@ -57,7 +59,6 @@ function Find-PublicS3Object {
 
         $results = [System.Collections.Generic.List[PSObject]]::new()
     }
-
     Process {
         # ITERATE THROUGH ALL BUCKETS IN ACCOUNT
         foreach ( $b in $buckets ) {
@@ -87,7 +88,6 @@ function Find-PublicS3Object {
             }
         }
     }
-
     End {
         $results
     }

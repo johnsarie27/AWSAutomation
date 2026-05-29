@@ -57,6 +57,8 @@ function Export-EC2UsageReport {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         function Get-AvailableEBS {
             [CmdletBinding(DefaultParameterSetName = '_profile')]
             [OutputType([System.Object[]])]
@@ -138,7 +140,6 @@ function Export-EC2UsageReport {
         Write-Verbose -Message ('EC2 instances: {0}' -f $ec2.Count)
         Write-Verbose -Message ('EBS volumes: {0}' -f $allVolumes.Count)
     }
-
     Process {
         # ADD DATA VALUES FOR COST INFO
         Get-CostInfo -Region $Region -Instance $ec2 | Out-Null
@@ -167,7 +168,6 @@ function Export-EC2UsageReport {
             $allVolumes | Export-Excel @excelParams -WorksheetName 'Unattached EBS'
         }
     }
-
     End {
         # RETURN REPORT PATH
         if ( $PSBoundParameters.ContainsKey('PassThru') ) {

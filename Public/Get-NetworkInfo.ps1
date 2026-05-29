@@ -48,6 +48,8 @@ function Get-NetworkInfo {
         [System.String] $Region
     )
 
+    Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
     $awsParams = @{
         Region = $Region
         Filter = @{Name = "vpc-id"; Values = $VpcId}

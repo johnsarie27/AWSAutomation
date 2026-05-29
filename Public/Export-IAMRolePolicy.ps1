@@ -49,6 +49,8 @@ function Export-IAMRolePolicy {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET EXCEL PARAMETERS
         $excelParams = @{
             AutoSize     = $true
@@ -67,7 +69,6 @@ function Export-IAMRolePolicy {
             $excelParams['Path'] = Join-Path -Path "$HOME\Desktop" -ChildPath ('IAMRolePolicies_{0:yyyy-MM}.xlsx' -f (Get-Date))
         }
     }
-
     Process {
         # CHECK FOR CREDENTIALS
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
@@ -150,7 +151,6 @@ function Export-IAMRolePolicy {
             }
         }
     }
-
     End {
         # RETURN NEW PATH
         if ( $PSBoundParameters.ContainsKey('PassThru') ) { $excelParams['Path'] }

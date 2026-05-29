@@ -37,6 +37,8 @@ function Find-NextSubnet {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         $vpcs = [System.Collections.Generic.List[Amazon.EC2.Model.Vpc]]::new()
         $subVal = [System.Collections.Generic.List[System.Int32]]::new()
 
@@ -46,7 +48,6 @@ function Find-NextSubnet {
         # EXCLUDE ALL DEFAULT VPC'S (172.31.0.0/16) AND SERVICES VPC
         $where = { $_.CidrBlock -notmatch '^172\.' }
     }
-
     Process {
         if ( $PSBoundParameters.ContainsKey('ProfileName') ) {
             foreach ( $p in $ProfileName ) {

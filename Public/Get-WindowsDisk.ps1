@@ -30,6 +30,8 @@ function Get-WindowsDisk {
     Param()
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         function Get-EC2InstanceMetadata {
             param([System.String] $Path)
             (Invoke-WebRequest -Uri "http://169.254.169.254/latest/$Path").Content
@@ -48,7 +50,6 @@ function Get-WindowsDisk {
             return $deviceName
         }
     }
-
     Process {
         try {
             $InstanceId = Get-EC2InstanceMetadata "meta-data/instance-id"

@@ -37,6 +37,9 @@ function Get-LoadBalancer {
         [ValidateNotNullOrEmpty()]
         [System.String] $Region
     )
+    Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+    }
     Process {
         if ($PSCmdlet.ParameterSetName -eq '_profile') {
             foreach ($name in $ProfileName) {

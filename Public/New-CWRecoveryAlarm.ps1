@@ -44,6 +44,8 @@ function New-CWRecoveryAlarm {
         [System.String] $Region
     )
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET ALARM PARAMS
         $alarmParams = @{
             Region             = $Region

@@ -69,6 +69,8 @@ function Get-RoleCredential {
     )
 
     Begin {
+        Write-Verbose -Message "Starting $($MyInvocation.Mycommand)"
+
         # SET CREDENTIAL SPLATTER TABLE
         $creds = @{ }
 
