@@ -107,17 +107,17 @@ Intentionally **not** changed per maintainer:
 Verified `Import-Module` still surfaces `AlphabetList` and
 `VolumeLookupTable` via `Get-Module`.
 
-### 10. CI workflows ([.github/workflows](../.github/workflows))
+### 10. CI workflows ([.github/workflows](../.github/workflows)) — **CLOSED**
 
-- Both workflows reference actions by floating tags
-  (`actions/checkout@v6`, `actions/upload-artifact@v7`). Standard requires
-  **commit-SHA pinning** with a trailing version comment.
-- `validate.yml` runs on `pull_request` only — standard also runs on
-  `push: branches: [main]` and adds a `concurrency` block to cancel
-  superseded runs.
-- Both workflows use Windows-style path separator `.\Build\build.ps1` while
-  running on `ubuntu-latest`. Works under `pwsh` but `./Build/build.ps1` is
-  cross-platform-idiomatic.
+- `actions/checkout@v6` and `actions/upload-artifact@v7` swapped for
+  full commit SHAs with a trailing version comment in both
+  `validate.yml` and `release.yml`. `softprops/action-gh-release` was
+  already SHA-pinned.
+- `validate.yml` now also triggers on `push: branches: [main]` and has
+  a `concurrency` group keyed by `github.ref` with
+  `cancel-in-progress: true` so superseded runs are cancelled.
+- All `.\Build\build.ps1` invocations changed to `./Build/build.ps1`
+  for cross-platform idiomatic paths under `pwsh` on `ubuntu-latest`.
 
 ### 11. Tests directory layout
 

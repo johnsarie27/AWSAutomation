@@ -9,26 +9,32 @@ on:
       #- CONTRIBUTING.md
       #- .gitignore
       #- .github/**
+  push:
+    branches: [main]
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6 # checkout code
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - shell: pwsh # install dependencies
-        run: .\Build\build.ps1 -ResolveDependency -TaskList 'Init'
+        run: ./Build/build.ps1 -ResolveDependency -TaskList 'Init'
 
       - shell: pwsh # stage module
-        run: .\Build\build.ps1 -TaskList 'CombineFunctionsAndStage'
+        run: ./Build/build.ps1 -TaskList 'CombineFunctionsAndStage'
 
       - shell: pwsh # psscriptanalyzer
-        run: .\Build\build.ps1 -TaskList 'Analyze'
+        run: ./Build/build.ps1 -TaskList 'Analyze'
 
       - shell: pwsh # pester
-        run: .\Build\build.ps1 -TaskList 'Test'
+        run: ./Build/build.ps1 -TaskList 'Test'
 
-      - uses: actions/upload-artifact@v7 # publish pester results
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: Pester Results
           path: "Artifacts/**/Test-*.xml"
