@@ -76,18 +76,18 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess = @(
-        './Private/AwsSecurityFinding.types.ps1xml'
-        './Private/CertificateDetail.types.ps1xml'
-        './Private/CertificateSummary.types.ps1xml'
-        './Private/EBS.types.ps1xml'
-        './Private/EC2.Image.types.ps1xml'
-        './Private/EC2.Instance.types.ps1xml'
-        './Private/ELB.types.ps1xml'
-        './Private/ELB2.types.ps1xml'
-        './Private/ELB2.Listener.types.ps1xml'
-        './Private/Snapshot.types.ps1xml'
-        './Private/SSM.types.ps1xml'
-        './Private/Volume.types.ps1xml'
+        'Private/AwsSecurityFinding.types.ps1xml'
+        'Private/CertificateDetail.types.ps1xml'
+        'Private/CertificateSummary.types.ps1xml'
+        'Private/EBS.types.ps1xml'
+        'Private/EC2.Image.types.ps1xml'
+        'Private/EC2.Instance.types.ps1xml'
+        'Private/ELB.types.ps1xml'
+        'Private/ELB2.types.ps1xml'
+        'Private/ELB2.Listener.types.ps1xml'
+        'Private/Snapshot.types.ps1xml'
+        'Private/SSM.types.ps1xml'
+        'Private/Volume.types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module

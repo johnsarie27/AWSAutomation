@@ -96,7 +96,7 @@ function New-HealthCheck {
             HealthCheckConfig_Type                     = $Type
             HealthCheckConfig_Region                   = @('us-east-1', 'us-west-1', 'us-west-2')
             Select                                     = '*'
-            ErrorAction                                = 1 # Stop
+            ErrorAction                                = 'Stop'
             #AlarmIdentifier_Name                       = ''
             #HealthCheckConfig_SearchString             = # COMMENT OUT FOR HTTPS
             #HealthCheckConfig_Disabled                 = $false
@@ -126,7 +126,7 @@ function New-HealthCheck {
             ResourceType = 'healthcheck'
             AddTag       = @{ Key = 'Name'; Value = $Name }
             Select       = '*'
-            ErrorAction  = 1 # STOP
+            ErrorAction  = 'Stop'
         }
         Edit-R53TagsForResource @tagParams @awsCreds
     }

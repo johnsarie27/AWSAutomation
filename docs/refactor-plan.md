@@ -172,27 +172,32 @@ git log --all -- deprecated/<File>.ps1
 git show <sha>:deprecated/<File>.ps1 > Public/<File>.ps1
 ```
 
-## Low-priority / polish
+## Low-priority / polish — **CLOSED**
 
-- **Hashtable comments next to code** (e.g., `ErrorAction = 1 # Stop`)
-  violate "no inline comments". Move above the key or drop the magic-number
-  alias and use `'Stop'` directly.
-- **Backtick line continuation** — none seen in spot-checks, good. Splatting
-  use is reasonable but inconsistent (some calls still pass 3+ named params
-  directly).
-- **`Find-PublicS3Object`, `Find-InsecureS3BucketPolicy`** etc. have lengthy
-  `Where-Object` pipelines that should be extracted to a `$where`
-  script-block variable per the universal standard.
-- **`Get-WindowsDisk`** uses inline `param([string]$Path)` nested
-  functions — minor, but full types still apply.
-- **`Get-LatestImage` / `Get-Instance` / `Get-LoadBalancer`** etc. validate
-  `ProfileName` with
-  `(Get-AWSCredential -ListProfileDetail).ProfileName -contains $_`
-  duplicated 15+ times. Candidate for a `Private/` validator helper or a
-  shared `[ValidateScript]` constant.
-- **`AwsSecurityFinding.types.ps1xml` etc.** are referenced in
-  `TypesToProcess` with `./Private/...` — works on both editions, but
-  `Private/...` (manifest-relative) is more portable.
+- **Hashtable comments next to code**: the two `ErrorAction = 1 # Stop`
+  sites in `Public/New-HealthCheck.ps1` now use `ErrorAction = 'Stop'`
+  directly (no magic-number alias, no inline comment). No other hashtable
+  keys in `Public/` carry inline `# ...` annotations on live values.
+- **Backtick line continuation** — none in tree. No-op.
+- **`Find-PublicS3Object`, `Find-InsecureS3BucketPolicy`** — re-inspected
+  during this pass; neither uses a `Where-Object` pipeline (both filter
+  with `foreach` + `if` inside `Process`). Nothing to extract. Note was
+  stale.
+- **`Get-WindowsDisk`** — inline nested function parameters already
+  declare full types (`[System.String] $Path`, `[System.Int32]
+  $SCSITargetId`). No change needed.
+- **Shared `[ValidateScript]` for `ProfileName`** — **declined.** The
+  guard is a one-liner (`(Get-AWSCredential -ListProfileDetail).ProfileName
+  -contains $_`); wrapping it in a `Private/` helper traded one line of
+  inline, self-documenting code per site for cross-file indirection and a
+  new function-call frame. The "shared constant" alternative is not
+  possible — `[ValidateScript(...)]` attribute arguments must be literal
+  script blocks, so they cannot reference a module-scoped variable. Left
+  as-is across the 30 sites; revisit only if the guard itself needs to
+  evolve (caching, friendlier error message, case-insensitive compare).
+- **`AwsSecurityFinding.types.ps1xml` etc.** — `TypesToProcess` entries
+  in `AWSAutomation.psd1` changed from `./Private/...` to
+  `Private/...` (manifest-relative, idiomatic on both editions).
 
 ## Recommended sequencing for the refactor branch
 
