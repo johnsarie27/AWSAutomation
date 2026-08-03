@@ -9,7 +9,7 @@
     RootModule        = 'AWSAutomation.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.11.0'
+    ModuleVersion     = '0.11.1'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Core', 'Desktop')
@@ -90,10 +90,12 @@
         'Private/Volume.types.ps1xml'
     )
 
-    # Format files (.ps1xml) to be loaded when importing this module
-    FormatsToProcess = @(
-        'Private/EC2.Instance.format.ps1xml'
-    )
+    # Format files (.ps1xml) to be loaded when importing this module.
+    # NOTE: EC2.Instance.format.ps1xml is intentionally NOT listed here.
+    # FormatsToProcess appends views, so AWS.Tools.EC2's own 'Instance' view
+    # would remain the default. The module script prepends it instead so the
+    # 'Info' view wins as the default display (see AWSAutomation.psm1).
+    # FormatsToProcess = @()
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     # NestedModules = @()
