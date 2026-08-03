@@ -11,6 +11,12 @@ foreach ( $directory in @('Public', 'Private') ) {
     Get-ChildItem -Path "$PSScriptRoot\$directory\*.ps1" | ForEach-Object -Process { . $_.FullName }
 }
 
+# PREPEND EC2 INSTANCE FORMATTING SO THE 'Info' VIEW IS THE DEFAULT DISPLAY.
+# AWS.Tools.EC2 ships its own 'Instance' view for Amazon.EC2.Model.Instance;
+# appending (via the manifest FormatsToProcess) leaves that view first and in
+# control. Prepending places 'Info' ahead of it regardless of module load order.
+Update-FormatData -PrependPath "$PSScriptRoot\Private\EC2.Instance.format.ps1xml"
+
 # VARIABLES
 $AlphabetList = 0..25 | ForEach-Object { [char](65 + $_) }
 

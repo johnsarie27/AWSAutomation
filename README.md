@@ -5,7 +5,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![PowerShell 5.1+](https://img.shields.io/badge/PowerShell-5.1%2B-blue.svg)](https://github.com/PowerShell/PowerShell)
 
-
 A PowerShell module for automating, auditing, and reporting on AWS resources. It covers a broad surface of AWS services — EC2, IAM, S3, SSM, CloudFormation, CloudWatch, Elastic Load Balancing, Route 53, ACM, Secrets Manager, KMS, and SSO — with functions designed for cloud/ops engineers who work heavily in the AWS CLI and PowerShell ecosystem.
 
 ## Requirements
